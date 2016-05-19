@@ -1,5 +1,8 @@
 var fs = require('fs');
 var moment = require('moment');
+var async = require('async');
+var md5 = require('md5');
+var csv2json = require('csv-to-json-stream');
 
 var Dataset = function(server, options, next) {
   this.server = server;
@@ -50,20 +53,37 @@ Dataset.prototype.dataset = function(request, reply) {
 
 Dataset.prototype.upload = function(request, reply) {
   var self = this;
-  var filename = 'dataset_' + moment().format("YYYY-MM-DD") + '_' + (new Date()).valueOf();
+  var id = md5((new Date()).valueOf());
+  var filename = 'dataset_' + id + '.csv';
   var prefix = __dirname + '/../../data/';
   console.log(request.payload.opts);
   var path = prefix + filename;
   var fws = fs.createWriteStream(path);
   fws.on("finish", function(){
-    reply();
+    var map = {};
+    var header = 'kode_provinsi,nama_provinsi,kelompok_usia,tahun,persentase_buta_huruf';
+    header = header.split(',');
+    for (var i in header) {
+      map[header[i]] = i;
+    }
+    // Convert  to JSON file
+    var stream = fs.createReadStream(path).pipe(csv2json({
+      delimiter : ',',
+      map : map,
+      skipHeader: true
+    })).pipe(fs.createWriteStream(path.replace('.csv', '.json')));
+    stream.on('data', function(data){
+      console.log(data);
+    })
+    stream.on('finish', function(){
+      reply();
+    })
   });
   fws.on("error", function(err){
     reply(err).code(500);
   })
   request.payload.content.pipe(fws);
 }
-
 
 exports.register = function(server, options, next) {
   new Dataset(server, options, next);
