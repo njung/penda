@@ -1,0 +1,63 @@
+var UploadCtrl = function ($stateParams, $scope, $state, $window, $rootScope, AuthService, localStorageService, toastr, $location, ToastrService, $modal, $http, host, AlertService, DatasetService, Upload){
+  this.$stateParams = $stateParams;
+  this.$scope = $scope;
+  this.$state = $state;
+  this.$window = $window;
+  this.$rootScope = $rootScope;
+  this.AuthService = AuthService;
+  this.localStorageService = localStorageService
+  this.toastr = toastr;
+  this.ToastrService = ToastrService;
+  this.$location = $location;
+  this.$modal = $modal;
+  this.$http = $http;
+  this.host = host;
+  this.AlertService = AlertService;
+  this.DatasetService = DatasetService;
+  this.Upload = Upload;
+  
+  var self = this;
+
+  self.$window.scrollTo(0,0)
+
+  // Handle main spinners in one place.
+  self.spinner = {
+  };
+
+  self.AuthService.checkToken({redirect:true})
+
+  self.uploadStatus = "ready";
+  self.$rootScope.preventNavigation = false;
+
+
+}
+
+UploadCtrl.prototype.upload = function(files, invalid) {
+  var self = this;
+  if (files && files.length > 0) {
+    var file = files[files.length - 1];
+    // TODO validate file type
+    self.$rootScope.preventNavigation = true;
+    self.uploadStatus = "uploading";
+    self.DatasetService.upload(file)
+      .then(function(data, status){
+        self.$rootScope.preventNavigation = false;
+        self.uploadStatus = "uploaded";
+        alert("Berhasil diunggah.");
+        // TODO check for error
+      }, function(err){
+        self.$rootScope.preventNavigation = false;
+        self.uploadStatus = "failed";
+        // TODO check for error
+      }, function(evt){
+        self.uploadPercentage = parseInt(100 * evt.loaded / evt.total);
+      })
+  }
+}
+
+UploadCtrl.inject = [ '$stateParams', '$scope', '$state', '$window', '$rootScope', 'AuthService', 'localStorageService', 'toastr' , '$location', 'ToastrService', '$modal', '$http', 'host' , 'AlertService', 'DatasetService', 'Upload'];
+
+angular.module('upload',[])
+.controller('UploadCtrl', UploadCtrl)
+;
+

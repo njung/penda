@@ -1,0 +1,17 @@
+#!/bin/sh
+
+if [ -z $NODE_ENV ];then
+    echo "NODE_ENV is not defined"
+    exit
+fi
+
+if [ $NODE_ENV != "test" -a $NODE_ENV != "dev" -a $NODE_ENV != "prod" -a $NODE_ENV != "staging" ];then
+    echo "Unknown NODE_ENV"
+    exit
+fi
+
+if [ $NODE_ENV = test ];then
+  mongo test --eval 'db.dropDatabase();'
+fi
+
+cp -rf config/$NODE_ENV/settings.json api/hapi-mongoose-db-connector.settings.json

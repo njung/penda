@@ -1,0 +1,118 @@
+<div class="row animated fadeIn" ng-controller="UserCtrl as user" style="min-height:60vh">
+    <div class="col-md-8" ng-show="detail || new">
+        <div class="login-box">
+          <form class="form-horizontal">
+          <div>&nbsp;</div>
+
+          <fieldset>
+              <legend ng-show="detail">Detail Pengguna</legend>
+              <legend ng-show="new">Daftarkan Pengguna Baru</legend>
+              <div class="form-group">
+                  <label for="" class="col-lg-4 control-label">Nama Pengguna</label>
+                  <div class="col-lg-8">
+                      <input type="text" ng-model="selectedUser.fullName" class="form-control" placeholder="Nama Pengguna">
+                  </div>
+              </div>
+              <div class="form-group">
+                  <label for="" class="col-lg-4 control-label">Email</label>
+                  <div class="col-lg-8">
+                      <input type="text" ng-model="selectedUser.email" class="form-control" placeholder="Email" ng-show="new">
+                      <input disabled type="text" ng-model="selectedUser.email" class="form-control" placeholder="Email" ng-hide="new">
+                  </div>
+              </div>
+              <div class="form-group" ng-show="new">
+                  <label for="" class="col-lg-4 control-label">Kata Sandi</label>
+                  <div class="col-lg-8">
+                      <input type="password" ng-model="selectedUser.password" class="form-control" placeholder="Kata Sandi">
+                  </div>
+              </div>
+              <div class="form-group" ng-show="detail">
+                  <label for="" class="col-lg-4 control-label">Nomor Ponsel</label>
+                  <div class="col-lg-8">
+                      <input type="text" ng-model="selectedUser.phone" class="form-control" placeholder="Nomor Ponsel">
+                  </div>
+              </div>
+              <div class="form-group">
+                  <label for="" class="col-lg-4 control-label">Level</label>
+                  <div class="col-lg-8">
+                        <select ng-model="selectedUser.rule" class="form-control">
+                                <option value="admin">Admin</option>
+                                <option value="user">User</option>
+                        </select>
+                  </div>
+              </div>
+              <div class="form-group">
+                  <div class="col-lg-8 col-lg-offset-4" ng-hide="spinner || !detailButton">
+                      <button type="" class="btn btn-default" ng-click="user.back()">Kembali</button>
+                      <button ng-show="detail" type="" class="btn btn-warning" ng-click="user.delete(selectedUser)">Hapus</button>
+                      <button ng-show="detail" type="" class="btn btn-primary" ng-click="user.update(selectedUser)">Simpan</button>
+                      <button ng-show="new" type="" class="btn btn-primary" ng-click="user.create(selectedUser)">Simpan</button>
+                  </div>
+                  <div class="col-lg-8 col-lg-offset-4" ng-show="spinner">
+                    <div class="spinner spinner-left">
+                      <div class="rect1"></div>
+                      <div class="rect2"></div>
+                      <div class="rect3"></div>
+                      <div class="rect4"></div>
+                      <div class="rect5"></div>
+                    </div>
+      	          </div>
+              </div>
+          </fieldset>
+	        
+          </form>
+      	</div>
+    </div>
+    <div class="col-md-12" ng-hide="detail || new">
+      <div>
+
+        <!-- Level -->
+        <div class="btn-group">
+          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Level : <span ng-show="filter.rule">{{filter.rule}}</span><span ng-hide="filter.rule">Semua</span> <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu">
+            <li><a href="" ng-click="user.setRule('Semua')">Semua</a></li>
+            <li><a href="" ng-click="user.setRule('admin')">Admin</a></li>
+            <li><a href="" ng-click="user.setRule('user')">User</a></li>
+          </ul>
+        </div>
+        <button style="float:right;margin-bottom:25px" class="btn btn-primary" ng-click="user.new()"><i class="glyphicon glyphicon-plus"></i> Daftarkan Pengguna Baru</button>
+    </div>
+    <div>
+      <table class="table table-hover">
+        <tr style="font-weight:bold !important">
+          <td>Nama</td>
+          <td>Email</td>
+          <td>Level</td>
+        </tr>
+        <tr ng-repeat="item in users" ng-click="user.detail(item)" class="pointer" ng-hide="spinner">
+          <td>{{item.fullName}}</td>
+          <td>{{item.email}}</td>
+          <td>{{item.rule}}</td>
+        </tr>
+      </table>
+    </div>
+      <div class="spinner" ng-show="spinner">
+        <div class="rect1"></div>
+        <div class="rect2"></div>
+        <div class="rect3"></div>
+        <div class="rect4"></div>
+        <div class="rect5"></div>
+      </div>
+      <br>
+      <div class="centered" style="margin:0 auto !important" ng-show="countries[0] && showPagination">
+            <span> {{offset-limit+1}} sampai {{pageOffset}} dari {{total}} data</span>
+            <div class="bs-component">
+              <ul class="pagination centered">
+                <li ng-show="prev.active"><a href="" ng-click="user.list(1,10)">&laquo;&laquo;</a></li>
+                <li ng-show="prev.active"><a href="" ng-click="user.list(prev.page,10)">&laquo;</a></li>
+                <li ng-repeat="page in pagination" ng-class="{active:page.active}"><a href="" ng-click="user.list(page.number, 10)">{{page.number}}</a></li>
+                <li ng-show="next.active"><a href="" ng-click="user.list(next.page,10)">&raquo;</a></li>
+                <li ng-show="next.active"><a href="" ng-click="user.list(last.page,10)">&raquo;&raquo;</a></li>
+              </ul>
+			      </div>
+      </div>
+    </div>
+</div>
+

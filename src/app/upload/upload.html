@@ -1,0 +1,8 @@
+<div cjass="fluid-container" ng-controller="UploadCtrl as upload">
+  <div class="row animated fadeIn margined-container">
+    <h1>Unggah</h1>
+    <button ng-hide="upload.uploadStatus=='uploading'" ngf-select="upload.upload($files, $invalidFiles)" multiple class="btn btn-inline-right btn-primary pull-right">Unggah</button>
+    <button ng-show="upload.uploadStatus=='uploading' && upload.uploadPercentage < 100" class="btn btn-inline-right btn-primary pull-right">Mengunggah... {{upload.uploadPercentage}} %</button>
+    <button ng-show="upload.uploadStatus!=='uploaded' && upload.uploadStatus!=='failed' && upload.uploadPercentage==100" class="btn btn-inline-right btn-primary pull-right">Memproses...</button>
+  </div>
+</div>

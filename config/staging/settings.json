@@ -1,0 +1,6 @@
+{
+  "options" : {
+    "mongodbUrl" : "mongodb://localhost/staging",
+    "datasetsPath" : "data"
+  }
+}

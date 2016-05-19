@@ -1,0 +1,11 @@
+{
+  "name": "data.blankon.id-hello",
+  "version": "0.0.1",
+  "description": "Hello!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Mohammad Anwari <mdamt@mdamt.net> (http://aksi.mdamt.net/)",
+  "license": "MIT"
+}

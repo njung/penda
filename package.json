@@ -1,0 +1,64 @@
+{
+  "name": "penda",
+  "version": "0.0.0",
+  "description": "OpenData",
+  "main": "index.js",
+  "scripts": {
+    "test": "NODE_ENV=test npm run setenv && PORT=7000 mocha test",
+    "bower": "./node_modules/.bin/bower install",
+    "server": "npm run build && node index",
+    "build": "rm -rf public && ./node_modules/.bin/gulp && mkdir -p public/reclinejs && cp -R reclinejs/* public/reclinejs",
+    "cov": "NODE_ENV=test npm run setenv && PORT=7000 ./node_modules/.bin/mocha --require blanket -R json-cov test",
+    "html-cov": "NODE_ENV=test npm run setenv && PORT=7000 ./node_modules/.bin/mocha --require blanket -R html-cov test",
+    "setenv": "./scripts/setenv",
+    "watch-build": "watch 'fuser -k 3000/tcp;npm run server' ./src"
+  },
+  "author": "Herpiko Dwi Aguno <herpiko@gmail.com> (http://pdft.net)",
+  "license": "Proprietary",
+  "dependencies": {
+    "angular-fcsa-number": "https://github.com/herpiko/angular-fcsa-number/tarball/master",
+    "async": "1.5.2",
+    "backbone": "1.0.0",
+    "blanket": "1.2.2",
+    "boom": "3.1.2",
+    "bower": "1.7.7",
+    "faker": "3.0.1",
+    "form-data": "1.0.0-rc3",
+    "gridfs-stream": "1.1.1",
+    "gulp": "3.9.1",
+    "gulp-batch-replace": "0.0.0",
+    "gulp-concat": "2.6.0",
+    "gulp-minify-html": "1.0.6",
+    "gulp-ng-html2js": "0.2.2",
+    "gulp-rimraf": "0.2.0",
+    "gulp-uglify": "1.5.3",
+    "hapi": "13.0.0",
+    "hapi-swagger": "4.2.1",
+    "inert": "3.2.0",
+    "mocha": "2.4.5",
+    "moment": "^2.13.0",
+    "must": "0.13.1",
+    "mustache": "^2.2.1",
+    "reclinejs": "^0.7.0",
+    "request": "2.69.0",
+    "run-sequence": "1.1.5",
+    "slickgrid": "^2.1.0",
+    "stream-to-promise": "1.1.0",
+    "supertest": "1.2.0",
+    "timeline": "0.0.1",
+    "underscore": "1.4.4",
+    "watch": "0.17.1"
+  },
+  "devDependencies": {},
+  "config": {
+    "blanket": {
+      "pattern": [
+        "api"
+      ],
+      "data-cover-never": [
+        "node_modules",
+        "test"
+      ]
+    }
+  }
+}

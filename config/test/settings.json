@@ -1,0 +1,6 @@
+{
+  "options" : {
+    "mongodbUrl" : "mongodb://localhost/test",
+    "datasetsPath" : "data"
+  }
+}

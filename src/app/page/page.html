@@ -1,0 +1,96 @@
+<div class="row animated fadeIn" ng-controller="PageCtrl as page" style="min-height:60vh">
+    <div class="col-md-12" ng-show="detail || new">
+        <div class="login-box">
+          <form class="form-horizontal">
+          <div>&nbsp;</div>
+
+          <fieldset>
+              <legend ng-show="detail">Halaman</legend>
+              <legend ng-show="new">Buat halaman baru</legend>
+              <div class="form-group">
+                  <label for="" class="col-lg-2 control-label">Judul</label>
+                  <div class="col-lg-10">
+                      <input type="text" ng-model="selectedPage.title" class="form-control" placeholder="Judul">
+                  </div>
+              </div>
+              <!--div class="form-group">
+                  <label for="" class="col-lg-2 control-label">URL Friendly</label>
+                  <div class="col-lg-10">
+                      <input type="text" ng-model="selectedPage.url" class="form-control" placeholder="URL Friendly">
+                  </div>
+              </div-->
+              <!--div class="form-group">
+                  <label for="" class="col-lg-2 control-label">Jenis</label>
+                  <div class="col-lg-10">
+                      <select ng-model="selectedPage.type" class="form-control" placeholder="Jenis">
+                              <option value="static">Statis</option>
+                      </select>
+                  </div>
+              </div-->
+              <div class="form-group">
+                  <label for="" class="col-lg-2 control-label">Isi</label>
+                  <div class="col-lg-10">
+                          <div id="content" ng-model="selectedPage.content" ui-tinymce></div>
+                  </div>
+              </div>
+              <div class="form-group">
+                  <div class="col-lg-10 col-lg-offset-2" ng-hide="spinner || !detailButton">
+                      <button type="" class="btn btn-default" ng-click="page.back()">Kembali</button>
+                      <!--button ng-show="detail" type="" class="btn btn-warning" ng-click="page.delete(selectedPage)">Hapus</button-->
+                      <button ng-show="detail" type="" class="btn btn-primary" ng-click="page.update(selectedPage)">Simpan</button>
+                      <button ng-show="new" type="" class="btn btn-primary" ng-click="page.create(selectedPage)">Simpan</button>
+                  </div>
+                  <div class="col-lg-10 col-lg-offset-2" ng-show="spinner">
+                    <div class="spinner spinner-left">
+                      <div class="rect1"></div>
+                      <div class="rect2"></div>
+                      <div class="rect3"></div>
+                      <div class="rect4"></div>
+                      <div class="rect5"></div>
+                    </div>
+      	          </div>
+              </div>
+          </fieldset>
+	        
+          </form>
+      	</div>
+    </div>
+    <div class="col-md-12" ng-hide="detail || new">
+    <div>
+            <!--button style="float:right;margin-bottom:25px" class="btn btn-primary" ng-click="page.new()"><i class="glyphicon glyphicon-plus"></i> Buat halaman baru</button-->
+    </div>
+    <div>
+      <table class="table table-hover">
+        <tr style="font-weight:bold !important">
+          <td>Judul</td>
+          <td>Jenis</td>
+        </tr>
+        <tr ng-repeat="item in pages" ng-click="page.detail(item)" class="pointer" ng-hide="spinner">
+          <td>{{item.title}}</td>
+          <td>{{item.type}}</td>
+        </tr>
+      </table>
+    </div>
+      <div class="spinner" ng-show="spinner">
+        <div class="rect1"></div>
+        <div class="rect2"></div>
+        <div class="rect3"></div>
+        <div class="rect4"></div>
+        <div class="rect5"></div>
+      </div>
+      <br>
+      <div class="centered" style="margin:0 auto !important" ng-show="countries[0] && showPagination">
+            <span> {{offset-limit+1}} sampai {{pageOffset}} dari {{total}} data</span>
+            <div class="bs-component">
+              <ul class="pagination centered">
+                <li ng-show="prev.active"><a href="" ng-click="page.list(1,10)">&laquo;&laquo;</a></li>
+                <li ng-show="prev.active"><a href="" ng-click="page.list(prev.page,10)">&laquo;</a></li>
+                <li ng-repeat="page in pagination" ng-class="{active:page.active}"><a href="" ng-click="page.list(page.number, 10)">{{page.number}}</a></li>
+                <li ng-show="next.active"><a href="" ng-click="page.list(next.page,10)">&raquo;</a></li>
+                <li ng-show="next.active"><a href="" ng-click="page.list(last.page,10)">&raquo;&raquo;</a></li>
+              </ul>
+			      </div>
+      </div>
+    </div>
+</div>
+

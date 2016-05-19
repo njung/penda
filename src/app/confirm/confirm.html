@@ -1,0 +1,20 @@
+<div class="row animated fadeIn" ng-controller="ConfirmCtrl as confirm">
+    <div class="col-md-12">
+        <div class="login-box" ng-show="success">
+           <h4>Akun Anda sudah aktif</h4>
+            Silakan masuk menggunakan email dan kata sandi yang sudah Anda daftarkan.
+           <a href="#/start" class="btn btn-primary">Masuk</a>
+        </div>
+        <div ng-show="spinner">
+          <div class="spinner">
+            <div class="rect1"></div>
+            <div class="rect2"></div>
+            <div class="rect3"></div>
+            <div class="rect4"></div>
+            <div class="rect5"></div>
+          </div>
+        </div>
+    </div>
+
+</div>
+

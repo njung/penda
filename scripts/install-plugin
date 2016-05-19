@@ -1,0 +1,20 @@
+#!/bin/sh
+set -x
+
+NAME=$1
+ALIAS=$2
+if [ -z $ALIAS ];then
+    ALIAS=$NAME
+fi
+
+cd ../../
+HERE=`pwd`
+cd $HERE/api
+if [ ! -L $ALIAS ];then
+    ln -s ../node_modules/$NAME $ALIAS
+fi
+cd $HERE/test
+if [ ! -L $ALIAS ];then
+    ln -s ../node_modules/$NAME $ALIAS
+fi
+

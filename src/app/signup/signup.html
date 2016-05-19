@@ -1,0 +1,71 @@
+<div class="container-fluid animated-ease" ng-class="{'gradient-bg-1' : !spinner}">
+  <div class="row animated fadeIn" ng-controller="SignupCtrl as signup" style="height:100vh">
+     <br>
+     <br>
+     <br>
+     <br>
+     <br>
+     <br>
+    <div class="auth-margined-container auth-form content-centered" ng-show="spinner">
+      <img class="centered" src="/assets/img/spinners/spinner_64.gif">
+    </div>
+    <div class="auth-margined-container auth-form" ng-hide="spinner">
+        <div class="login-box" ng-show="success">
+           <h4>Terima kasih telah mendaftar</h4>
+            Silakan periksa kotak masuk atau kotak spam dari surat elektronik Anda untuk mengkonfirmasi pendaftaran.
+        </div>
+        <div class="login-box" ng-hide="success">
+          <form class="form-signin" name="userForm">
+            <div class="form-group">
+              <div class="input-group">
+                <span class="input-group-addon"><div class="auth-input-group-addon fa fa-user"></div></span>
+                <input type="text" ng-model="user.fullName" name="userForm.fullName" class="form-control" placeholder="Nama lengkap" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="input-group">
+                <span class="input-group-addon"><div class="auth-input-group-addon fa fa-envelope"></div></span>
+                <input type="email" ng-model="user.email" name="userForm.email" class="form-control" id="inputEmail" placeholder="Surat elektronik" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="input-group">
+                <span class="input-group-addon"><div class="auth-input-group-addon fa fa-unlock-alt"></div></span>
+                <input type="password" ng-model="user.password" name="userForm.password" class="form-control" id="inputPassword" placeholder="Sandi" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="input-group">
+                <span class="input-group-addon"><div class="auth-input-group-addon fa fa-unlock-alt"></div></span>
+                <input type="password" ng-model="user.repeatPassword" name="userForm.repeatPassword" class="form-control" id="inputPassword" placeholder="Ulangi sandi" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="input-group titip-right" data-title="Tanggal lahir">
+                <span class="input-group-addon"><div class="auth-input-group-addon fa fa-calendar"></div></span>
+                <input type="text" maxlength="10" ng-model="user.birthDate" name="userForm.birthDate" class="form-control" id="birthDate" placeholder="Tanggal lahir"placeholder="DD/MM/YYYY" type="text" name="birthDate" id="birthDate" is-open="ctrl.showBirthDatePicker" datepicker-popup="dd/MM/yyyy" ng-click="ctrl.showBirthDatePicker=true;" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="input-group">
+                <span class="input-group-addon"><div class="auth-input-group-addon fa fa-map-marker"></div></span>
+                <input type="text" maxlength="20" ng-model="user.city" name="userForm.city" class="form-control" id="city" placeholder="Kota domisili" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="input-group">
+                <span class="input-group-addon">Jenis kelamin</span>
+                <select type="text" maxlength="20" ng-model="user.gender" name="userForm.gender" class="form-control" id="city" placeholder="Jenis kelamin" required>
+                  <option value="male">Laki-laki</option>
+                  <option value="female">Perempuan</option>
+                </select>
+              </div>
+            </div>
+            <button ng-disabled="userForm.$invalid" type="submit" ng-click="signup.register(user)" class="btn btn-primary btn-block">Daftar</button>
+          </form>
+      	</div>
+    </div>
+
+  </div>
+</div>
+

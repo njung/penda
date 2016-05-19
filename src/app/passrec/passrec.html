@@ -1,0 +1,58 @@
+<div class="container-fluid gradient-bg-1">
+  <div class="row animated fadeIn" ng-controller="PassRecCtrl as passrec" style="height:100vh">
+     <br>
+     <br>
+     <br>
+     <br>
+     <br>
+     <br>
+    <div class="auth-margined-container auth-form animated fadeIn" ng-hide="spinner">
+      <div class="login-box">
+        <div class="login-box animated fadeIn" ng-show="spinner">
+          <div class="sk-folding-cube centered">
+            <div class="sk-cube1 sk-cube"></div>
+            <div class="sk-cube2 sk-cube"></div>
+            <div class="sk-cube4 sk-cube"></div>
+            <div class="sk-cube3 sk-cube"></div>
+          </div>
+        </div>
+        <div class="login-box animated fadeIn" ng-show="success">
+           <h4>Kata sandi Anda berhasil diperbarui</h4>
+            <a href="#/start" class="btn btn-default">Kembali ke Halaman Utama</a>
+        </div>
+        <div class="login-box animated fadeIn" ng-hide="success || spinner">
+          <form class="form-horizontal">
+          <fieldset>
+              <legend>Atur Ulang Kata Sandi</legend>
+              <div class="form-group">
+                  <label for="inputPassword" class="col-lg-4 control-label">Kata sandi baru</label>
+                  <div class="col-lg-8">
+                      <input type="password" ng-model="password" class="form-control" id="inputPassword" placeholder="Sandi">
+                  </div>
+              </div>
+              <div class="form-group">
+                  <label for="inputPassword" class="col-lg-4 control-label">Ulangi kata sandi</label>
+                  <div class="col-lg-8">
+                      <input type="password" ng-model="repeatPassword" class="form-control" id="inputPassword" placeholder="Ulangi sandi">
+                  </div>
+              </div>
+              <div class="form-group">
+                  <div class="col-lg-8 col-lg-offset-4" ng-hide="passwordSpinner">
+                      <button type="submit" ng-click="passrec.setPasswordRecovery(password)" class="btn btn-primary">Simpan</button>
+                  </div>
+                  <div class="col-lg-8 col-lg-offset-4 animated fadeIn" ng-show="passwordSpinner">
+                  <div class="sk-folding-cube centered">
+                    <div class="sk-cube1 sk-cube"></div>
+                    <div class="sk-cube2 sk-cube"></div>
+                    <div class="sk-cube4 sk-cube"></div>
+                    <div class="sk-cube3 sk-cube"></div>
+                  </div>
+                </div>
+              </div>
+          </fieldset>
+          </form>
+      	</div>
+      </div>
+    </div>
+  </div>
+</div>

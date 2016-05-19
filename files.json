@@ -1,0 +1,80 @@
+{
+  "maps": [
+    "bower_components/angular/angular.min.js.map",
+    "bower_components/angular-file-upload/angular-file-upload.min.map",
+    "bower_components/jquery/dist/jquery.min.map"
+  ],
+  "libs": [
+    "src/libs/tinymce.js",
+    "bower_components/jquery/dist/jquery.js",
+    "bower_components/jquery-ui/jquery-ui.js",
+    "bower_components/hawk/lib/browser.js",
+    "bower_components/angular/angular.js",
+    "src/libs/angularSlideables.js",
+    "bower_components/angular-sanitize/angular-sanitize.js",
+    "bower_components/angular-animate/angular-animate.js",
+    "bower_components/angular-local-storage/dist/angular-local-storage.js",
+    "bower_components/angular-ui-router/release/angular-ui-router.js",
+    "bower_components/angular-bootstrap/ui-bootstrap.js",
+    "src/libs/ui-bootstrap-tpls.js",
+    "bower_components/lodash/lodash.js",
+    "bower_components/bootstrap/dist/js/bootstrap.js",
+    "bower_components/angular-toastr/dist/angular-toastr.js",
+    "bower_components/angular-slick/dist/slick.js",
+    "bower_components/slick-carousel/slick/slick.js",
+    "bower_components/angular-tooltips/dist/angular-tooltips.js",
+    "bower_components/moment/moment.js",
+    "bower_components/moment/locale/id.js",
+    "bower_components/angular-moment/angular-moment.js",
+    "bower_components/angular-bootstrap-colorpicker/js/bootstrap-colorpicker-module.js",
+    "bower_components/angular-ui-tinymce/src/tinymce.js",
+    "bower_components/leaflet/dist/leaflet.js",
+    "bower_components/leaflet-plugins/layer/tile/Google.js",
+    "bower_components/ngprogress/build/ngprogress.js",
+    "bower_components/angular-input-masks/angular-input-masks-standalone.min.js",
+    "bower_components/ngInfiniteScroll/build/ng-infinite-scroll.js",
+    "bower_components/ng-img-crop/compile/minified/ng-img-crop.js",
+    "bower_components/ng-debounce/angular-debounce.js",
+    "node_modules/angular-fcsa-number/src/fcsaNumber.js",
+    "bower_components/ng-file-upload/ng-file-upload-all.js",
+    "libs/*.js"
+  ],
+  "styles": [
+    "src/styles/*",
+    "bower_components/leaflet/dist/leaflet.css",
+    "bower_components/animate.css/animate.css",
+    "bower_components/slick-carousel/slick/slick.css",
+    "bower_components/slick-carousel/slick/slick-theme.css",
+    "bower_components/angular-tooltips/dist/angular-tooltips.min.css",
+    "bower_components/angular-bootstrap-colorpicker/css/colorpicker.css",
+    "bower_components/ngprogress/ngProgress.css",
+    "bower_components/titip/dist/css/titip.css",
+    "bower_components/ng-img-crop/compile/minified/ng-img-crop.css"
+  ],
+  "skins": [
+  ],
+  "tinymcefonts": [
+    "bower_components/tinymce-dist/skins/lightgray/fonts/*"
+  ],
+  "fa": [
+    "bower_components/fontawesome/css/font-awesome.min.css"
+  ],
+  "src": [
+    "src/app/*/*.js",
+    "src/*/*.js",
+    "src/*.js"
+  ],
+  "images": [
+    "src/img/*",
+    "src/img/*/*"
+  ],
+  "fonts": [
+    "bower_components/fontawesome/fonts/*",
+    "src/fonts/*"
+  ],
+  "html": [
+    "src/app/*/*.html",
+    "src/app/*.html",
+    "src/menu.html"
+  ]
+}
