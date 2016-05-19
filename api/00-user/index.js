@@ -181,88 +181,6 @@ User.prototype.registerEndPoints = function() {
       self.logout(request, reply);
     },
   });
-
-  self.server.route({
-    method: 'GET',
-    path : '/api/auth/twitter',
-    config : {
-      auth : 'twitter',
-      handler: function(request, reply) {
-        console.log(request.auth);
-        console.log(JSON.stringify(request.auth));
-        // TODO : check for isAuthenticated
-        /* return reply(Boom.unauthorized('Authenticationn failed')); */
-
-        var profile = {
-          
-          fullName : request.auth.credentials.profile.raw.name,
-          rule : 'user',
-          city : request.auth.credentials.profile.raw.location,
-          description : request.auth.credentials.profile.raw.description,
-          avatar: request.auth.credentials.profile.raw.profile_image_url,
-          
-          externalId : request.auth.credentials.profile.id,
-
-          /* userId : String, */
-          /* joinedSince : new Date(), */
-          /* email : { */
-          /*   type : String, */
-          /*   unique : true */
-          /* }, */
-          /* gender : String, */
-          /* birthDate : Date, */
-          /* originCity : String, */
-          /* phone : String, */
-          /* facebook : String, */
-          /* instagram : String, */
-          /* twitter : String, */
-          /* blog : String, */
-          /* hashtag : String, */
-
-          /* activationCode : String, */
-        }
-        // TODO :  Set hawk token here
-
-        return reply.redirect('/');
-      }
-    }
-  });
-  
-  self.server.route({
-    method: 'GET',
-    path : '/api/auth/google',
-    config : {
-      auth : 'google',
-      handler: function(request, reply) {
-        console.log(request.auth);
-        console.log(JSON.stringify(request.auth));
-        // TODO : check for isAuthenticated
-        /* return reply(Boom.unauthorized('Authenticationn failed')); */
-
-        // TODO :  Set hawk token here
-
-        return reply.redirect('/');
-      }
-    }
-  });
-  
-  self.server.route({
-    method: 'GET',
-    path : '/api/auth/facebook',
-    config : {
-      auth : 'facebook',
-      handler: function(request, reply) {
-        console.log(request.auth);
-        console.log(JSON.stringify(request.auth));
-        // TODO : check for isAuthenticated
-        /* return reply(Boom.unauthorized('Authenticationn failed')); */
-
-        // TODO :  Set hawk token here
-
-        return reply.redirect('/');
-      }
-    }
-  });
 }
 
 User.prototype.model = function() {
@@ -319,7 +237,7 @@ User.prototype.login = function(request, reply) {
       }).code(401);
     }
     profileModel
-      .findOne({userId : user._id})
+      .findOne({userId : user._id.toString()})
       .lean()
       .exec(function(err, profile){
       if (err) return reply(err);
