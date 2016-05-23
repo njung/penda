@@ -11,6 +11,8 @@ Penda is an Open Data management system.
 #### Deployment
 
 - ``npm install``
+- ``npm install -g bower gulp``
+- ``bower install``
 - ``NODE_ENV=dev npm run setenv``
 - ``DB=dev ./script/init.sh``
 - ``npm run server``
