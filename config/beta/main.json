@@ -1,5 +1,5 @@
 [ 
-  [ "_HOST_", "http://localhost:3000" ],
-  [ "_API_", "http://localhost:3000" ],
+  [ "_HOST_", "http://118.98.75.154:3000" ],
+  [ "_API_", "http://118.98.75.154:3000" ],
   [ "_APP_NAME_", "OpenData" ]
 ]
