@@ -16,3 +16,7 @@ Penda is an Open Data management system.
 - ``NODE_ENV=dev npm run setenv``
 - ``DB=dev ./script/init.sh``
 - ``npm run server``
+
+#### Note
+
+You need configure specefic host in each mode in config. There are ``beta``, ``dev``, ``prod``, ``staging``, ``test``.
