@@ -3,6 +3,10 @@ var moment = require('moment');
 var async = require('async');
 var md5 = require('md5');
 var csv2json = require('csv-to-json-stream');
+var jstoxml = require('jstoxml');
+var spawn = require('child_process').spawn;
+var streamJson = require("stream-json");
+var StreamArray = require("stream-json/utils/StreamArray");
 
 var Dataset = function(server, options, next) {
   this.server = server;
@@ -51,6 +55,67 @@ Dataset.prototype.dataset = function(request, reply) {
   })
 }
 
+// Private
+var Converter = function() {}
+Converter.prototype.csv2json = function(csvPath, jsonPath) {
+  var self = this;
+  return new Promise(function(resolve, reject) {
+    var map = {};
+    // TODO fetch first line to get header's array
+    var header = 'kode_provinsi,nama_provinsi,kelompok_usia,tahun,persentase_buta_huruf';
+    header = header.split(',');
+    for (var i in header) {
+      map[header[i]] = i;
+    }
+    fs.appendFileSync(jsonPath + '.tmp', '[');
+    var stream = fs.createReadStream(csvPath).pipe(csv2json({
+      delimiter : ',',
+      map : map,
+      skipHeader: true
+    }))
+    stream.on('data', function(data){
+      fs.appendFileSync(jsonPath + '.tmp', data.toString('utf8').replace('\n',','));
+    })
+    stream.on('finish', function(){
+      var cmd = spawn('sed', ['$ s/.$//', jsonPath + '.tmp']);
+      var s = cmd.stdout.pipe(fs.createWriteStream(jsonPath));
+      s.on('finish', function(){
+        fs.appendFileSync(jsonPath, ']');
+        spawn('rm', ['-f', jsonPath + '.tmp']);
+        return resolve();
+      });
+      s.on('error', function(err) {
+        // TODO catch err
+      })
+      cmd.stdout.on('error', function(err){
+        // TODO catch err
+      });
+    })
+    stream.on('error', function(err) {
+      console.log(err);
+      return reject(err);
+    })
+  })
+}
+Converter.prototype.json2xml = function(jsonPath, xmlPath) {
+  var self = this;
+  return new Promise(function(resolve, reject) {
+    var stream = StreamArray.make();
+     
+    stream.output.on("data", function(object){
+      console.log(object.index, object.value);
+    });
+    stream.output.on("end", function(){
+      console.log("done");
+    });
+     
+    fs.createReadStream(jsonPath).pipe(stream.input);
+
+  })
+}
+
+var converter = new Converter();
+
 Dataset.prototype.upload = function(request, reply) {
   var self = this;
   var id = md5((new Date()).valueOf());
@@ -59,30 +124,26 @@ Dataset.prototype.upload = function(request, reply) {
   console.log(request.payload.opts);
   var path = prefix + filename;
   var fws = fs.createWriteStream(path);
+  request.payload.content.pipe(fws);
   fws.on("finish", function(){
-    var map = {};
-    var header = 'kode_provinsi,nama_provinsi,kelompok_usia,tahun,persentase_buta_huruf';
-    header = header.split(',');
-    for (var i in header) {
-      map[header[i]] = i;
-    }
-    // Convert  to JSON file
-    var stream = fs.createReadStream(path).pipe(csv2json({
-      delimiter : ',',
-      map : map,
-      skipHeader: true
-    })).pipe(fs.createWriteStream(path.replace('.csv', '.json')));
-    stream.on('data', function(data){
-      console.log(data);
+
+    // CSV --> JSON
+    converter.csv2json(path, path.replace('.csv', '.json'))
+    .then(function(){
+    // JSON --> XML
+      return converter.json2xml(path.replace('.csv', '.json'), path.replace('.xml'))
     })
-    stream.on('finish', function(){
-      reply();
+    .then(function(){
+      return reply();
+    })
+    .catch(function(err){
+      console.log(err);
+      return reply(err).code(500);
     })
   });
   fws.on("error", function(err){
     reply(err).code(500);
   })
-  request.payload.content.pipe(fws);
 }
 
 exports.register = function(server, options, next) {
