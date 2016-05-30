@@ -1,4 +1,4 @@
-var Admin = function ($stateParams, $scope, $state, $window, $rootScope, AuthService, localStorageService, toastr, $location, ToastrService, $modal, $http, host, AlertService){
+var Admin = function ($stateParams, $scope, $state, $window, $rootScope, AuthService, localStorageService, toastr, $location, ToastrService, $modal, $http, host, AlertService, DatasetService){
   this.$stateParams = $stateParams;
   this.$scope = $scope;
   this.$state = $state;
@@ -13,6 +13,7 @@ var Admin = function ($stateParams, $scope, $state, $window, $rootScope, AuthSer
   this.$http = $http;
   this.host = host;
   this.AlertService = AlertService;
+  this.DatasetService = DatasetService;
   
   var self = this;
 
@@ -30,18 +31,24 @@ var Admin = function ($stateParams, $scope, $state, $window, $rootScope, AuthSer
       /*     self.$rootScope.currentUser = data.fullName; */
       /*     self.$rootScope.currentUserRule = data.rule; */
       /*   }) */
-      self.$rootScope.loadNotification();
     })
 
+  self.list();
+}
 
-
+Admin.prototype.list = function(){
+  var self = this;
+  self.DatasetService.list()
+  .then(function(result){
+    self.$scope.list = result.data;
+  })
 }
 
 Admin.prototype.someFunc = function(params) {
   var self = this;
 }
 
-Admin.inject = [ '$stateParams', '$scope', '$state', '$window', '$rootScope', 'AuthService', 'localStorageService', 'toastr', '$location', 'ToastrService', '$modal', '$http', 'host' , 'AlertService'];
+Admin.inject = [ '$stateParams', '$scope', '$state', '$window', '$rootScope', 'AuthService', 'localStorageService', 'toastr', '$location', 'ToastrService', '$modal', '$http', 'host' , 'AlertService', 'DatasetService'];
 
 angular.module('admin',[])
 .controller('AdminCtrl', Admin)

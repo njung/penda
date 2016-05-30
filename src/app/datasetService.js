@@ -8,14 +8,15 @@ var DatasetService = function($http, AuthService, host, $rootScope, Upload) {
   var self = this;
 }
 
-DatasetService.prototype.upload = function(data, opts) {
+DatasetService.prototype.upload = function(data, obj) {
   var self = this;
-  var payload = {
-    content : data,
+  var payload = {}
+  var keys = Object.keys(obj);
+  for (var i in keys) {
+    payload[keys[i]] = obj[keys[i]];
   }
-  if (opts) {
-    payload.opts = opts;
-  }
+  console.log(payload);
+  payload.content = data; 
   var req = {
     method: 'POST',
     data : payload,
@@ -23,6 +24,18 @@ DatasetService.prototype.upload = function(data, opts) {
     headers : JSON.parse(localStorage.getItem("HawkPairKey"))
   }
   return self.Upload.upload(req);
+}
+
+DatasetService.prototype.list = function() {
+  var self = this;
+  var path = '/api/datasets';
+  return self.$http({
+    headers : {
+      Authorization : self.AuthService.generateMac(path, 'GET'),
+    },
+    method: 'GET',
+    url : self.host + path,
+  });
 }
 
 DatasetService.inject = ['$http', 'AuthService', 'host', 'Upload']

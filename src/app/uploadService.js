@@ -21,20 +21,6 @@ UploadService.prototype.uploadAvatar = function(file) {
   });
 }
 
-UploadService.prototype.uploadSettingsImg = function(id, files) {
-  var self = this;
-  var path = "/api/setting/" + id + "/img";
-  return self.$upload.upload({
-    url : self.host + path,
-    headers : {
-      Authorization : self.AuthService.generateMac(path, "POST")
-    },
-    file: files[0],
-    fileFormDataName : "img",
-  });
-}
-
-
 UploadService.inject = ["$http", "AuthService", "host", "localStorageService"]
 
 angular.module('uploadService', [])

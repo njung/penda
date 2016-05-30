@@ -23,6 +23,7 @@ angular.module("App", [
   "cropAvatar",
   "alert",
   // Services
+  "menu",
   "alertService",
   "authService",
   "userService",
@@ -34,7 +35,6 @@ angular.module("App", [
 
   "LocalStorageModule",
   "toastr",
-  "menu",
   "ngFileUpload",
   "slick",
   "angularMoment",

@@ -27,6 +27,7 @@ var UploadCtrl = function ($stateParams, $scope, $state, $window, $rootScope, Au
   self.AuthService.checkToken({redirect:true})
 
   self.uploadStatus = "ready";
+  self.$scope.data = {};
   self.$rootScope.preventNavigation = false;
 
 
@@ -39,12 +40,13 @@ UploadCtrl.prototype.upload = function(files, invalid) {
     // TODO validate file type
     self.$rootScope.preventNavigation = true;
     self.uploadStatus = "uploading";
-    self.DatasetService.upload(file)
+    self.DatasetService.upload(file, self.$scope.data)
       .then(function(data, status){
         self.$rootScope.preventNavigation = false;
         self.uploadStatus = "uploaded";
         alert("Berhasil diunggah.");
-        // TODO check for error
+        self.$scope.data = {};
+        self.$state.go('admin');
       }, function(err){
         self.$rootScope.preventNavigation = false;
         self.uploadStatus = "failed";

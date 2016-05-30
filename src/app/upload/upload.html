@@ -1,8 +1,64 @@
 <div cjass="fluid-container" ng-controller="UploadCtrl as upload">
   <div class="row animated fadeIn margined-container">
     <h1>Unggah</h1>
-    <button ng-hide="upload.uploadStatus=='uploading'" ngf-select="upload.upload($files, $invalidFiles)" multiple class="btn btn-inline-right btn-primary pull-right">Unggah</button>
-    <button ng-show="upload.uploadStatus=='uploading' && upload.uploadPercentage < 100" class="btn btn-inline-right btn-primary pull-right">Mengunggah... {{upload.uploadPercentage}} %</button>
-    <button ng-show="upload.uploadStatus!=='uploaded' && upload.uploadStatus!=='failed' && upload.uploadPercentage==100" class="btn btn-inline-right btn-primary pull-right">Memproses...</button>
+    <form class="form-horizontal">
+      <fieldset>
+        <!--legend>Unggah</legend-->
+        <div class="form-group">
+          <label class="col-sm-4 control-label" for="title">Judul</label>  
+          <div class="col-sm-4">
+          <input name="title" ng-model="data.title" type="text" class="form-control input-md">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-4 control-label" for="source">Sumber</label>  
+          <div class="col-sm-4">
+          <input name="source" ng-model="data.source" type="text" class="form-control input-md">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-4 control-label" for="contact">Kontak</label>  
+          <div class="col-sm-4">
+          <input name="contact" ng-model="data.contact" type="text" class="form-control input-md">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-4 control-label" for="releaseFreq">Frekuensi rilis</label>
+          <div class="col-sm-4">
+            <select id="releaseFreq" ng-model="data.releaseFreq" name="releaseFreq" class="form-control">
+              <option value="1">Bulanan</option>
+              <option value="2">Tahunan</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-4 control-label" for="year">Year</label>  
+          <div class="col-sm-4">
+          <input name="year" ng-model="data.year" type="text" class="form-control input-md">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-4 control-label" for="level">Level</label>  
+          <div class="col-sm-4">
+          <input name="level" ng-model="data.level" type="text" class="form-control input-md">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-4 control-label" for="scope">Cakupan</label>  
+          <div class="col-sm-4">
+          <input name="scope" ng-model="data.scope" type="text" class="form-control input-md">
+          </div>
+        </div>
+        <!-- Button -->
+        <div class="form-group">
+          <label class="col-sm-4 control-label" for="singlebutton"></label>
+          <div class="col-sm-4">
+            <button ng-hide="upload.uploadStatus=='uploading'" ngf-select="upload.upload($files, $invalidFiles)" multiple class="btn btn-inline-right btn-primary">Unggah</button>
+            <button ng-show="upload.uploadStatus=='uploading' && upload.uploadPercentage < 100" class="btn btn-inline-right btn-primary">Mengunggah... {{upload.uploadPercentage}} %</button>
+            <button ng-show="upload.uploadStatus!=='uploaded' && upload.uploadStatus!=='failed' && upload.uploadPercentage==100" class="btn btn-inline-right btn-primary">Memproses...</button>
+          </div>
+        </div>
+      </fieldset>
+    </form>
   </div>
 </div>

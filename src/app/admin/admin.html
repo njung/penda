@@ -1,87 +1,17 @@
 <div cjass="fluid-container" ng-controller="AdminCtrl as admin">
   <div class="row animated fadeIn margined-container">
     <h1>OpenData Admin</h1>
+    <ul>
+      <li ng-repeat="data in list">
+        {{data.title}} - {{data.createdAt}}
+          <a target="_blank" href="_HOST_/api/get-dataset/{{data.filename}}?type=csv">CSV</a>
+          <a target="_blank" href="_HOST_/api/get-dataset/{{data.filename}}?type=json">JSON</a>
+          <a target="_blank" href="_HOST_/api/get-dataset/{{data.filename}}?type=xml">XML</a>
+          <a target="_blank" href="_HOST_/api/get-dataset/{{data.filename}}?type=xlsx">XLSX</a>
+      </li>
+    </ul>
   </div>
 </div>
-
-<script type="text/ng-template" id="feedbackModal.html">
-    <!--div class="modal-header">
-        <h4 class="modal-title" style="text-align:center;margin-top:10px;">Feedback</h4>
-    </div-->
-    <div class="modal-body" style="padding-bottom:15px">
-      <br>
-      <!-- form start -->
-      <form class="form-horizontal">
-        <div class="box-body" style="height:200px;">
-          <div class="col-sm-2">
-            <img src="_HOST_/assets/img/feedback_mascot.png">
-          </div>
-          <div class="col-sm-10">
-            <div class="row">
-              <--div class="form-group">
-                <label class="col-sm-2 control-label">Jenis</label>
-                <div class="col-sm-10">
-                  <select ng-model="newFeedback.type" type="text" class="form-control">
-                    <option value="ui">Tampilan</option>
-                    <option value="feature">Usulan Fitur</option>
-                    <option value="bug">Bug</option>
-                    <option value="other">Lainnya</option>
-		              </select>
-                </div>
-              </div-->
-              <div class="form-group">
-                <label class="col-sm-2 control-label">Kritik atau saran</label>
-                <div class="col-sm-10">
-                  <textarea rows="5" ng-model="newFeedback.body" type="text" class="form-control"></textarea>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div><!-- /.box-body -->
-        <div style="height:45px;padding-bottom:15px;">
-          <button class="pull-right btn-rounded btn btn-primary" ng-click="submit(newFeedback);" style="margin-left:15px;">Kirim</button>
-          <button class="pull-right btn-rounded btn btn-default" ng-click="feedbackModal.dismiss();">Batal</button>
-        </div>
-      </form>
-    </div>
-</script>
-
-<script type="text/ng-template" id="cropAvatarModal.html">
-    <div class="modal-body" style="padding-bottom:15px;text-align:center;height:350px;">
-      <div class="cropArea">
-        <img-crop image="myImage" result-image="cropped"></img-crop>
-      </div>
-      <button style="margin-top:7.5px;" class="btn-rounded btn btn-default" ng-click="dismiss();">Potong foto profil</button>
-    </div>
-</script>
-
-<script type="text/ng-template" id="inviteParticipantModal.html">
-    <!--div class="modal-header">
-      <h4 class="modal-title" style="text-align:center;margin-top:10px;">Undang orang lain</h4>
-    </div-->
-    <div class="modal-body" style="padding-bottom:15px">
-      <!-- form start -->
-      <form class="form-horizontal">
-        <div class="box-body" style="height:110px;">
-          <div class="col-sm-12">
-            <div class="row">
-              <br>
-              <div class="form-group">
-                <div class="col-sm-12">
-                  <input class="form-control" placeholder="Alamat surat elektronik" ng-model="inviteForm.email"></input>
-                  <small>Anda bisa memasukkan beberapa surel sekaligus dengan dipisahkan oleh tanda koma.</small>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div><!-- /.box-body -->
-        <div style="height:45px;padding-bottom:15px;">
-          <button class="pull-right btn-rounded btn btn-primary" ng-click="invite(inviteForm);" style="margin-left:15px;">Kirim undangan</button>
-          <button class="pull-right btn-rounded btn btn-default" ng-click="inviteParticipantModal.dismiss();">Batal</button>
-        </div>
-      </form>
-    </div>
-</script>
 
 <!--ALERT-->
 <script type="text/ng-template" id="alertModal.html">
