@@ -1,5 +1,6 @@
 {
   "options" : {
-    "mongodbUrl" : "mongodb://localhost/dev"
+    "mongodbUrl" : "mongodb://localhost/penda",
+    "datasetsPath" : "data"
   }
 }
