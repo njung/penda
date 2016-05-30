@@ -115,7 +115,7 @@ Dataset.prototype.getDataset = function(request, reply) {
     console.log(err);
     reply(result)
     .header('Content-Type', 'application/octet-stream')
-    .header('content-disposition', 'attachment; ' + filename + '.' + type + ';');
+    .header('content-disposition', 'attachment; filename=' + filename + '.' + type + ';');
   })
 }
 
