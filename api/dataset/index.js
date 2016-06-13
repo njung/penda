@@ -4,8 +4,10 @@ var moment = require('moment');
 var async = require('async');
 var md5 = require('md5');
 var csv2json = require('csv-to-json-stream');
+var babyparse = require('babyparse');
 var jstoxml = require('jstoxml');
 var spawn = require('child_process').spawn;
+var exec = require('child_process').exec;
 var streamJson = require("stream-json");
 var StreamArray = require("stream-json/utils/StreamArray");
 var mongoose = require('mongoose');
@@ -121,7 +123,7 @@ Dataset.prototype.getDataset = function(request, reply) {
 
 // TODO remote this sample API
 Dataset.prototype.dataset = function(request, reply) {
-  fs.readFile(__dirname + '/../../data/dataset.csv', 'utf-8', function(err, result){
+  fs.readFile(__dirname + '/../../data/sample.csv', 'utf-8', function(err, result){
     console.log(err);
     reply(result).type('text/plain');
   })
@@ -137,93 +139,6 @@ Dataset.prototype.datasets = function(request, reply) {
     reply(result);
   })
 }
-
-// Private
-var Converter = function() {}
-Converter.prototype.csv2json = function(csvPath, jsonPath) {
-  var self = this;
-  return new Promise(function(resolve, reject) {
-    var map = {};
-    var rl = readline.createInterface({
-      input: fs.createReadStream(csvPath)
-    });
-    var firstLine = null;
-    rl.on('line', (line) => {
-      if (!firstLine) {
-        firstLine = line;
-        console.log('Line from file:', line);
-      }
-      rl.close();
-    });
-    rl.on('close', function(){
-      var header = firstLine.split(',');
-      for (var i in header) {
-        map[header[i]] = i;
-      }
-      fs.appendFileSync(jsonPath + '.tmp', '[');
-      var stream = fs.createReadStream(csvPath).pipe(csv2json({
-        delimiter : ',',
-        map : map,
-        skipHeader: true
-      }))
-      stream.on('data', function(data){
-        fs.appendFileSync(jsonPath + '.tmp', data.toString('utf8').replace('\n',','));
-      })
-      stream.on('finish', function(){
-        var cmd = spawn('sed', ['$ s/.$//', jsonPath + '.tmp']);
-        var s = cmd.stdout.pipe(fs.createWriteStream(jsonPath));
-        s.on('finish', function(){
-          fs.appendFileSync(jsonPath, ']');
-          spawn('rm', ['-f', jsonPath + '.tmp']);
-          return resolve();
-        });
-        s.on('error', function(err) {
-          return reject(err);
-        })
-        cmd.stdout.on('error', function(err){
-          return reject(err);
-        });
-      })
-      stream.on('error', function(err) {
-        console.log(err);
-        return reject(err);
-      })
-    })
-  })
-}
-Converter.prototype.json2xml = function(jsonPath, xmlPath) {
-  var self = this;
-  console.log('xml file path ' + xmlPath);
-  return new Promise(function(resolve, reject) {
-    fs.appendFileSync(xmlPath, '<dataset>');
-    var stream = StreamArray.make();
-    stream.output.on("data", function(object){
-      console.log(object.index, object.value);
-      fs.appendFileSync(xmlPath, `<data>${jstoxml.toXML(object.value)}</data>`);
-    });
-    stream.output.on("end", function(){
-      fs.appendFileSync(xmlPath, '</dataset>');
-      console.log("done");
-      resolve();
-    });
-    fs.createReadStream(jsonPath).pipe(stream.input);
-  })
-}
-Converter.prototype.csv2xlsx = function(jsonPath, xlsxPath) {
-  var self = this;
-  return new Promise(function(resolve, reject) {
-    var cmd = spawn('node_modules/.bin/j', ['-f', jsonPath, '-X', '-o', xlsxPath]);
-    cmd.stdout.on('error', function(err) {
-      console.log(err.toString());
-      reject();
-    })
-    cmd.stdout.on('finish', function() {
-      resolve();
-    })
-  })
-}
-
-var converter = new Converter();
 
 Dataset.prototype.upload = function(request, reply) {
   var self = this;
@@ -252,29 +167,20 @@ Dataset.prototype.upload = function(request, reply) {
       if (err) {
         return reply(err).code(500);
       }
-      // Convert them all
-      // CSV --> JSON
-      converter.csv2json(path, path.replace('.csv', '.json'))
-      .then(function(){
-      // JSON --> XLSX
-        return converter.csv2xlsx(path, path.replace('.csv', '.xlsx'));
-      })
-      .then(function(){
-      // JSON --> XML
-        return converter.json2xml(path.replace('.csv', '.json'), path.replace('.csv', '.xml'))
-      })
-      .then(function(){
-        // TODO update dataset db
-        console.log('Converted');
-        console.log(result._id);
+      console.log('converting...');
+      var cmd = '/usr/local/bin/node ' + __dirname + '/converter.js ' + path;
+      console.log(cmd);
+      var convert = exec(cmd, function(err, stdout, stderr) {
+        console.log('save2db...');
         result.status = 'done';
         result.filename = filename;
+        if (err || stderr) {
+          result.status = 'err';
+        }
+        console.log(stdout);
         result.save();
+        console.log('DONE');
       })
-      .catch(function(err){
-        console.log(err);
-      })
-
       // Do not wait 
       return reply();
     }) 
