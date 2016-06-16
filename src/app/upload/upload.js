@@ -27,7 +27,14 @@ var UploadCtrl = function ($stateParams, $scope, $state, $window, $rootScope, Au
   self.AuthService.checkToken({redirect:true})
 
   self.uploadStatus = "ready";
-  self.$scope.data = {};
+  self.$scope.data = {
+    title : (new Date()).valueOf(),
+    source : 'source',
+    contact : 'contact',
+    releaseFreq : 'year',
+    level : 'level',
+    scope : 'Cakupan', 
+  };
   self.$rootScope.preventNavigation = false;
 
 

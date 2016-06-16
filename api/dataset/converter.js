@@ -39,8 +39,11 @@ Converter.prototype.csv2json = function(csvPath, jsonPath) {
               header = row.data[0];
               for (var i in header) {
                 header[i] = header[i].trim();
+                /* if (typeof header[0][i] == 'string' && header[0][i].indexOf(',') > -1) { */
+                /*   header[0][i] = '\"' + header[0][i] + '\"'; */ 
+                /* } */
               }
-              fs.appendFileSync(csvPath + '_clean', header.join(',') + '\n');
+              fs.appendFileSync(csvPath.replace('.csv','.valid.csv'), header.join(',') + '\n');
             } else {
               if (row.data[0].length != header.length) {
                 console.error('Inconsistent column length');
@@ -74,14 +77,12 @@ Converter.prototype.csv2json = function(csvPath, jsonPath) {
                 obj[key] = val;
               }
               fs.appendFileSync(jsonPath + '.tmp', JSON.stringify(obj) + ',');
-              console.log(row.data[0]);
               for (var i in row.data[0]) {
                 if (typeof row.data[0][i] == 'string' && row.data[0][i].indexOf(',') > -1) {
                   row.data[0][i] = '\"' + row.data[0][i] + '\"'; 
-                  console.log(row.data[0][i]);
                 }
               }
-              fs.appendFileSync(csvPath + '_clean', row.data[0].join(',') + '\n');
+              fs.appendFileSync(csvPath.replace('.csv','.valid.csv'), row.data[0].join(',') + '\n');
             }
           }
         } catch (e) {
@@ -154,14 +155,14 @@ if (!module.parent) {
   console.log(path); 
   // Convert them all
   // CSV --> JSON
-  converter.csv2json(path, path.replace('.csv', '.json'))
+  converter.csv2json(path, path.replace('.csv', '.valid.json'))
   .then(function(){
   // JSON --> XLSX
-    return converter.csv2xlsx(path, path.replace('.csv', '.xlsx'));
+    return converter.csv2xlsx(path, path.replace('.csv', '.valid.xlsx'));
   })
   .then(function(){
   // JSON --> XML
-    return converter.json2xml(path.replace('.csv', '.json'), path.replace('.csv', '.xml'))
+    return converter.json2xml(path.replace('.csv', '.json'), path.replace('.csv', '.valid.xml'))
   })
   .then(function(){
     console.log('convert sequence done');

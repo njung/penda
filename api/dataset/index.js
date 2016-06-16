@@ -1,3 +1,5 @@
+'use strict'
+var config = require(__dirname + '/../../config.json');
 var fs = require('fs');
 var readline = require('readline');
 var moment = require('moment');
@@ -11,11 +13,14 @@ var exec = require('child_process').exec;
 var streamJson = require("stream-json");
 var StreamArray = require("stream-json/utils/StreamArray");
 var mongoose = require('mongoose');
+var tablespoon = require('tablespoon').sqlite();
+var boom = require('boom');
 
 var Dataset = function(server, options, next) {
   this.server = server;
   this.options = options || {};
   this.registerEndPoints();
+  this.cached = [];
 }
 
 var datasetModel = function() {
@@ -56,7 +61,7 @@ Dataset.prototype.registerEndPoints = function() {
  
   self.server.route({
     method: "POST",
-    path: "/api/dataset/upload",
+    path: "/api/upload",
     handler: function(request, reply) {
       self.upload(request, reply);
     },
@@ -75,9 +80,9 @@ Dataset.prototype.registerEndPoints = function() {
   // TODO Remove this sample API endpoint 
   self.server.route({
     method: "GET",
-    path: "/api/dataset",
+    path: "/api/sample",
     handler: function(request, reply) {
-      self.dataset(request, reply);
+      self.sample(request, reply);
     },
 		config : {
 			auth : false,
@@ -97,7 +102,7 @@ Dataset.prototype.registerEndPoints = function() {
   
   self.server.route({
     method: "GET",
-    path: "/api/get-dataset/{filename}",
+    path: "/api/dataset/{filename}",
     handler: function(request, reply) {
       self.getDataset(request, reply);
     },
@@ -112,19 +117,48 @@ Dataset.prototype.getDataset = function(request, reply) {
   var self = this;
   var filename = request.params.filename;
   var type = request.query.type;
-  // TODO check in db first
-  fs.readFile(__dirname + '/../../data/' + filename + '.' + type, 'utf-8', function(err, result){
-    console.log(err);
-    reply(result)
-    .header('Content-Type', 'application/octet-stream')
-    .header('content-disposition', 'attachment; filename=' + filename + '.' + type + ';');
+  // Check in db first
+  datasetModel().find({filename : filename}, function(err,result) {
+    if (err) return reply(boom.wrap(err));
+    if (!result || result.length == 0) return reply(boom.notFound());
+    if (request.query.sql) {
+      // Check for cached sql
+      if (!self.cached[filename]) {
+        try {
+          tablespoon.createTable(JSON.parse(fs.readFileSync(config.datasetsPath + '/' + filename + '.valid.json', 'utf-8')), filename);
+        } catch(err) {
+          console.log(err);
+          return reply(boom.wrap(err));
+        }
+        self.cached[filename] = true;
+      }
+      console.log(request.query.sql);
+      // Get total
+      var sql = 'select count(*) as total from ' + filename;
+      tablespoon.query(sql, function(result) {
+        tablespoon.query(request.query.sql, function(rows) {
+          // Assign length and total
+          rows['length'] = rows.rows.length;
+          rows['total'] = result.rows[0].total;
+          return reply(rows)
+        })
+      })
+    } else {
+      // Return a downloadable text file
+      fs.readFile(config.datasetsPath + '/' + filename + '.valid.' + type, 'utf-8', function(err, result){
+        if (err) return reply(boom.wrap(err));
+        reply(result)
+        .header('Content-Type', 'application/octet-stream')
+        .header('content-disposition', 'attachment; filename=' + filename + '.' + type + ';');
+      })
+    }
   })
 }
 
 // TODO remote this sample API
-Dataset.prototype.dataset = function(request, reply) {
-  fs.readFile(__dirname + '/../../data/sample.csv', 'utf-8', function(err, result){
-    console.log(err);
+Dataset.prototype.sample = function(request, reply) {
+  fs.readFile(config.datasetsPath + '/sample.csv', 'utf-8', function(err, result){
+    if (err || !result) return reply(boom.notFound());
     reply(result).type('text/plain');
   })
 }
@@ -145,7 +179,7 @@ Dataset.prototype.upload = function(request, reply) {
   console.log(request.payload);
   var id = md5((new Date()).valueOf());
   var filename = 'dataset_' + id;
-  var prefix = __dirname + '/../../data/';
+  var prefix = config.datasetsPath + '/';
   console.log(request.payload.opts);
   var path = prefix + filename + '.csv';
   var fws = fs.createWriteStream(path);

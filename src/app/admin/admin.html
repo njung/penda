@@ -4,10 +4,10 @@
     <ul>
       <li ng-repeat="data in list">
         {{data.title}} - {{data.createdAt}}
-          <a target="_blank" href="_HOST_/api/get-dataset/{{data.filename}}?type=csv">CSV</a>
-          <a target="_blank" href="_HOST_/api/get-dataset/{{data.filename}}?type=json">JSON</a>
-          <a target="_blank" href="_HOST_/api/get-dataset/{{data.filename}}?type=xml">XML</a>
-          <a target="_blank" href="_HOST_/api/get-dataset/{{data.filename}}?type=xlsx">XLSX</a>
+          <a target="_blank" href="_HOST_/api/dataset/{{data.filename}}?type=csv">CSV</a>
+          <a target="_blank" href="_HOST_/api/dataset/{{data.filename}}?type=json">JSON</a>
+          <a target="_blank" href="_HOST_/api/dataset/{{data.filename}}?type=xml">XML</a>
+          <a target="_blank" href="_HOST_/api/dataset/{{data.filename}}?type=xlsx">XLSX</a>
       </li>
     </ul>
   </div>

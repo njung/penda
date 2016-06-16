@@ -43,7 +43,7 @@ var Start = function ($stateParams, $scope, $state, $window, $rootScope, AuthSer
   /* realCheckToken(); */
   
   var dataset = new recline.Model.Dataset({
-    url : '/api/dataset',
+    url : '/api/sample',
     backend:'csv',
     delimiter: ',',
     encoding : 'utf-8',
