@@ -15,7 +15,7 @@ server.connection({
   routes: {
     cors : {
       origin : ["*"],
-      headers : ["Authorization", "Content-Type", "host"],
+      headers : ["Accept", "Accept-language","Authorization", "host",  "Content-Type", "host"],
       exposedHeaders : ["token", "current_user"],
     }
   }
@@ -45,3 +45,5 @@ server.start(function(err){
     console.log("server is running at", server.info.port);
   }
 });
+
+module.exports = server;

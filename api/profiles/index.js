@@ -52,6 +52,7 @@ var profileModel = function() {
     rule : String,
     joinedSince : Date,
     activationCode : String,
+    userId : String,
     avatar: mongoose.Schema.ObjectId,
   }
 

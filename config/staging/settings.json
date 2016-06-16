@@ -1,0 +1,5 @@
+{
+  "options" : {
+    "mongodbUrl" : "mongodb://localhost/test"
+  }
+}

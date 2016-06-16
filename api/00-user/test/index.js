@@ -1,12 +1,11 @@
-var server = require(__dirname + "/../../../lib/server");
+var server = require(__dirname + "/../../../index");
 var mongoose = require("mongoose");
-var server = require(__dirname + "/../../../lib/server");
+var server = require(__dirname + "/../../../index");
 var model = require(__dirname + "/../index").model();
 var tokenModel = require(__dirname + "/../index").tokenModel();
 var hawk = require("hawk");
 var passportLocalMongoose = require("passport-local-mongoose");
 var fs = require("fs");
-var hat = require("hat");
 var _ = require("lodash");
 var uuid = require("uuid");
 var moment = require("moment");

@@ -1,4 +1,4 @@
-var realServer = require(__dirname + "/../lib/server");
+var realServer = require(__dirname + "/../index");
 var hawk = require("hawk");
 var prefix = "http://localhost:7000";
 

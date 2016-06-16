@@ -15,3 +15,4 @@ if [ $NODE_ENV = test ];then
 fi
 
 cp -rf config/$NODE_ENV/settings.json api/hapi-mongoose-db-connector.settings.json
+DB=test ./scripts/init.sh
