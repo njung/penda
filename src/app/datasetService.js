@@ -20,7 +20,7 @@ DatasetService.prototype.upload = function(data, obj) {
   var req = {
     method: 'POST',
     data : payload,
-    url: self.host + '/api/dataset/upload',
+    url: self.host + '/api/upload',
     headers : JSON.parse(localStorage.getItem("HawkPairKey"))
   }
   return self.Upload.upload(req);
