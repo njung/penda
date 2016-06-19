@@ -21,7 +21,7 @@ Converter.prototype.csv2json = function(csvPath, jsonPath) {
     if (!jsonPath) {
       jsonPath = '/tmp/sample.json';
     }
-    let header, len, totalRows = 0, totalColumns;
+    let header, firstRow, len, totalRows = 0, totalColumns, schema = {};
     fs.appendFileSync(jsonPath + '.tmp', '[');
     var parsed = babyparse.parseFiles(csvPath, {
       dynamicTyping : true,
@@ -75,6 +75,24 @@ Converter.prototype.csv2json = function(csvPath, jsonPath) {
                 }
                 obj[key] = val;
               }
+              // Collect type data on the first row
+              if (!firstRow) {
+                firstRow = true;
+                var keys = Object.keys(obj);
+                for (var i in keys) {
+                  schema[keys[i]] = typeof obj[keys[i]];
+                  // Detect Date ISO string 2016-06-19T06:46:50.747Z
+                  if (typeof obj[keys[i]] == 'string' && 
+                  obj[keys[i]].length == 24 && 
+                  obj[keys[i]][4] == '-' &&
+                  obj[keys[i]][7] == '-' &&
+                  obj[keys[i]][10] == 'T' &&
+                  obj[keys[i]][13] == ':' &&
+                  obj[keys[i]][16] == ':') {
+                    schema[keys[i]] = 'date';
+                  }
+                }
+              }
               fs.appendFileSync(jsonPath + '.tmp', JSON.stringify(obj) + ',');
               for (var i in row.data[0]) {
                 if (typeof row.data[0][i] == 'string' && row.data[0][i].indexOf(',') > -1) {
@@ -99,7 +117,8 @@ Converter.prototype.csv2json = function(csvPath, jsonPath) {
           //console.log('done : ' + jsonPath);
           return resolve({
             totalRows : totalRows,
-            totalColumns : totalColumns
+            totalColumns : totalColumns,
+            schema : schema,
           });
         });
         s.on('error', function(err) {

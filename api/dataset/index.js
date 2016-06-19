@@ -51,6 +51,7 @@ var datasetModel = function() {
     keywords : String,
     totalRows : Number,
     totalColumns : Number,
+    tableSchema : {},
     createdAt : Date,
     updatedAt : Date,
     error : {},
@@ -205,16 +206,18 @@ Dataset.prototype.get = function(request, reply) {
       tablespoon.createTable(JSON.parse(fs.readFileSync(config.datasetsPath + '/' + filename + '.valid.json', 'utf-8')), filename, null, null, function(err) {
         console.log(err);
         console.log(request.query.sql);
-        // Get total
-        var sql = 'select count(*) as total from ' + filename;
-        tablespoon.query(sql, function(result) {
-          tablespoon.query(request.query.sql, function(rows) {
-            if (request.query.type && request.query.type === 'csv') {
-              return reply(babyparse.unparse(rows.rows));
-            }
-            return reply(rows.rows)
+        setTimeout(function(){
+          // Get total
+          var sql = 'select count(*) as total from ' + filename;
+          tablespoon.query(sql, function(result) {
+            tablespoon.query(request.query.sql, function(rows) {
+              if (request.query.type && request.query.type === 'csv') {
+                return reply(babyparse.unparse(rows.rows));
+              }
+              return reply(rows.rows)
+            })
           })
-        })
+        }, 500);
       });
     } else if (request.query.type && result.status=='done') {
       // Return a downloadable text file
@@ -275,17 +278,23 @@ Dataset.prototype.upload = function(request, reply) {
       console.log(cmd);
       var convert = exec(cmd, function(err, stdout, stderr) {
         console.log('save2db...');
+        console.log(err);
+        console.log(stderr);
         result.status = 'done';
         result.filename = filename;
-        if (stderr) {
+        if (err) {
+          result.status = 'error';
+          result.error = util.format(err);
+        } else if (stderr) {
           result.status = 'error';
           result.error = util.format(stderr);
+        } else {
+          var output = JSON.parse(util.format(stdout.toString()));
+          console.log(output);
+          result.totalRows = output.totalRows; 
+          result.totalColumns = output.totalColumns; 
+          result.tableSchema = output.schema; 
         }
-        var output = JSON.parse(util.format(stdout.toString()));
-        console.log(typeof output);
-        console.log(output);
-        result.totalRows = output.totalRows; 
-        result.totalColumns = output.totalColumns; 
         result.save();
         console.log('DONE');
       })
