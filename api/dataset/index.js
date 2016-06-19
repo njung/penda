@@ -274,7 +274,7 @@ Dataset.prototype.upload = function(request, reply) {
         return reply(boom.wrap(err));
       }
       console.log('converting...');
-      var cmd = '/usr/local/bin/node ' + __dirname + '/converter.js ' + path;
+      var cmd = '~/bin/node ' + __dirname + '/converter.js ' + path;
       console.log(cmd);
       var convert = exec(cmd, function(err, stdout, stderr) {
         console.log('save2db...');

@@ -4,7 +4,7 @@ Penda is an Open Data management system.
 
 #### Requirements
 
-- ``node`` version 5.11
+- ``node`` version 5.11. Symlink the binary to ``~/bin/node``.
 - ``sqlite3``
 - ``mongodb`` verson >2.4
 
@@ -15,6 +15,7 @@ Penda is an Open Data management system.
 - ``bower install``
 - ``NODE_ENV=dev npm run setenv``
 - ``DB=dev ./script/init.sh``
+- Prepare the dataset directory. See ``config.js``.
 - ``npm run server``
 
 #### Note
