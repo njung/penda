@@ -43,6 +43,8 @@ var Admin = function ($stateParams, $scope, $state, $window, $rootScope, AuthSer
   self.$scope.datasetQuery = {
     limit : 10,
     page : 1,
+    searchKey : {
+    }
   }
 
   // TODO this function costs too many request, please think for alternative solution 
@@ -79,6 +81,17 @@ Admin.prototype.get = function(filename) {
   .then(function(result) {
     self.$scope.currentItem = result.data;
     self.$scope.datasetQuery.total = result.data.totalRows;
+    // Collect field
+    self.$scope.fields = [{
+      text:'SQL',
+      value:'sql'
+    },{divider:true}]
+    if (result.data.tableSchema) {
+      var keys = Object.keys(result.data.tableSchema);
+      for (var i in keys) {
+        self.$scope.fields.push({text:keys[i], value:keys[i]}); 
+      }
+    }
     self.$scope.spinner.dataset = false;
     self.getQuery();
   })
@@ -102,18 +115,59 @@ Admin.prototype.updateLimit = function(selected) {
   self.$scope.datasetQuery.limit = selected.value || 10;
   self.getQuery();
 }
+Admin.prototype.getQuerySearch = function(event) {
+  var self = this;
+  console.log(event.keyCode);
+  if (event.key == 'Enter') {
+    self.getQuery();
+  }
+}
 Admin.prototype.getQuery = function() {
   var self = this;
   var $el = $('#view-table');
   $el.text('');
   if (self.$scope.currentItem.status == 'done') {
     self.$scope.spinner.datasetQuery = true;
-    self.$scope.fields = [{
-      text:'SQL',
-      value:'sql'
-    },{divider:true}]
     // Fetch first page with 10 item limit
-    var sql = 'select * from ' + self.$scope.currentItem.filename + ' limit ' + self.$scope.datasetQuery.limit + ' offset ' + (self.$scope.datasetQuery.page - 1)*self.$scope.datasetQuery.limit;
+    var sql;
+    var pagination = ' limit ' + self.$scope.datasetQuery.limit + ' offset ' + (self.$scope.datasetQuery.page - 1)*self.$scope.datasetQuery.limit;
+
+    // Use SQL query string
+    if (self.$scope.datasetQuery.searchKey && 
+    self.$scope.datasetQuery.searchKey.value == 'sql' && 
+    self.$scope.datasetQuery.searchString && 
+    self.$scope.datasetQuery.searchString.toLowerCase().indexOf('select') > -1) {
+      sql = self.$scope.datasetQuery.searchString;
+
+    // Just search the string
+    } else if (self.$scope.datasetQuery.searchKey && 
+    self.$scope.datasetQuery.searchKey.value != 'sql' &&
+    self.$scope.datasetQuery.searchString) {
+      sql = 'select * from ' + self.$scope.currentItem.filename + ' where ' + self.$scope.datasetQuery.searchKey.value + ' like "%' + self.$scope.datasetQuery.searchString + '%"';
+      sql += pagination;
+    } else {
+    
+    // Simple pagination
+      sql = 'select * from ' + self.$scope.currentItem.filename;
+      sql += pagination;
+    }
+    console.log(sql);
+    // replace the table name;
+    var splittedSql = sql.split(' ');
+    console.log(splittedSql);
+    var isFrom = false;
+    for (var i in splittedSql) {
+      console.log(splittedSql[i]);
+      if (isFrom) {
+        splittedSql[i] = self.$scope.currentItem.filename;
+        break;
+      }
+      if (splittedSql[i].toLowerCase() == 'from') {
+        isFrom = true;
+      }
+    }
+    console.log(splittedSql);
+    sql = splittedSql.join(' ');
     console.log(sql);
     var dataset = new recline.Model.Dataset({
       url : '/api/dataset/' + self.$scope.currentItem.filename + '?type=csv&sql=' + sql,
