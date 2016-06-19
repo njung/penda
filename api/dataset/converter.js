@@ -3,11 +3,10 @@ var fs = require('fs');
 var readline = require('readline');
 var moment = require('moment');
 var async = require('async');
-/* var csv2json = require('csv-to-json-stream'); */
 var babyparse = require('babyparse');
 var jstoxml = require('jstoxml');
 var spawn = require('child_process').spawn;
-/* var streamJson = require("stream-json"); */
+var xlsx = require('xlsx');
 var StreamArray = require("stream-json/utils/StreamArray");
 
 var Converter = function() {}
@@ -169,10 +168,8 @@ Converter.prototype.csv2xlsx = function(jsonPath, xlsxPath) {
   })
 }
 
-// Check for parent
-if (!module.parent) {
-  var converter = new Converter();
-  var path = process.argv[2];
+// From CSV 
+var convertFromCSV = function(path) {
   var result;
   //console.log(path); 
   // Convert them all
@@ -189,6 +186,8 @@ if (!module.parent) {
   })
   .then(function(){
     //console.log('convert sequence done');
+    // Return the table schema, total rows and total columns.
+    // This stdout will be parsed as JSON
     console.log(JSON.stringify(result));
   })
   .catch(function(err){
@@ -196,4 +195,57 @@ if (!module.parent) {
     console.error(err);
     proccess.exit(0);
   })
+}
+
+// From XLSX
+var convertFromXLSX = function(path) {
+  fs.writeFileSync(path.replace('.xlsx','.csv'), '');
+  var wb = xlsx.readFile(path);
+  if (!wb.SheetNames[0]) {
+    console.error('There is no first sheet to parse.');
+    process.exit();
+  }
+  // Fetch first sheet
+  var worksheet = wb.Sheets[wb.SheetNames[0]];
+  var row = 0, data = [];
+  if (!worksheet['A1']) {
+    console.error('First row and first column should not be empty.');
+    process.exit();
+  }
+  for (var i in worksheet) {
+    if (i[0] === '!') continue;
+    if (i.indexOf(row) < 0) {
+      row++;
+    }
+    if (!data[row-1]) {
+      data[row-1] = [];
+    }
+    var val = JSON.stringify(worksheet[i].v);
+    // Remove double quote
+    if (typeof val == 'string' && val[0] == '"' && val[val.length-1] == '"') {
+      val = val.substr(1,val.length-2);
+    }
+    data[row-1].push(val);
+  }
+  for (var i in data) {
+    if (data[i].length != data[0].length) {
+      console.error('Inconsisten column length.');
+      process.exit();
+    }
+    fs.appendFileSync(path.replace('.xlsx','.csv'), data[i].join(',') + '\n');
+  }
+  convertFromCSV(path.replace('.xlsx','.csv'));
+}
+
+// Check for parent
+if (!module.parent) {
+  var converter = new Converter();
+  var path = process.argv[2];
+  if (path.indexOf('.xlsx') > -1) {
+    convertFromXLSX(path);
+  } else if (path.indexOf('.csv') > -1) {
+    convertFromCSV(path);
+  } else {
+    console.error('Non-supported file format. Please provide a .csv or .xlsx file.');
+  }
 }
