@@ -76,6 +76,7 @@ Dataset.prototype.registerEndPoints = function() {
       // TODO extend Hawk timeout
       auth : false,
       payload : {
+        timeout : false,
         output : "stream",
         maxBytes : 1000000000,
         allow : "multipart/form-data",
