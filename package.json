@@ -18,6 +18,7 @@
   "dependencies": {
     "angular-fcsa-number": "https://github.com/herpiko/angular-fcsa-number/tarball/master",
     "async": "1.4.0",
+    "babyparse": "0.4.6",
     "bell": "7.6.1",
     "blanket": "1.1.7",
     "boom": "^2.8.0",
