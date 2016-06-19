@@ -174,6 +174,7 @@ Dataset.prototype.list = function(request, reply) {
     count = result;
     datasetModel()
     .find({status: { $ne : 'deleted' }})
+    .sort({_id:-1})
     .limit(limit)
     .skip(limit * (page - 1))
     .exec(function(err, result){
