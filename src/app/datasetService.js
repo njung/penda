@@ -26,9 +26,13 @@ DatasetService.prototype.upload = function(data, obj) {
   return self.Upload.upload(req);
 }
 
-DatasetService.prototype.list = function() {
+DatasetService.prototype.list = function(option) {
   var self = this;
+  var page = option.page || 1;
+  var limit = option.limit || 10;
   var path = '/api/datasets';
+  path += '?page=' + page;
+  path += '&limit=' + limit;
   return self.$http({
     headers : {
       Authorization : self.AuthService.generateMac(path, 'GET'),
@@ -37,6 +41,35 @@ DatasetService.prototype.list = function() {
     url : self.host + path,
   });
 }
+
+DatasetService.prototype.get = function(filename, option) {
+  var self = this;
+  option = option || {};
+  var path = '/api/dataset/' + filename;
+  if (option.sql) {
+    path += '?sql=' + option.sql;
+  }
+  return self.$http({
+    headers : {
+      Authorization : self.AuthService.generateMac(path, 'GET'),
+    },
+    method: 'GET',
+    url : self.host + path,
+  });
+}
+
+DatasetService.prototype.delete = function(filename) {
+  var self = this;
+  var path = '/api/dataset/' + filename;
+  return self.$http({
+    headers : {
+      Authorization : self.AuthService.generateMac(path, 'DELETE'),
+    },
+    method: 'DELETE',
+    url : self.host + path,
+  });
+}
+
 
 DatasetService.inject = ['$http', 'AuthService', 'host', 'Upload']
 
