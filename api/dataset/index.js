@@ -204,6 +204,7 @@ Dataset.prototype.get = function(request, reply) {
     if (!result) return reply(boom.notFound());
     if (request.query.sql && result.status=='done') {
       // Check for cached sql
+      // TODO use non throw sqlite3
       tablespoon.createTable(JSON.parse(fs.readFileSync(config.datasetsPath + '/' + filename + '.valid.json', 'utf-8')), filename, null, null, function(err) {
         console.log(err);
         console.log(request.query.sql);
@@ -211,7 +212,8 @@ Dataset.prototype.get = function(request, reply) {
           // Get total
           var sql = 'select count(*) as total from ' + filename;
           tablespoon.query(sql, function(result) {
-            tablespoon.query(request.query.sql, function(rows) {
+            var sql = request.query.sql.replace(/%22/g,'"');
+            tablespoon.query(sql, function(rows) {
               if (request.query.type && request.query.type === 'csv') {
                 return reply(babyparse.unparse(rows.rows));
               }
