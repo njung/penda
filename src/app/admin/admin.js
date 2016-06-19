@@ -87,9 +87,14 @@ Admin.prototype.get = function(filename) {
       value:'sql'
     },{divider:true}]
     if (result.data.tableSchema) {
+      self.$scope.currentItem.schema = [];
       var keys = Object.keys(result.data.tableSchema);
       for (var i in keys) {
-        self.$scope.fields.push({text:keys[i], value:keys[i]}); 
+        self.$scope.fields.push({text:keys[i], value:keys[i]});
+        self.$scope.currentItem.schema.push({
+          key : keys[i],
+          value : result.data.tableSchema[keys[i]]
+        })
       }
     }
     self.$scope.spinner.dataset = false;

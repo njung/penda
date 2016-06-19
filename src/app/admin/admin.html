@@ -145,6 +145,14 @@
                 <tr>
                   <td class="bg-lightgrey">Skema</td>
                   <td>
+                      <span class="pointer alert alert-info alert-small" ng-click="showSchema=true;" ng-show="!showSchema">Tampilkan skema tabel</span>
+                      <span class="pointer alert alert-info alert-small" ng-click="showSchema=false;" ng-show="showSchema">Sembunyikan skema tabel</span>
+                      <hr ng-show="showSchema">
+                      <ul ng-show="showSchema">
+                        <li ng-repeat="col in currentItem.schema track by $index">
+                          {{col.key}} : {{col.value}}
+                        </li>
+                      </ul>
                   </td>
                 </tr>
               </tbody>
