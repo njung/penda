@@ -186,6 +186,10 @@ label {
 /* when showing the picture */
 .ng-hide-remove      { animation:0.0s fadeIn ease !important; }
 
+/* Fix flicker on animate fadeIn*/
+.slide-animation.ng-enter { display:none; }
+.slide-animation.ng-enter.ng-enter-active { display:block; }
+
 .sidebar-right-container {
 	padding:10px !important;
 }

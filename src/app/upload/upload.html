@@ -1,64 +1,73 @@
 <div cjass="fluid-container" ng-controller="UploadCtrl as upload">
   <div class="row animated fadeIn margined-container">
     <h1>Unggah</h1>
-    <form class="form-horizontal">
-      <fieldset>
-        <!--legend>Unggah</legend-->
-        <div class="form-group">
-          <label class="col-sm-4 control-label" for="title">Judul</label>  
-          <div class="col-sm-4">
-          <input name="title" ng-model="data.title" type="text" class="form-control input-md">
+    <div class="row">
+      <form class="form-horizontal col-sm-6">
+        <fieldset>
+          <!--legend>Unggah</legend-->
+          <div class="form-group">
+            <label class="col-sm-4 control-label" for="title">Judul</label>  
+            <div class="col-sm-8">
+            <input name="title" ng-model="data.title" type="text" class="form-control input-md">
+            <small><i>*Harus diisi</i></small>
+            </div>
           </div>
-        </div>
-        <div class="form-group">
-          <label class="col-sm-4 control-label" for="source">Sumber</label>  
-          <div class="col-sm-4">
-          <input name="source" ng-model="data.source" type="text" class="form-control input-md">
+          <div class="form-group">
+            <label class="col-sm-4 control-label" for="source">Sumber</label>  
+            <div class="col-sm-8">
+            <input name="source" ng-model="data.source" type="text" class="form-control input-md">
+            </div>
           </div>
-        </div>
-        <div class="form-group">
-          <label class="col-sm-4 control-label" for="contact">Kontak</label>  
-          <div class="col-sm-4">
-          <input name="contact" ng-model="data.contact" type="text" class="form-control input-md">
+          <div class="form-group">
+            <label class="col-sm-4 control-label" for="contact">Kontak</label>  
+            <div class="col-sm-8">
+            <input name="contact" ng-model="data.contact" type="text" class="form-control input-md">
+            </div>
           </div>
-        </div>
-        <div class="form-group">
-          <label class="col-sm-4 control-label" for="releaseFreq">Frekuensi rilis</label>
-          <div class="col-sm-4">
-            <select id="releaseFreq" ng-model="data.releaseFreq" name="releaseFreq" class="form-control">
-              <option value="1">Bulanan</option>
-              <option value="2">Tahunan</option>
-            </select>
+          <div class="form-group">
+            <label class="col-sm-4 control-label" for="releaseFreq">Frekuensi rilis</label>
+            <div class="col-sm-8">
+              <select id="releaseFreq" ng-model="data.releaseFreq" name="releaseFreq" class="form-control">
+                <option value="1">Bulanan</option>
+                <option value="2">Tahunan</option>
+              </select>
+            </div>
           </div>
-        </div>
-        <div class="form-group">
-          <label class="col-sm-4 control-label" for="year">Year</label>  
-          <div class="col-sm-4">
-          <input name="year" ng-model="data.year" type="text" class="form-control input-md">
+          <div class="form-group">
+            <label class="col-sm-4 control-label" for="year">Year</label>  
+            <div class="col-sm-8">
+            <input name="year" ng-model="data.year" type="text" class="form-control input-md">
+            </div>
           </div>
-        </div>
-        <div class="form-group">
-          <label class="col-sm-4 control-label" for="level">Level</label>  
-          <div class="col-sm-4">
-          <input name="level" ng-model="data.level" type="text" class="form-control input-md">
+          <div class="form-group">
+            <label class="col-sm-4 control-label" for="level">Level</label>  
+            <div class="col-sm-8">
+            <input name="level" ng-model="data.level" type="text" class="form-control input-md">
+            </div>
           </div>
-        </div>
-        <div class="form-group">
-          <label class="col-sm-4 control-label" for="scope">Cakupan</label>  
-          <div class="col-sm-4">
-          <input name="scope" ng-model="data.scope" type="text" class="form-control input-md">
+          <div class="form-group">
+            <label class="col-sm-4 control-label" for="scope">Cakupan</label>  
+            <div class="col-sm-8">
+            <input name="scope" ng-model="data.scope" type="text" class="form-control input-md">
+            </div>
           </div>
-        </div>
-        <!-- Button -->
-        <div class="form-group">
-          <label class="col-sm-4 control-label" for="singlebutton"></label>
-          <div class="col-sm-4">
-            <button ng-hide="upload.uploadStatus=='uploading'" ngf-select="upload.upload($files, $invalidFiles)" multiple class="btn btn-inline-right btn-primary">Unggah</button>
-            <button ng-show="upload.uploadStatus=='uploading' && upload.uploadPercentage < 100" class="btn btn-inline-right btn-primary">Mengunggah... {{upload.uploadPercentage}} %</button>
-            <button ng-show="upload.uploadStatus!=='uploaded' && upload.uploadStatus!=='failed' && upload.uploadPercentage==100" class="btn btn-inline-right btn-primary">Memproses...</button>
+          <!-- Button -->
+          <div class="form-group">
+            <label class="col-sm-4 control-label" for="singlebutton"></label>
+            <div class="col-sm-8">
+              <button ng-disabled="!data.title" ng-hide="upload.uploadStatus=='uploading'" ngf-select="upload.upload($files, $invalidFiles)" multiple class="btn btn-inline-right btn-primary">Pilih berkas dan unggah</button>
+              <button ng-show="upload.uploadStatus=='uploading' && upload.uploadPercentage < 100" class="btn btn-inline-right btn-primary">Mengunggah... {{upload.uploadPercentage}} %</button>
+              <button ng-show="upload.uploadStatus!=='uploaded' && upload.uploadStatus!=='failed' && upload.uploadPercentage==100" class="btn btn-inline-right btn-primary">Memproses...</button>
+            </div>
           </div>
-        </div>
-      </fieldset>
-    </form>
+        </fieldset>
+      </form>
+      <div class="well col-sm-6">
+              <h4>Upload Requirements</h4>
+<div class='description js-task-list-container'>
+<div class='wiki'>
+<ul>&#x000A;<li>Berkas yang diterima : <code>.csv</code> dan <code>.xlsx</code>/<code>.xls</code>&#x000A;</li>&#x000A;<li>Prasyarat tipe data : &#x000A;&#x000A;<ul>&#x000A;<li>Tipe data string dan angka akan dideteksi secara otomatis</li>&#x000A;<li>Nilai untuk koordinat peta harus memiliki judul kolom <code>lat</code> untuk latitude dan <code>lon</code> untuk longatitude.</li>&#x000A;<li>Nilai untuk data waktu harus memenuhi standar ISO 24 karakter, contoh <code>2016-06-19T02:36:41.649Z</code>&#x000A;</li>&#x000A;</ul>&#x000A;</li>&#x000A;<li>Prasyarat spesifik <code>.csv</code> :&#x000A;&#x000A;<ul>&#x000A;<li>Baris pertama dari berkas adalah <code>header</code> atau judul kolom.</li>&#x000A;<li>Delimiter / pemisah menggunakan koma (<code>,</code>)</li>&#x000A;<li>Nilai string yang mengandung koma (<code>,</code>) harus dibungkus petik dua (<code>"</code>), contoh <code>... 2016, "Drs. Aminudin, S.Pd.", Jakarta ....</code>&#x000A;</li>&#x000A;<li>Jumlah kolom pada <code>header</code> dan <code>row</code> harus sama.</li>&#x000A;</ul>&#x000A;</li>&#x000A;<li>Prasyarat spesifik <code>.xlsx</code> : </li>&#x000A;</ul></div>
+      </div>
+    </div>
   </div>
 </div>

@@ -1,6 +1,6 @@
 <div cjass="fluid-container" ng-controller="AdminCtrl as admin">
   <div class="row animated fadeIn margined-container">
-    <div ng-show="mode=='list'">
+    <div ng-show="mode=='list'" class=" animated fadeIn">
       <h1>Dataset</h1>
       <table class="table table-striped table-hover table-bordered">
         <thead>
@@ -32,7 +32,7 @@
 	    	<pagination total-items="list.total" ng-model="list.page" ng-change="admin.paginate()" items-per-page="10"></pagination>
 	    </div>
 	  </div>
-    <div ng-show="mode=='item'">
+    <div ng-show="mode=='item'" class=" animated fadeIn">
       <div class="content-centered" ng-show="spinner.dataset">
         <br><br>
         <img class="centered" src="/assets/img/spinners/spinner_64.gif" style="height:32px;">
@@ -126,7 +126,7 @@
               </tbody>
             </table>
           </div>
-          <div class="col-sm-6 no-padding" ng-show="currentItem.status=='done'">
+          <div class="col-sm-6 no-padding animated fadeIn" ng-show="currentItem.status=='done'">
             <h4>Skema</h4>
             <table class="table table-bordered table-hover" style="margin-bottom:0px !important;">
               <tbody>
@@ -148,7 +148,7 @@
                       <span class="pointer alert alert-info alert-small" ng-click="showSchema=true;" ng-show="!showSchema">Tampilkan skema tabel</span>
                       <span class="pointer alert alert-info alert-small" ng-click="showSchema=false;" ng-show="showSchema">Sembunyikan skema tabel</span>
                       <hr ng-show="showSchema">
-                      <ul ng-show="showSchema">
+                      <ul ng-show="showSchema" class=" animated fadeIn">
                         <li ng-repeat="col in currentItem.schema track by $index">
                           {{col.key}} : {{col.value}}
                         </li>
@@ -159,7 +159,7 @@
             </table>
           </div>
         </div>
-        <div class="row" ng-show="currentItem.status=='done'">
+        <div class="row animated fadeIn" ng-show="currentItem.status=='done'">
           <div>
               <br>
               <h4>Tampilan Data</h4>
@@ -213,9 +213,9 @@
           <div class="content-centered" ng-show="spinner.datasetQuery" style="margin-bottom:15px;">
             <img class="centered" src="/assets/img/spinners/spinner_64.gif" style="height:32px;">
           </div>
-          <div ng-show="viewMode=='table'" id="view-table" class="recline-read-only" style="margin-bottom: 30px; height: 500px;border:1px solid lightgrey">&nbsp;</div>
-          <div ng-show="viewMode=='graph'">Coding in progress...</div>
-          <div ng-show="viewMode=='map'">Coding in progress...</div>
+          <div ng-show="viewMode=='table'" id="view-table" class="recline-read-only animated fadeIn" style="margin-bottom: 30px; height: 500px;border:1px solid lightgrey">&nbsp;</div>
+          <div ng-show="viewMode=='graph'" class=" animated fadeIn">Coding in progress...</div>
+          <div ng-show="viewMode=='map'" class=" animated fadeIn">Coding in progress...</div>
         </div>
       </div>
 	  </div>
