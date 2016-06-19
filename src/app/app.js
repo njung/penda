@@ -45,7 +45,8 @@ angular.module("App", [
   "infinite-scroll",
   "ngImgCrop",
   "debounce",
-  "fcsa-number"
+  "fcsa-number",
+  "ngDropdowns"
 ])
 // The controller declared in their html file
 .config(function($stateProvider, $urlRouterProvider, toastrConfig) {

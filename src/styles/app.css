@@ -17,8 +17,9 @@ textarea {
   .show-on-mobile {
     display:inherit;
   }
-  .email-subscribe-input {
-    width:100% !important;
+  .row {
+    margin-left:15px !important;
+    margin-right:15px !important
   }
 }
 @media (min-width:768px) {
@@ -87,6 +88,9 @@ body {
 }
 @media (min-width:768px) {
   .margined-container {
+    background:white !important;
+    padding-left:30px;
+    padding-right:30px;
     margin-left:5% !important;
     margin-right:5% !important;
   }
@@ -97,6 +101,7 @@ body {
 }
 @media (min-width:1024px) {
   .margined-container {
+    background:white !important;
     margin-left:10% !important;
     margin-right:10% !important;
   }
@@ -446,4 +451,12 @@ button:active {
 .no-padding {
   padding-left:0px !important;
   padding-right:0px !important;
+}
+.wrap-dd-menu .dropdown.active {
+  width:125px;
+  margin-top:40px;
+  z-index:99;
+}
+.wrap-dd-menu {
+  padding:0px;
 }

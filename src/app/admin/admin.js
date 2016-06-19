@@ -20,8 +20,30 @@ var Admin = function ($stateParams, $scope, $state, $window, $rootScope, AuthSer
   self.$window.scrollTo(0,0)
 
   // Handle main spinners in one place.
-  self.spinner = {
+  self.$scope.spinner = {
   };
+  self.$scope.limits = [
+    {
+      text:'10',
+      value:10
+    },
+    {
+      text:'20',
+      value:20
+    },
+    {
+      text:'50',
+      value:50
+    },
+    {
+      text:'99',
+      value:99
+    },
+  ]
+  self.$scope.datasetQuery = {
+    limit : 10,
+    page : 1,
+  }
 
   // TODO this function costs too many request, please think for alternative solution 
   self.AuthService.checkToken({redirect:true})
@@ -50,30 +72,69 @@ Admin.prototype.list = function(option){
 
 Admin.prototype.get = function(filename) {
   var self = this;
+  self.$scope.spinner.dataset = true;
   self.$scope.mode = 'item';
+  self.$scope.viewMode = 'table';
   self.DatasetService.get(filename)
   .then(function(result) {
     self.$scope.currentItem = result.data;
-    var $el = $('#view-table');
-    if (self.$scope.currentItem.status == 'done') {
-      // Fetch first page with 10 item limit
-      var dataset = new recline.Model.Dataset({
-        url : '/api/dataset/' + filename + '?type=csv&sql=select * from ' + filename + ' limit 10 offset 0',
-        backend:'csv',
-        delimiter: ',',
-        encoding : 'utf-8',
-      });
-      dataset.fetch();
+    self.$scope.datasetQuery.total = result.data.totalRows;
+    self.$scope.spinner.dataset = false;
+    self.getQuery();
+  })
+}
+
+Admin.prototype.nextPageQuery = function() {
+  var self = this;
+  self.$scope.datasetQuery.page++;
+  self.getQuery();
+}
+Admin.prototype.prevPageQuery = function() {
+  var self = this;
+  self.$scope.datasetQuery.page--;
+  if (self.$scope.datasetQuery.page < 1) {
+    self.$scope.datasetQuery.page = 1;
+  }
+  self.getQuery();
+}
+Admin.prototype.updateLimit = function(selected) {
+  var self = this;
+  self.$scope.datasetQuery.limit = selected.value || 10;
+  self.getQuery();
+}
+Admin.prototype.getQuery = function() {
+  var self = this;
+  var $el = $('#view-table');
+  $el.text('');
+  if (self.$scope.currentItem.status == 'done') {
+    self.$scope.spinner.datasetQuery = true;
+    self.$scope.fields = [{
+      text:'SQL',
+      value:'sql'
+    },{divider:true}]
+    // Fetch first page with 10 item limit
+    var sql = 'select * from ' + self.$scope.currentItem.filename + ' limit ' + self.$scope.datasetQuery.limit + ' offset ' + (self.$scope.datasetQuery.page - 1)*self.$scope.datasetQuery.limit;
+    console.log(sql);
+    var dataset = new recline.Model.Dataset({
+      url : '/api/dataset/' + self.$scope.currentItem.filename + '?type=csv&sql=' + sql,
+      backend:'csv',
+      delimiter: ',',
+      encoding : 'utf-8',
+    });
+    dataset.fetch().done(function(dataset){
+      console.log(dataset);
       var grid = new recline.View.SlickGrid({
         model: dataset,
         el: $el
       });
       grid.visible = true;
       grid.render();
-    } else {
-      $el.text('');
-    }
-  })
+      self.$scope.spinner.datasetQuery = false;
+      self.$scope.$apply();
+    });
+  } else {
+    $el.text('');
+  }
 }
 
 Admin.prototype.paginate = function() {
