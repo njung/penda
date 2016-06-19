@@ -28,12 +28,13 @@ var UploadCtrl = function ($stateParams, $scope, $state, $window, $rootScope, Au
 
   self.uploadStatus = "ready";
   self.$scope.data = {
-    title : (new Date()).valueOf(),
-    source : 'source',
-    contact : 'contact',
+    title : 'Data of ' + (new Date()).valueOf(),
+    source : 'sample_source',
+    contact : 'sample_contact@contact',
     releaseFreq : 'year',
-    level : 'level',
-    scope : 'Cakupan', 
+    year : 2016,
+    level : 'sample_level',
+    scope : 'sample_scope', 
   };
   self.$rootScope.preventNavigation = false;
 
@@ -44,7 +45,13 @@ UploadCtrl.prototype.upload = function(files, invalid) {
   var self = this;
   if (files && files.length > 0) {
     var file = files[files.length - 1];
-    // TODO validate file type
+    // Check for extension / file type
+    var extension = file.name.split('.');
+    extension = extension[extension.length-1];
+    console.log(extension);
+    if (!(extension == 'xlsx' || extension == 'csv')) {
+      return alert('Must be a .csv or .xlsx file. Please check the filename extension.');
+    }
     self.$rootScope.preventNavigation = true;
     self.uploadStatus = "uploading";
     self.DatasetService.upload(file, self.$scope.data)

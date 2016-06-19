@@ -249,11 +249,12 @@ Dataset.prototype.sample = function(request, reply) {
 
 Dataset.prototype.upload = function(request, reply) {
   var self = this;
-  console.log(request.payload);
   var id = md5((new Date()).valueOf());
   var filename = 'dataset_' + id;
   var prefix = config.datasetsPath + '/';
-  var path = prefix + filename + '.csv';
+  var extension = request.payload.content.hapi.filename.split('.');
+  extension = extension[extension.length-1];
+  var path = prefix + filename + '.' + extension;
   var fws = fs.createWriteStream(path);
   request.payload.content.pipe(fws);
    
