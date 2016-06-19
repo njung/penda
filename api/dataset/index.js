@@ -1,6 +1,7 @@
 'use strict'
 var config = require(__dirname + '/../../config.json');
 var fs = require('fs');
+var util = require('util');
 var readline = require('readline');
 var moment = require('moment');
 var async = require('async');
@@ -15,6 +16,7 @@ var StreamArray = require("stream-json/utils/StreamArray");
 var mongoose = require('mongoose');
 var tablespoon = require('tablespoon').sqlite();
 var boom = require('boom');
+var mongooseHistory = require('mongoose-history');
 
 var Dataset = function(server, options, next) {
   this.server = server;
@@ -47,11 +49,15 @@ var datasetModel = function() {
     reference : String,
     category : [],
     keywords : String,
+    totalRows : Number,
+    totalColumns : Number,
     createdAt : Date,
     updatedAt : Date,
+    error : {},
   }
 
   var s = new mongoose.Schema(schema);
+  s.plugin(mongooseHistory);
   m = mongoose.model("dataset", s);
   return m;
 }
@@ -93,7 +99,7 @@ Dataset.prototype.registerEndPoints = function() {
     method: "GET",
     path: "/api/datasets",
     handler: function(request, reply) {
-      self.datasets(request, reply);
+      self.list(request, reply);
     },
 		config : {
 			auth : false,
@@ -104,53 +110,125 @@ Dataset.prototype.registerEndPoints = function() {
     method: "GET",
     path: "/api/dataset/{filename}",
     handler: function(request, reply) {
-      self.getDataset(request, reply);
+      self.get(request, reply);
     },
 		config : {
 			auth : false,
     }
   });
   
+  self.server.route({
+    method: "DELETE",
+    path: "/api/dataset/{filename}",
+    handler: function(request, reply) {
+      self.delete(request, reply);
+    },
+		config : {
+			auth : false,
+    }
+  });
 }
 
-Dataset.prototype.getDataset = function(request, reply) {
+// This dataset CRUD use filename as ID instead of MongoDB's _id
+
+Dataset.prototype.delete = function(request, reply) {
+  var self = this;
+  var filename = request.params.filename;
+  // Check in db first
+  datasetModel().findOne({filename : filename}, function(err,result) {
+    if (err) {
+      console.log(err);
+      return reply(boom.wrap(err));
+    }
+    if (!result || result.length == 0) return reply(boom.notFound());
+    result.status = 'deleted';
+    console.log(result);
+    datasetModel().findOneAndUpdate({filename : filename}, result, function(err) {
+      if (err) {
+        console.log(err);
+        return reply(boom.wrap(err));
+      }
+      console.log(result);
+      reply();
+    })
+  })
+}
+
+Dataset.prototype.list = function(request, reply) {
+  var self = this;
+  // TODO pagination query, List all for admin
+  var limit = request.query.limit || 10;
+  var page = request.query.page || 1;
+  var count;
+  limit = parseInt(limit);
+  page = parseInt(page);
+  datasetModel()
+  .count({status: { $ne : 'deleted' }})
+  .exec(function(err, result) {
+    if (err) {
+      console.log(err);
+      return reply(boom.wrap(err));
+    }
+    count = result;
+    datasetModel()
+    .find({status: { $ne : 'deleted' }})
+    .limit(limit)
+    .skip(limit * (page - 1))
+    .exec(function(err, result){
+      if (err) {
+        console.log(err);
+        return reply(boom.wrap(err));
+      }
+      var obj = {
+        total : count,
+        page : page,
+        data : result,
+      }
+      reply(obj);
+    })
+  })
+}
+
+Dataset.prototype.get = function(request, reply) {
   var self = this;
   var filename = request.params.filename;
   var type = request.query.type;
   // Check in db first
-  datasetModel().find({filename : filename}, function(err,result) {
-    if (err) return reply(boom.wrap(err));
-    if (!result || result.length == 0) return reply(boom.notFound());
-    if (request.query.sql) {
+  datasetModel().findOne({filename : filename}, function(err,result) {
+    if (err) {
+      console.log(err);
+      return reply(boom.wrap(err));
+    }
+    if (!result) return reply(boom.notFound());
+    if (request.query.sql && result.status=='done') {
       // Check for cached sql
-      if (!self.cached[filename]) {
-        try {
-          tablespoon.createTable(JSON.parse(fs.readFileSync(config.datasetsPath + '/' + filename + '.valid.json', 'utf-8')), filename);
-        } catch(err) {
+      tablespoon.createTable(JSON.parse(fs.readFileSync(config.datasetsPath + '/' + filename + '.valid.json', 'utf-8')), filename, null, null, function(err) {
+        console.log(err);
+        console.log(request.query.sql);
+        // Get total
+        var sql = 'select count(*) as total from ' + filename;
+        tablespoon.query(sql, function(result) {
+          tablespoon.query(request.query.sql, function(rows) {
+            if (request.query.type && request.query.type === 'csv') {
+              return reply(babyparse.unparse(rows.rows));
+            }
+            return reply(rows.rows)
+          })
+        })
+      });
+    } else if (request.query.type && result.status=='done') {
+      // Return a downloadable text file
+      fs.readFile(config.datasetsPath + '/' + filename + '.valid.' + type, 'utf-8', function(err, result){
+        if (err) {
           console.log(err);
           return reply(boom.wrap(err));
         }
-        self.cached[filename] = true;
-      }
-      console.log(request.query.sql);
-      // Get total
-      var sql = 'select count(*) as total from ' + filename;
-      tablespoon.query(sql, function(result) {
-        tablespoon.query(request.query.sql, function(rows) {
-          // Assign length and total
-          rows['length'] = rows.rows.length;
-          rows['total'] = result.rows[0].total;
-          return reply(rows)
-        })
-      })
-    } else {
-      // Return a downloadable text file
-      fs.readFile(config.datasetsPath + '/' + filename + '.valid.' + type, 'utf-8', function(err, result){
-        if (err) return reply(boom.wrap(err));
         reply(result)
         .header('Content-Type', 'application/octet-stream')
         .header('content-disposition', 'attachment; filename=' + filename + '.' + type + ';');
       })
+    } else {
+      reply(result);
     }
   })
 }
@@ -163,31 +241,20 @@ Dataset.prototype.sample = function(request, reply) {
   })
 }
 
-Dataset.prototype.datasets = function(request, reply) {
-  var self = this;
-  // TODO pagination query
-  datasetModel().find({}, function(err, result){
-    if (err) {
-      return reply(err).code(500);
-    }
-    reply(result);
-  })
-}
-
 Dataset.prototype.upload = function(request, reply) {
   var self = this;
   console.log(request.payload);
   var id = md5((new Date()).valueOf());
   var filename = 'dataset_' + id;
   var prefix = config.datasetsPath + '/';
-  console.log(request.payload.opts);
   var path = prefix + filename + '.csv';
   var fws = fs.createWriteStream(path);
   request.payload.content.pipe(fws);
    
   fws.on("finish", function(){
     var data = {
-      status : 'progress',
+      status : 'pending',
+      filename : filename,
       title : request.payload.title,
       source : request.payload.source,
       contact : request.payload.contact,
@@ -196,10 +263,12 @@ Dataset.prototype.upload = function(request, reply) {
       year : request.payload.year,
       scope : request.payload.scope,
       reference : request.payload.reference,
+      createdAt : new Date(),
     }
     datasetModel().create(data, function(err, result) {
       if (err) {
-        return reply(err).code(500);
+        console.log(err);
+        return reply(boom.wrap(err));
       }
       console.log('converting...');
       var cmd = '/usr/local/bin/node ' + __dirname + '/converter.js ' + path;
@@ -208,10 +277,15 @@ Dataset.prototype.upload = function(request, reply) {
         console.log('save2db...');
         result.status = 'done';
         result.filename = filename;
-        if (err || stderr) {
-          result.status = 'err';
+        if (stderr) {
+          result.status = 'error';
+          result.error = util.format(stderr);
         }
-        console.log(stdout);
+        var output = JSON.parse(util.format(stdout.toString()));
+        console.log(typeof output);
+        console.log(output);
+        result.totalRows = output.totalRows; 
+        result.totalColumns = output.totalColumns; 
         result.save();
         console.log('DONE');
       })

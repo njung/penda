@@ -14,14 +14,14 @@ var Converter = function() {}
 Converter.prototype.csv2json = function(csvPath, jsonPath) {
   var self = this;
   return new Promise(function(resolve, reject) {
-    console.log('csv2json');
+    //console.log('csv2json');
     if (!csvPath) {
       csvPath = '/tmp/sample.csv';
     }
     if (!jsonPath) {
       jsonPath = '/tmp/sample.json';
     }
-    let header, len;
+    let header, len, totalRows = 0, totalColumns;
     fs.appendFileSync(jsonPath + '.tmp', '[');
     var parsed = babyparse.parseFiles(csvPath, {
       dynamicTyping : true,
@@ -37,19 +37,18 @@ Converter.prototype.csv2json = function(csvPath, jsonPath) {
             }
             if (!header) {
               header = row.data[0];
+              totalColumns = header.length;
               for (var i in header) {
                 header[i] = header[i].trim();
-                /* if (typeof header[0][i] == 'string' && header[0][i].indexOf(',') > -1) { */
-                /*   header[0][i] = '\"' + header[0][i] + '\"'; */ 
-                /* } */
               }
               fs.appendFileSync(csvPath.replace('.csv','.valid.csv'), header.join(',') + '\n');
             } else {
               if (row.data[0].length != header.length) {
                 console.error('Inconsistent column length');
-                proces.exit();
+                process.exit();
               }
               let obj = {};
+              totalRows++;
               for (var h in header) {
   
                 // Remove whitespace / nbsp
@@ -91,14 +90,17 @@ Converter.prototype.csv2json = function(csvPath, jsonPath) {
         }
       },
       complete : function(){
-        console.log('complete');
+        //console.log('complete');
         var cmd = spawn('sed', ['$ s/.$//', jsonPath + '.tmp']);
         var s = cmd.stdout.pipe(fs.createWriteStream(jsonPath));
         s.on('finish', function(){
           fs.appendFileSync(jsonPath, ']');
           spawn('rm', ['-f', jsonPath + '.tmp']);
-          console.log('done : ' + jsonPath);
-          return resolve();
+          //console.log('done : ' + jsonPath);
+          return resolve({
+            totalRows : totalRows,
+            totalColumns : totalColumns
+          });
         });
         s.on('error', function(err) {
           console.log(err);
@@ -116,7 +118,7 @@ Converter.prototype.csv2json = function(csvPath, jsonPath) {
 Converter.prototype.json2xml = function(jsonPath, xmlPath) {
   var self = this;
   return new Promise(function(resolve, reject) {
-    console.log('json2xml');
+    //console.log('json2xml');
     fs.appendFileSync(xmlPath, '<?xml version="1.0"?>\n');
     fs.appendFileSync(xmlPath, '<!DOCTYPE record>\n');
     fs.appendFileSync(xmlPath, '<dataset>\n');
@@ -126,7 +128,7 @@ Converter.prototype.json2xml = function(jsonPath, xmlPath) {
     });
     stream.output.on("end", function(){
       fs.appendFileSync(xmlPath, '</dataset>\n');
-      console.log('done : ' + xmlPath);
+      //console.log('done : ' + xmlPath);
       resolve();
     });
     fs.createReadStream(jsonPath).pipe(stream.input);
@@ -135,14 +137,14 @@ Converter.prototype.json2xml = function(jsonPath, xmlPath) {
 Converter.prototype.csv2xlsx = function(jsonPath, xlsxPath) {
   var self = this;
   return new Promise(function(resolve, reject) {
-    console.log('csv2xlsx');
+    //console.log('csv2xlsx');
     var cmd = spawn('node_modules/.bin/j', ['-f', jsonPath, '-X', '-o', xlsxPath]);
     cmd.stdout.on('error', function(err) {
       console.log(err.toString());
       reject();
     })
     cmd.stdout.on('finish', function() {
-      console.log('done : ' + xlsxPath);
+      //console.log('done : ' + xlsxPath);
       resolve();
     })
   })
@@ -152,24 +154,27 @@ Converter.prototype.csv2xlsx = function(jsonPath, xlsxPath) {
 if (!module.parent) {
   var converter = new Converter();
   var path = process.argv[2];
-  console.log(path); 
+  var result;
+  //console.log(path); 
   // Convert them all
   // CSV --> JSON
   converter.csv2json(path, path.replace('.csv', '.valid.json'))
-  .then(function(){
+  .then(function(res){
+    result = res;
   // JSON --> XLSX
     return converter.csv2xlsx(path, path.replace('.csv', '.valid.xlsx'));
   })
   .then(function(){
   // JSON --> XML
-    return converter.json2xml(path.replace('.csv', '.json'), path.replace('.csv', '.valid.xml'))
+    return converter.json2xml(path.replace('.csv', '.valid.json'), path.replace('.csv', '.valid.xml'))
   })
   .then(function(){
-    console.log('convert sequence done');
+    //console.log('convert sequence done');
+    console.log(JSON.stringify(result));
   })
   .catch(function(err){
     console.log('An error occured');
     console.error(err);
-    process.exit(0);
+    proccess.exit(0);
   })
 }
