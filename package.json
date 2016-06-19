@@ -41,6 +41,7 @@
     "hapi-mongoose-db-connector": "2.1.3",
     "inert": "3.2.0",
     "j": "0.4.3",
+    "joi": "^8.4.2",
     "jsonlint": "^1.6.2",
     "jstoxml": "0.2.3",
     "md5": "2.1.0",
