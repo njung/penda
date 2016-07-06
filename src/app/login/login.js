@@ -46,7 +46,7 @@ Login.prototype.login = function(account) {
       self.$rootScope.frontPage = false;
       self.$rootScope.loginForm = false;
       self.$rootScope.directPage= false;
-      self.$state.go("dataset");
+      self.$state.go("dataset", {mode:'list'});
     },
     // error
     function(data, status){

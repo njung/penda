@@ -286,14 +286,14 @@ i}
 }
 .navbar-default .navbar-nav > li > a:focus {
 	color:white !important;
-	background:grey !important;
+	/* background:grey !important; */
 }
 .navbar-default .navbar-nav > li > a:hover {
 	color:white !important;
-	background:grey !important;
+	/* background:grey !important; */
 }
 .navbar-default {
-	background: grey !important;
+	/* background: grey !important; */
 	border:0px !important;
 }
 
@@ -503,3 +503,349 @@ button:active {
 .well {
   border-radius:0px !important;
 }
+
+
+/* CAROUSEL */
+
+.css-carousel {
+  color: #fff;
+  overflow: hidden;
+  position: relative;
+  height:100vh;
+  margin-left:-15px;
+  margin-right:-15px;
+}
+
+.css-carousel-item {
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  transition: opacity 0.6s ease-in-out;
+  width: 100%;
+  height:100vh;
+}
+
+.css-carousel-active:checked + .css-carousel-item {
+  opacity: 1;
+  pointer-events: auto;
+  position: static;
+}
+
+.css-carousel-item img {
+  display: block;
+  height: auto;
+  width: 100%;
+}
+
+.css-carousel-controls {
+  height: 100%;
+  width: 100%;
+}
+
+.css-carousel-control {
+  color:white !important;
+  cursor: pointer;
+  font-size: 28px;
+  height: 100%;
+  line-height: 40px;
+  text-align: center;
+  transition: background 0.1s ease-in-out;
+  width: 50%;
+  z-index: 2;
+}
+
+.css-carousel-control:hover {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.css-carousel-control.prev {
+  float: left;
+  padding-top:45vh;
+}
+
+.css-carousel-control.next {
+  float: right;
+  padding-top:45vh;
+}
+
+.css-carousel-caption {
+  bottom: 40%;
+  font-size: 120%;
+  left: 20%;
+  opacity: 0;
+  right: 20%;
+  text-align: center;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+  transition: opacity 0.1s ease-out;
+  z-index: 2;
+}
+
+.css-carousel-active:checked + .css-carousel-item .css-carousel-caption {
+  transition: opacity 0.6s ease-in;
+  opacity: 1;
+}
+
+.css-carousel-indicators {
+  bottom: 5%;
+  left: 5%;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  right: 5%;
+  text-align: center;
+  z-index: 2;
+}
+
+.css-carousel-indicators li {
+  display: inline-block;
+}
+
+.css-carousel-indicator {
+  border-radius: 50%;
+  cursor: pointer;
+  display: block;
+  font-size: 28px;
+  line-height: 1;
+  padding: 5px 10px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+  transition: background 0.1s ease-in-out;
+}
+
+.css-carousel-indicator:hover {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+/* If you`re needing more than 3 banners, maybe you might be using another way to represent your info... ;-) */
+#css-carousel-1:checked ~ .css-carousel-indicators .css-carousel-indicator[for="css-carousel-1"],
+#css-carousel-2:checked ~ .css-carousel-indicators .css-carousel-indicator[for="css-carousel-2"],
+#css-carousel-3:checked ~ .css-carousel-indicators .css-carousel-indicator[for="css-carousel-3"] {
+  color: #007f7f;
+}
+
+@media (min-width: 768px) {
+  .css-carousel-indicators {
+    background: transparent;
+  }
+  .css-carousel-control {
+    width: 5%;
+  }
+  .css-carousel-controls,
+  .css-carousel-caption,
+  .css-carousel-indicators {
+    position: absolute;
+  }
+}
+
+.counter-up-container {
+  margin-bottom:20px !important;
+}
+.category-block:hover {
+  border:2px solid #B3A33D;
+}
+.category-block {
+  display:inline-block;
+  margin:15px;
+  padding:10px;
+  text-align:center;
+  background:lightgrey;
+  border:2px solid #CFD9D1;
+  width:150px;
+  height:150px;
+  font-size:18px;
+  line-height:130px;
+  color:#48704D !important;
+}
+
+.dataset-item:hover {
+  background:#E8EEEA !important;
+}
+.dataset-item {
+  margin:10px;
+  padding:10px;
+  cursor:pointer;
+  border-bottom:1px solid lightgrey;
+}
+.dataset-icon-container {
+  width:55px;
+  height:70px;
+  margin-right:10px;
+  display:inline-block;
+  vertical-align:top;
+  background:#B3A33D !important;
+}
+
+.dataset-info {
+  display:inline-block;
+  vertical-align:top;
+}
+.dataset-title {
+  margin-bottom:0px !important;
+}
+.dataset-desc {
+  margin-bottom:0px !important;
+}
+
+/* OVERRIDE COLOR */
+
+.navbar-nav > li:hover {
+  background:#5d9e58 !important;
+}
+
+.btn-primary {
+  background:#48704D !important;
+}
+
+.alert-info {
+  color:#48704D !important;
+  background:#E8EEEA !important;
+  border:1px solid #CFD9D1 !important;
+}
+
+a,a:hover,a:active {
+  color:#48704D !important;
+}
+
+.pagination > .active > a, .pagination > .active > span, .pagination > .active > a:hover, .pagination > .active > span:hover, .pagination > .active > a:focus, .pagination > .active > span:focus {
+  background:#CFD9D1 !important;
+  border:1px solid #CFD9D1 !important;
+}
+
+.aceh-color-green-fg {
+  color:#48704D !important;
+}
+.aceh-color-green-bg {
+  background:#48704D !important;
+}
+.aceh-color-gold-fg {
+  color:#B3A33D !important;
+}
+.aceh-color-gold-bg {
+  background:#B3A33D !important;
+}
+.aceh-color-lightgreen-fg {
+  color:#E8EEEA !important;
+}
+.aceh-color-lightgreen-bg {
+  background:#E8EEEA !important;
+}
+.aceh-color-greygreen-fg {
+  color:#CFD9D1 !important;
+}
+.aceh-color-greygreen-bg {
+  background:#CFD9D1 !important;
+}
+
+/*-------------------------------------*/
+    
+    .cf:before, .cf:after{
+      content:"";
+      display:table;
+    }
+    
+    .cf:after{
+      clear:both;
+    }
+
+    .cf{
+      zoom:1;
+    }
+
+    /*-------------------------------------*/ 
+    
+    .form-wrapper {
+        width: 450px;
+        padding: 15px;
+        margin: 150px auto 50px auto;
+        background: #444;
+        background: rgba(0,0,0,.2);
+        /* -moz-border-radius: 10px; */
+        /* -webkit-border-radius: 10px; */
+        /* border-radius: 10px; */
+        -moz-box-shadow: 0 1px 1px rgba(0,0,0,.4) inset, 0 1px 0 rgba(255,255,255,.2);
+        -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.4) inset, 0 1px 0 rgba(255,255,255,.2);
+        box-shadow: 0 1px 1px rgba(0,0,0,.4) inset, 0 1px 0 rgba(255,255,255,.2);
+    }
+    
+    .form-wrapper input {
+        width: 330px;
+        height: 40px;
+        padding: 10px 15px;
+        float: left;    
+        border: 0;
+        background: #eee;
+        color:black !important;
+        /* -moz-border-radius: 3px 0 0 3px; */
+        /* -webkit-border-radius: 3px 0 0 3px; */
+        /* border-radius: 3px 0 0 3px; */      
+    }
+    
+    .form-wrapper input:focus {
+        outline: 0;
+        background: #fff;
+    }
+    
+    .form-wrapper input::-webkit-input-placeholder {
+       font-weight: normal;
+       font-style: italic;
+    }
+    
+    .form-wrapper input:-moz-placeholder {
+        font-weight: normal;
+        font-style: italic;
+    }
+    
+    .form-wrapper input:-ms-input-placeholder {
+        font-weight: normal;
+        font-style: italic;
+    }    
+    
+    .form-wrapper button {
+        overflow: visible;
+        position: absolute;
+        margin-left:-65px;
+        float: right;
+        border: 0;
+        padding: 0;
+        cursor: pointer;
+        height: 40px;
+        width: 110px;
+        text-transform: uppercase;
+        background: #d83c3c;
+        /* -moz-border-radius: 0 3px 3px 0; */
+        /* -webkit-border-radius: 0 3px 3px 0; */
+        /* border-radius: 0 3px 3px 0; */      
+        text-shadow: 0 -1px 0 rgba(0, 0 ,0, .3);
+    }   
+      
+    .form-wrapper button:hover{   
+        background: #e54040;
+    } 
+      
+    .form-wrapper button:active,
+    .form-wrapper button:focus{   
+        background: #c42f2f;    
+    }
+    
+    .form-wrapper button:before {
+        content: '';
+        position: absolute;
+        border-width: 8px 8px 8px 0;
+        border-style: solid solid solid none;
+        border-color: transparent #d83c3c transparent;
+        top: 12px;
+        left: -6px;
+    }
+    
+    .form-wrapper button:hover:before{
+        border-right-color: #e54040;
+    }
+    
+    .form-wrapper button:focus:before{
+        border-right-color: #c42f2f;
+    }    
+    
+    .form-wrapper button::-moz-focus-inner {
+        border: 0;
+        padding: 0;
+    }
