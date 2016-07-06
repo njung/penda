@@ -14,7 +14,7 @@ angular.module("App", [
   "page",
   "p",
   "user",
-  "admin",
+  "dataset",
   "upload",
   "logout",
   "notfound",
@@ -126,11 +126,11 @@ angular.module("App", [
       }
     }
   )
-  .state("admin", {
-      url: "/admin/{mode}",
+  .state("dataset", {
+      url: "/dataset/{mode}",
       cache: false,
       templateProvider: function($templateCache) {
-        return $templateCache.get("admin/admin.html");
+        return $templateCache.get("dataset/dataset.html");
       }
     }
   )

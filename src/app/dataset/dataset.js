@@ -1,4 +1,4 @@
-var Admin = function ($stateParams, $scope, $state, $window, $rootScope, AuthService, localStorageService, toastr, $location, ToastrService, $modal, $http, host, AlertService, DatasetService){
+var Dataset = function ($stateParams, $scope, $state, $window, $rootScope, AuthService, localStorageService, toastr, $location, ToastrService, $modal, $http, host, AlertService, DatasetService){
   this.$stateParams = $stateParams;
   this.$scope = $scope;
   this.$state = $state;
@@ -22,6 +22,7 @@ var Admin = function ($stateParams, $scope, $state, $window, $rootScope, AuthSer
   // Handle main spinners in one place.
   self.$scope.spinner = {
   };
+  self.$scope.appearance = {}
   self.$scope.limits = [
     {
       text:'10',
@@ -56,23 +57,28 @@ var Admin = function ($stateParams, $scope, $state, $window, $rootScope, AuthSer
       /*     self.$rootScope.currentUserRule = data.rule; */
       /*   }) */
     })
-  
-  self.list();
+ 
+  if (self.$stateParams.mode !== 'list') {
+    self.get(self.$stateParams.mode);
+  } else {
+    self.list();
+  }
 }
 
-Admin.prototype.list = function(option){
+Dataset.prototype.list = function(option){
   var self = this;
+  self.$scope.spinner.list = true;
   self.$scope.mode = 'list';
   self.$scope.currentItem = null;
   var option = option || { page : 1 };
   self.DatasetService.list(option)
   .then(function(result){
+    self.$scope.spinner.list = false;
     self.$scope.list = result.data;
-
   })
 }
 
-Admin.prototype.get = function(filename) {
+Dataset.prototype.get = function(filename) {
   var self = this;
   self.$scope.spinner.dataset = true;
   self.$scope.mode = 'item';
@@ -102,12 +108,12 @@ Admin.prototype.get = function(filename) {
   })
 }
 
-Admin.prototype.nextPageQuery = function() {
+Dataset.prototype.nextPageQuery = function() {
   var self = this;
   self.$scope.datasetQuery.page++;
   self.getQuery();
 }
-Admin.prototype.prevPageQuery = function() {
+Dataset.prototype.prevPageQuery = function() {
   var self = this;
   self.$scope.datasetQuery.page--;
   if (self.$scope.datasetQuery.page < 1) {
@@ -115,19 +121,19 @@ Admin.prototype.prevPageQuery = function() {
   }
   self.getQuery();
 }
-Admin.prototype.updateLimit = function(selected) {
+Dataset.prototype.updateLimit = function(selected) {
   var self = this;
   self.$scope.datasetQuery.limit = selected.value || 10;
   self.getQuery();
 }
-Admin.prototype.getQuerySearch = function(event) {
+Dataset.prototype.getQuerySearch = function(event) {
   var self = this;
   console.log(event.keyCode);
   if (event.key == 'Enter') {
     self.getQuery();
   }
 }
-Admin.prototype.getQuery = function() {
+Dataset.prototype.getQuery = function() {
   var self = this;
   var $el = $('#view-table');
   $el.text('');
@@ -196,7 +202,7 @@ Admin.prototype.getQuery = function() {
   }
 }
 
-Admin.prototype.paginate = function() {
+Dataset.prototype.paginate = function() {
   var self = this;
   var opt = {
     page : self.$scope.list.page
@@ -204,11 +210,11 @@ Admin.prototype.paginate = function() {
   self.list(opt);
 }
 
-Admin.prototype.alert = function(str) {
+Dataset.prototype.alert = function(str) {
   alert(str);
 }
 
-Admin.prototype.delete = function(filename) {
+Dataset.prototype.delete = function(filename) {
   var self = this;
   self.DatasetService.delete(filename)
   .then(function(result) {
@@ -216,13 +222,13 @@ Admin.prototype.delete = function(filename) {
   })
 }
 
-Admin.prototype.someFunc = function(params) {
+Dataset.prototype.someFunc = function(params) {
   var self = this;
 }
 
-Admin.inject = [ '$stateParams', '$scope', '$state', '$window', '$rootScope', 'AuthService', 'localStorageService', 'toastr', '$location', 'ToastrService', '$modal', '$http', 'host' , 'AlertService', 'DatasetService'];
+Dataset.inject = [ '$stateParams', '$scope', '$state', '$window', '$rootScope', 'AuthService', 'localStorageService', 'toastr', '$location', 'ToastrService', '$modal', '$http', 'host' , 'AlertService', 'DatasetService'];
 
-angular.module('admin',[])
-.controller('AdminCtrl', Admin)
+angular.module('dataset',[])
+.controller('DatasetCtrl', Dataset)
 ;
 

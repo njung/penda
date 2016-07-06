@@ -60,7 +60,7 @@ UploadCtrl.prototype.upload = function(files, invalid) {
         self.uploadStatus = "uploaded";
         alert("Berhasil diunggah.");
         self.$scope.data = {};
-        self.$state.go('admin');
+        self.$state.go('dataset');
       }, function(err){
         self.$rootScope.preventNavigation = false;
         self.uploadStatus = "failed";

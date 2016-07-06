@@ -309,6 +309,7 @@ Dataset.prototype.upload = function(request, reply) {
 
   });
   fws.on("error", function(err){
+    console.log(err);
     reply(err).code(500);
   })
 }

@@ -3,7 +3,7 @@
                 <a href="/" style="color:white !important;text-decoration:none !important;">_APP_NAME_</a>
         </div>
         <div class="hide-on-mobile navbar-header" style="margin-top:5px;margin-left:15px;">
-          <input class="form-control" type="text" placeholder="Cari data" style="border:0px;height:30px;padding:2px 10px;width:300px;border-radius:3px !important;" ng-model="search.string" ng-keypress="uniSearch($event)">
+          <input class="form-control" type="text" placeholder="Cari data" style="border:0px;height:30px;padding:2px 10px;width:300px;border-radius:0px !important;" ng-model="search.string" ng-keypress="uniSearch($event)">
         </div>
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul class="nav navbar-nav navbar-right auth-corner-menu" ng-show="!currentUser" style="margin-right:0px;">
@@ -19,7 +19,7 @@
               <a href="_HOST_/#/upload/new">Unggah</a>
             </li>
             <li>
-              <a href="_HOST_/#/admin/dataset">Dataset</a>
+              <a href="_HOST_/#/dataset/list">Dataset</a>
             </li>
             <li>
               <a href="_HOST_/#/logout">Keluar</a>

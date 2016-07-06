@@ -1,8 +1,16 @@
-<div cjass="fluid-container" ng-controller="AdminCtrl as admin">
+<div cjass="fluid-container" ng-controller="DatasetCtrl as dataset">
   <div class="row animated fadeIn margined-container">
-    <div ng-show="mode=='list'" class=" animated fadeIn">
+    <div ng-show="mode=='list' && list.data.length < 1" class="content-centered animated fadeIn">
+        <span class="alert alert-info">Belum ada data</span>
+    </div>
+    <div ng-show="mode=='list' && list.data.length > 0" class=" animated fadeIn">
+      <button class="btn btn-primary pull-right" ng-click="dataset.list()">Muat ulang</button>
       <h1>Dataset</h1>
-      <table class="table table-striped table-hover table-bordered">
+      <div class="content-centered" ng-show="spinner.list">
+        <br><br>
+        <img class="centered" src="/assets/img/spinners/spinner_64.gif" style="height:32px;">
+      </div>
+      <table class="table table-striped table-hover table-bordered" ng-hide="spinner.list">
         <thead>
           <tr>
             <td>Judul</td>
@@ -15,9 +23,10 @@
             <td>
               <span ng-show="data.status=='pending'" class="fa fa-spinner"></span>
               <span ng-show="data.status=='done'" class="fa fa-check-circle"></span>
-              <span ng-show="data.status=='error' || data.error" class="fa fa-warning pointer" ng-click="admin.alert(data.error);"></span>
+              <span ng-show="data.status=='error' || data.error" class="fa fa-warning pointer" ng-click="dataset.alert(data.error);"></span>
               &nbsp;
-              <a href="" ng-click="admin.get(data.filename);">{{data.title}}</a>
+              <!--a href="" ng-click="dataset.get(data.filename);">{{data.title}}</a-->
+              <a href="#/dataset/{{data.filename}}">{{data.title}}</a>
             </td>
             <td>
                 {{data.createdAt}}
@@ -28,8 +37,8 @@
           </tr>
         </tbody>
       </table>
-	    <div class="content-centered centered">
-	    	<pagination total-items="list.total" ng-model="list.page" ng-change="admin.paginate()" items-per-page="10"></pagination>
+	    <div class="content-centered centered" ng-hide="spinner.list">
+	    	<pagination total-items="list.total" ng-model="list.page" ng-change="dataset.paginate()" items-per-page="10"></pagination>
 	    </div>
 	  </div>
     <div ng-show="mode=='item'" class=" animated fadeIn">
@@ -40,16 +49,25 @@
       <div ng-hide="spinner.dataset">
         <div class="row">
           <h1>Dataset : {{currentItem.title}}</h1>
-          <div class="pull-left">
-            <h4>Meta</h4>
+          <div class="pull-left" ng-mouseover="appearance.meta=true;" ng-mouseleave="appearance.meta=false;" style="width:150px">
+            <h4>
+              Meta&nbsp;
+              <small ng-show="appearance.meta && !appearance.hideMeta" class="pointer" ng-click="appearance.hideMeta=true">Sembunyikan</small>
+              <small ng-show="appearance.hideMeta" class="pointer" ng-click="appearance.hideMeta=false">Tampilkan</small>
+            </h4>
           </div>
-          <div class="pull-right" style="margin-bottom:15px;">
-            <button class="btn btn-default" ng-click="mode='list'"><span class="fa fa-chevron-left"></span>&nbsp;Kembali</button>
+          <div class="pull-right" style="margin-bottom:15px;" ng-hide="confirmDelete">
+            <a href="#/dataset/list" class="btn btn-default"><span class="fa fa-chevron-left"></span>&nbsp;Kembali</a>
             <button class="btn btn-default"><span class="fa fa-edit"></span>&nbsp;Sunting</button>
-            <button class="btn btn-default" ng-click="admin.delete(currentItem.filename);"><span class="fa fa-trash"></span>&nbsp;Hapus</button>
+            <button class="btn btn-default" ng-click="confirmDelete=true;"><span class="fa fa-trash"></span>&nbsp;Hapus</button>
+          </div>
+          <div class="pull-right" style="margin-bottom:15px;" ng-show="confirmDelete">
+            Anda yakin ingin menghapus dataset ini?
+            <button class="btn btn-default" ng-click="confirmDelete=false;">Tidak</button>
+            <button class="btn btn-default" ng-click="dataset.delete(currentItem.filename);"><span class="fa fa-trash"></span>&nbsp;Ya, hapus</button>
           </div>
         </div>
-        <div class="row">
+        <div class="row" ng-hide="appearance.hideMeta">
           <div class="col-sm-6 no-padding">
             <table class="table table-bordered table-hover" style="margin-bottom:0px !important;">
               <tbody>
@@ -58,7 +76,7 @@
                   <td>
                     <span ng-show="currentItem.status=='pending'" class="fa fa-spinner"></span>
                     <span ng-show="currentItem.status=='done'" class="fa fa-check-circle"></span>
-                    <span ng-show="currentItem.status=='error' || currentItem.error" class="fa fa-warning pointer" ng-click="admin.alert(currentItem.error);"></span>
+                    <span ng-show="currentItem.status=='error' || currentItem.error" class="fa fa-warning pointer" ng-click="dataset.alert(currentItem.error);"></span>
                   </td>
                 </tr>
                 <tr>
@@ -112,8 +130,14 @@
         <br>
         <div class="row">
           <div class="col-sm-6 no-padding">
-            <h4>Profil Pengunggah</h4>
-            <table class="table table-bordered table-hover" style="margin-bottom:0px !important;">
+            <div class="pull-left" ng-mouseover="appearance.uploader=true;" ng-mouseleave="appearance.uploader=false;" style="width:250px">
+              <h4>
+                Profil Pengunggah&nbsp;
+                <small ng-show="appearance.uploader && !appearance.hideUploader" class="pointer" ng-click="appearance.hideUploader=true">Sembunyikan</small>
+                <small ng-show="appearance.hideUploader" class="pointer" ng-click="appearance.hideUploader=false">Tampilkan</small>
+              </h4>
+            </div>
+            <table class="table table-bordered table-hover" style="margin-bottom:0px !important;" ng-hide="appearance.hideUploader">
               <tbody>
                 <tr>
                   <td class="bg-lightgrey" style="width:150px;">Pengunggah</td>
@@ -127,8 +151,14 @@
             </table>
           </div>
           <div class="col-sm-6 no-padding animated fadeIn" ng-show="currentItem.status=='done'">
-            <h4>Skema</h4>
-            <table class="table table-bordered table-hover" style="margin-bottom:0px !important;">
+            <div class="pull-left" ng-mouseover="appearance.scheme=true;" ng-mouseleave="appearance.scheme=false;" style="width:250px">
+              <h4>
+                Skema&nbsp;
+                <small ng-show="appearance.scheme && !appearance.hideScheme" class="pointer" ng-click="appearance.hideScheme=true">Sembunyikan</small>
+                <small ng-show="appearance.hideScheme" class="pointer" ng-click="appearance.hideScheme=false">Tampilkan</small>
+              </h4>
+            </div>
+            <table class="table table-bordered table-hover" style="margin-bottom:0px !important;" ng-hide="appearance.hideScheme">
               <tbody>
                 <tr>
                   <td class="bg-lightgrey" style="width:150px;">Jumlah kolom</td>
@@ -169,7 +199,7 @@
             <div class="btn btn-default"  style="height:33px;width:100px;padding:5px 10px;display:inline-block;position:absolute;" 
   
                 dropdown-menu="limits"
-                dropdown-onchange="admin.updateLimit(selected);"
+                dropdown-onchange="dataset.updateLimit(selected);"
                 dropdown-item-label="text"
               >Limit : {{datasetQuery.limit}}
             </div>
@@ -177,9 +207,9 @@
           <div class="pull-right" style="width:175px;margin-right:80px;">
             <div class="input-group">
               <span style="height:33px;width:33px;" class="input-group-addon pointer" ng-click="prevPageQuery()"><span class="fa fa-chevron-left"></span></span>
-              <input class="form-control" type="number" style="height:33px;padding:2px 10px;width:75px;" ng-model="datasetQuery.page" ng-keypress="admin.getQuery()" ng-change="admin.getQuery();">
+              <input class="form-control" type="number" style="height:33px;padding:2px 10px;width:75px;" ng-model="datasetQuery.page" ng-keypress="dataset.getQuery()" ng-change="dataset.getQuery();">
   
-              <span style="height:33px;width:33px;" class="input-group-addon pointer" ng-click="admin.nextPageQuery()"><span class="fa fa-chevron-right"></span></span>
+              <span style="height:33px;width:33px;" class="input-group-addon pointer" ng-click="dataset.nextPageQuery()"><span class="fa fa-chevron-right"></span></span>
             </div>
           </div>
           <div style="height:33px;width:150px;padding:5px 10px;display:inline-block;position:absolute;" 
@@ -190,9 +220,9 @@
           </div>
           <div style="display:inline-block;margin-left:160px;" class="input-group">
             
-            <input class="form-control" type="text" placeholder="Cari data atau query SQL SELECT" style="height:33px;padding:2px 10px;width:300px;border-radius:3px !important;" ng-model="datasetQuery.searchString" ng-keypress="admin.getQuerySearch($event)" ng-disabled="!datasetQuery.searchKey.value">
+            <input class="form-control" type="text" placeholder="Cari data atau query SQL SELECT" style="height:33px;padding:2px 10px;width:300px;border-radius:0px !important;" ng-model="datasetQuery.searchString" ng-keypress="dataset.getQuerySearch($event)" ng-disabled="!datasetQuery.searchKey.value">
 
-            <span style="height:33px;width:33px;" class="input-group-addon pointer" ng-click="admin.getQuery()"><span class="fa fa-search"></span></span>
+            <span style="height:33px;width:33px;" class="input-group-addon pointer" ng-click="dataset.getQuery()"><span class="fa fa-search"></span></span>
           </div>
           <hr>
           <ul class="nav nav-tabs">
