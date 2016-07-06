@@ -1,4 +1,4 @@
-var Start = function ($stateParams, $scope, $state, $window, $rootScope, AuthService, localStorageService, toastr, UserService, $timeout, $http, $interval, ToastrService, host, $compile){
+var Start = function ($stateParams, $scope, $state, $window, $rootScope, AuthService, localStorageService, toastr, UserService, $timeout, $http, $interval, ToastrService, host, $compile, DatasetService){
   this.$stateParams = $stateParams;
   this.$scope = $scope;
   this.$state = $state;
@@ -14,6 +14,7 @@ var Start = function ($stateParams, $scope, $state, $window, $rootScope, AuthSer
   this.ToastrService = ToastrService;
   this.host = host;
   this.$compile = $compile;
+  this.DatasetService = DatasetService;
   var self = this;
 
   /* if (self.$rootScope.currentUser) { */
@@ -31,9 +32,9 @@ var Start = function ($stateParams, $scope, $state, $window, $rootScope, AuthSer
   /* var realCheckToken = function(){ */
   /*   self.AuthService.checkToken({redirect:true}) */
   /*     .then(function(){ */
-  /*       self.$state.go("main"); */
+  /*       self.$state.go('main'); */
   /*       self.$rootScope.loginForm = false; */
-  /*       self.UserService.getUserById(self.localStorageService.get("currentUser")) */
+  /*       self.UserService.getUserById(self.localStorageService.get('currentUser')) */
   /*         .success(function(data, status, headers) { */
   /*           self.$rootScope.currentUser = data.fullName; */
   /*           self.$rootScope.currentUserRule = data.rule; */
@@ -42,26 +43,32 @@ var Start = function ($stateParams, $scope, $state, $window, $rootScope, AuthSer
   /* } */
   /* realCheckToken(); */
   
-  var dataset = new recline.Model.Dataset({
-    url : '/api/sample',
-    backend:'csv',
-    delimiter: ',',
-    encoding : 'utf-8',
-  });
-  dataset.fetch();
-  var $el = $('#mygrid');
-  var grid = new recline.View.SlickGrid({
-    model: dataset,
-    el: $el
-  });
-  grid.visible = true;
-  grid.render();
+  self.list({limit:5})
+}
+
+Start.prototype.showDataset = function(filename) {
+  var self = this;
+  self.$state.go('dataset', { mode : filename });
+}
+
+Start.prototype.list = function(option){
+  var self = this;
+  self.$scope.spinner.list = true;
+  self.$scope.mode = 'list';
+  self.$scope.currentItem = null;
+  var option = option || { page : 1 };
+  self.DatasetService.list(option)
+  .then(function(result){
+    self.$scope.spinner.list = false;
+    self.$scope.list = result.data;
+  })
 }
 
 
-Start.inject = [ "$stateParams", "$scope", "$state", "$window", "$rootScope", "AuthService", "localStorageService", "toastr" , "UserService", "$timeout", "$http", "$interval", "ToastrService", "host", "$compile"];
 
-angular.module("start",[])
-.controller("StartCtrl", Start)
+Start.inject = [ '$stateParams', '$scope', '$state', '$window', '$rootScope', 'AuthService', 'localStorageService', 'toastr' , 'UserService', '$timeout', '$http', '$interval', 'ToastrService', 'host', '$compile', 'DatasetService'];
+
+angular.module('start',[])
+.controller('StartCtrl', Start)
 ;
 

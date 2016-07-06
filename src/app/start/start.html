@@ -1,4 +1,4 @@
-<div class="container-fluid" ng-controller="StartCtrl">
+<div class="container-fluid" ng-controller="StartCtrl as start">
 
     <div id="css-carousel" class="css-carousel">
       <input class="css-carousel-active" type="radio" id="css-carousel-1" name="css-carousel" aria-hidden="true" hidden checked="checked">
@@ -49,7 +49,7 @@
       </ol>
     </div>
 
-  <div class="row margined-container">
+  <div class="row margined-container" style="padding-top:50px;">
     <div class="counter-up-container centered content-centered aceh-color-gold-fg">
       <h3>
       <span class="counter-up" id="recordCounterUp"></span>,
@@ -103,7 +103,7 @@
   </div>
   <div class="row margined-container aceh-color-gold-bg" style="height:5px;padding:0px !important">
   </div>
-  <div class="row margined-container aceh-color-lightgreen-bg">
+  <div class="row margined-container aceh-color-lightgreen-bg" style="padding-top:50px;">
     <div class="category-container centered content-centered">
       <div class="pointer category-block aceh-color-greygreen-bg">
         Pendidikan
@@ -131,59 +131,25 @@
   <div class="row margined-container" style="padding:0px !important">
     <div class="col-md-9" style="padding:30px;">
       <h4 class="aceh-color-green-fg">Dataset Terbaru</h4>
-      <div class="dataset-item">
+      <div class="dataset-item" ng-repeat="dataset in list.data" ng-click="start.showDataset(dataset.filename);">
         <div class="dataset-icon-container"></div>
         <div class="dataset-info">
-          <h4 class="dataset-title">Lifting Gas Bumi Aceh 2011</h4>
-          <p class="dataset-desc">Description lorem ipsum </p>
-          <span class="alert-info">8483499 record</span>
+          <h4 class="dataset-title">{{dataset.title}}</h4>
+          {{dataset.createdAt | amDateFormat:'DD-MM-YYYY HH:mm:ss'}} &nbsp;
+          <span class="alert-info">{{dataset.totalRows}} record</span>
           <span class="alert-info">Kesehatan</span>
           <span class="alert-info">Kependudukan</span>
+          <p class="dataset-desc">{{dataset.desc}} </p>
         </div>
       </div>
-      <div class="dataset-item">
-        <div class="dataset-icon-container"></div>
-        <div class="dataset-info">
-          <h4 class="dataset-title">Lifting Gas Bumi Aceh 2011</h4>
-          <p class="dataset-desc">Description lorem ipsum </p>
-          <span class="alert-info">8483499 record</span>
-          <span class="alert-info">Kesehatan</span>
-          <span class="alert-info">Kependudukan</span>
-        </div>
-      </div>
-      <div class="dataset-item">
-        <div class="dataset-icon-container"></div>
-        <div class="dataset-info">
-          <h4 class="dataset-title">Lifting Gas Bumi Aceh 2011</h4>
-          <p class="dataset-desc">Description lorem ipsum </p>
-          <span class="alert-info">8483499 record</span>
-          <span class="alert-info">Kesehatan</span>
-          <span class="alert-info">Kependudukan</span>
-        </div>
-      </div>
-      <div class="dataset-item">
-        <div class="dataset-icon-container"></div>
-        <div class="dataset-info">
-          <h4 class="dataset-title">Lifting Gas Bumi Aceh 2011</h4>
-          <p class="dataset-desc">Description lorem ipsum </p>
-          <span class="alert-info">8483499 record</span>
-          <span class="alert-info">Kesehatan</span>
-          <span class="alert-info">Kependudukan</span>
-        </div>
-      </div>
-      <div class="dataset-item">
-        <div class="dataset-icon-container"></div>
-        <div class="dataset-info">
-          <h4 class="dataset-title">Lifting Gas Bumi Aceh 2011</h4>
-          <p class="dataset-desc">Description lorem ipsum </p>
-          <span class="alert-info">8483499 record</span>
-          <span class="alert-info">Kesehatan</span>
-          <span class="alert-info">Kependudukan</span>
-        </div>
+      <div class="content-centered">
+        <a href="#/dataset/list" class="btn btn-primary" style="color:white !important">Lihat semua...</a>
       </div>
     </div>
-    <div class="col-md-3 aceh-color-greygreen-bg" style="height:500px;">
-    Sidebar
+    <div class="col-md-3">
+      <div class="aceh-color-greygreen-bg" style="margin-top:15px;height:500px;">
+        Sidebar
+      </div>
     </div>
   </div>
   <div class="row margined-container aceh-color-gold-bg" style="height:5px;padding:0px !important">

@@ -101,7 +101,7 @@ AuthService.prototype.clearCredentials = function(){
   self.$rootScope.loginForm = true;
   self.$rootScope.frontPage = true;
   self.$rootScope.currentUser = false;
-  self.$rootScope.currentUserRUle = false;
+  self.$rootScope.currentUserRule = false;
   self.$state.go("start");
 }
 

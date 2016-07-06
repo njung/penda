@@ -41,6 +41,42 @@ var Dataset = function ($stateParams, $scope, $state, $window, $rootScope, AuthS
       value:99
     },
   ]
+  self.$scope.listQuery = {
+    uploader : {
+      text:'Semua',
+      value:'all'
+    },
+    category : {
+      text:'Semua',
+      value:'all'
+    },
+  }
+  self.$scope.uploader = [{
+      text:'Semua',
+      value:'all'
+    },{divider:true},
+    {
+      text:'Provinsi',
+      value:'Provinsi'
+    },
+    {
+      text:'Diskes',
+      value:'Diskes'
+    },
+  ]
+  self.$scope.categories = [{
+      text:'Semua',
+      value:'all'
+    },{divider:true},
+    {
+      text:'Pendidikan',
+      value:'Pendidikan'
+    },
+    {
+      text:'Kesehatan',
+      value:'Kesehatan'
+    },
+  ]
   self.$scope.datasetQuery = {
     limit : 10,
     page : 1,
@@ -49,20 +85,25 @@ var Dataset = function ($stateParams, $scope, $state, $window, $rootScope, AuthS
   }
 
   // TODO this function costs too many request, please think for alternative solution 
-  self.AuthService.checkToken({redirect:true})
-    .then(function(){
-      /* self.UserService.getUserById(self.localStorageService.get('currentUser')) */
-      /*   .success(function(data, status, headers) { */
-      /*     self.$rootScope.currentUser = data.fullName; */
-      /*     self.$rootScope.currentUserRule = data.rule; */
-      /*   }) */
-    })
+  /* self.AuthService.checkToken({redirect:true}) */
+  /*   .then(function(){ */
+  /*     /1* self.UserService.getUserById(self.localStorageService.get('currentUser')) *1/ */
+  /*     /1*   .success(function(data, status, headers) { *1/ */
+  /*     /1*     self.$rootScope.currentUser = data.fullName; *1/ */
+  /*     /1*     self.$rootScope.currentUserRule = data.rule; *1/ */
+  /*     /1*   }) *1/ */
+  /*   }) */
  
   if (self.$stateParams.mode !== 'list') {
     self.get(self.$stateParams.mode);
   } else {
     self.list();
   }
+}
+
+Dataset.prototype.showDataset = function(filename) {
+  var self = this;
+  self.$state.go('dataset', { mode : filename });
 }
 
 Dataset.prototype.list = function(option){

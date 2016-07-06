@@ -1,9 +1,9 @@
 <div cjass="fluid-container" ng-controller="DatasetCtrl as dataset">
   <div class="row animated fadeIn margined-container">
-    <div ng-show="mode=='list' && list.data.length < 1" class="content-centered animated fadeIn">
+    <div ng-show="mode=='list' && list.data.length < 1" class="content-centered animated fadeIn" style="margin-top:50px;">
         <span class="alert alert-info">Belum ada data</span>
     </div>
-    <div ng-show="mode=='list' && list.data.length > 0" class=" animated fadeIn">
+    <div ng-show="mode=='list' && list.data.length > 0 && currentUser" class=" animated fadeIn">
       <button class="btn btn-primary pull-right" ng-click="dataset.list()">Muat ulang</button>
       <h1>Dataset</h1>
       <div class="content-centered" ng-show="spinner.list">
@@ -29,7 +29,7 @@
               <a href="#/dataset/{{data.filename}}">{{data.title}}</a>
             </td>
             <td>
-                {{data.createdAt}}
+                {{data.createdAt | amDateFormat:'DD-MM-YYYY HH:mm:ss'}}
             </td>
             <td class="content-centered">
                 {{data.uploader}}
@@ -40,6 +40,54 @@
 	    <div class="content-centered centered" ng-hide="spinner.list">
 	    	<pagination total-items="list.total" ng-model="list.page" ng-change="dataset.paginate()" items-per-page="10"></pagination>
 	    </div>
+	  </div>
+    <div ng-show="mode=='list' && list.data.length > 0 && !currentUser" class=" animated fadeIn">
+      <div class="row">
+        <div class="col-md-9">
+          <div>
+            <h1>Dataset</h1>
+            <div class="pull-right" style="margin-top:-45px;">
+              <div style="height:33px;width:150px;padding:5px 10px;display:inline-block;vertical-align:top;" 
+                  dropdown-select="uploader"
+                  dropdown-model="listQuery.uploader"
+                  dropdown-item-label="text"
+               >
+              </div>
+              <div style="height:33px;width:150px;padding:5px 10px;display:inline-block;vertical-align:top;" 
+                  dropdown-select="categories"
+                  dropdown-model="listQuery.category"
+                  dropdown-item-label="text"
+               >
+              </div>
+            </div>
+          </div>
+          <div>
+            <div style="margin-top:15px;:w" class="alert alert-info">Hasil pencarian untuk kata kunci "Pengairan"</div>
+          </div>
+
+          <div class="content-centered" ng-show="spinner.list">
+            <br><br>
+            <img class="centered" src="/assets/img/spinners/spinner_64.gif" style="height:32px;">
+          </div>
+          <div class="dataset-item" ng-repeat="data in list.data" ng-click="dataset.showDataset(data.filename);">
+            <div class="dataset-icon-container"></div>
+            <div class="dataset-info">
+              <h4 class="dataset-title">{{data.title}}</h4>
+              {{data.createdAt | amDateFormat:'DD-MM-YYYY HH:mm:ss'}} &nbsp;
+              <span class="alert-info">{{data.totalRows}} record</span>
+              <span class="alert-info">Kesehatan</span>
+              <span class="alert-info">Kependudukan</span>
+              <p class="dataset-desc">{{data.desc}} </p>
+            </div>
+          </div>
+          <div class="content-centered centered" ng-hide="spinner.list">
+	    	    <pagination total-items="list.total" ng-model="list.page" ng-change="dataset.paginate()" items-per-page="10"></pagination>
+          </div>
+        </div>
+        <div class="col-md-3 aceh-color-greygreen-bg" style="height:500px;margin-top:15px">
+          Sidebar
+        </div>
+      </div>
 	  </div>
     <div ng-show="mode=='item'" class=" animated fadeIn">
       <div class="content-centered" ng-show="spinner.dataset">
