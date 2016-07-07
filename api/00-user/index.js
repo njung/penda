@@ -306,7 +306,7 @@ User.prototype.create = function(request, cb) {
   var self = this;
   var newUser = model();
   newUser.username = request.payload.email;
-  newUser.isActive = false;
+  newUser.isActive = true;
   model().register(newUser, request.payload.password, function(err, result) {
     if (err) return cb({error: err.name, message: err.message, statusCode: 400}, null);
     var user = {

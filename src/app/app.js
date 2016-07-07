@@ -119,7 +119,7 @@ angular.module("App", [
     }
   )
   .state("user", {
-      url: "/user",
+      url: "/user/{mode}",
       cache: false,
       templateProvider: function($templateCache) {
         return $templateCache.get("user/user.html");

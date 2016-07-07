@@ -7,7 +7,7 @@ var UserService = function($http, AuthService, host, localStorageService) {
   var self = this;
 }
 
-UserService.prototype.getUserById = function(id) {
+UserService.prototype.get = function(id) {
   var self = this;
   var path = "/api/user/" + id;
   return self.$http({
@@ -19,14 +19,11 @@ UserService.prototype.getUserById = function(id) {
   });
 }
 
-UserService.prototype.list = function(page, limit, filter) {
-  console.log("user service : ");
-  console.log(filter);
-  page--;
+UserService.prototype.list = function(option) {
   var self = this;
+  var page = option.page || 1;
+  var limit = option.limit || 10;
   var path = "/api/users?page=" + page + "&limit=" + limit;
-  if (filter.rule) path = path + "&rule=" + filter.rule;
-  if (filter.country) path = path + "&country=" + filter.country;
   return self.$http({
     headers : {
       Authorization : self.AuthService.generateMac(path, "GET"),
@@ -68,7 +65,7 @@ UserService.prototype.update = function(user) {
 
 UserService.prototype.create = function(data) {
   var self = this;
-  var path = "/api/users";
+  var path = "/api/user-register";
   return self.$http({
     headers : {
       Authorization : self.AuthService.generateMac(path, "POST"),

@@ -94,7 +94,7 @@ var Dataset = function ($stateParams, $scope, $state, $window, $rootScope, AuthS
   /*     /1*   }) *1/ */
   /*   }) */
  
-  if (self.$stateParams.mode !== 'list') {
+  if (self.$stateParams.mode && self.$stateParams.mode !== 'list') {
     self.get(self.$stateParams.mode);
   } else {
     self.list();

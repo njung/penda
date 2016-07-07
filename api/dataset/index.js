@@ -40,6 +40,8 @@ var datasetModel = function() {
     status : String,
     filename : String,
     title : String,
+    description : String,
+    keywords : String,
     source : String,
     contact : String,
     releaseFreq : String,
@@ -55,6 +57,7 @@ var datasetModel = function() {
     createdAt : Date,
     updatedAt : Date,
     error : {},
+    uploaderId : String,
   }
 
   var s = new mongoose.Schema(schema);
@@ -74,7 +77,7 @@ Dataset.prototype.registerEndPoints = function() {
     },
     config: {
       // TODO extend Hawk timeout
-      auth : false,
+			auth : false,
       payload : {
         timeout : false,
         output : "stream",
@@ -85,18 +88,6 @@ Dataset.prototype.registerEndPoints = function() {
     }
   });
  
-  // TODO Remove this sample API endpoint 
-  self.server.route({
-    method: "GET",
-    path: "/api/sample",
-    handler: function(request, reply) {
-      self.sample(request, reply);
-    },
-		config : {
-			auth : false,
-    }
-  });
-
   self.server.route({
     method: "GET",
     path: "/api/datasets",
@@ -126,7 +117,7 @@ Dataset.prototype.registerEndPoints = function() {
       self.delete(request, reply);
     },
 		config : {
-			auth : false,
+			/* auth : false, */
     }
   });
 }
@@ -264,6 +255,8 @@ Dataset.prototype.upload = function(request, reply) {
       status : 'pending',
       filename : filename,
       title : request.payload.title,
+      description : request.payload.description,
+      keywords : request.payload.keywords,
       source : request.payload.source,
       contact : request.payload.contact,
       releaseFreq : request.payload.releaseFreq,
@@ -272,6 +265,7 @@ Dataset.prototype.upload = function(request, reply) {
       scope : request.payload.scope,
       reference : request.payload.reference,
       createdAt : new Date(),
+      /* uploaderId : request.auth.credentials.userId */
     }
     datasetModel().create(data, function(err, result) {
       if (err) {

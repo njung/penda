@@ -15,17 +15,17 @@
             </li>
           </ul>
           <ul class="nav navbar-nav navbar-right auth-corner-menu" ng-show="currentUser">
-            <li>
+            <li ng-class="{'navbar-nav-li-active':state.current.name=='upload'}">
               <a href="_HOST_/#/upload/new">Unggah</a>
             </li>
-            <li>
+            <li ng-class="{'navbar-nav-li-active':state.current.name=='dataset'}">
               <a href="_HOST_/#/dataset/list">Dataset</a>
             </li>
-            <li>
-              <a href="_HOST_/#/dataset/list">Kategori</a>
+            <li ng-class="{'navbar-nav-li-active':state.current.name=='category'}">
+              <a href="_HOST_/#/category/list">Kategori</a>
             </li>
-            <li>
-              <a href="_HOST_/#/dataset/list">Pengguna / Instansi</a>
+            <li ng-class="{'navbar-nav-li-active':state.current.name=='user'}">
+              <a href="_HOST_/#/user/list">Pengguna / Instansi</a>
             </li>
             <li>
               <a href="_HOST_/#/logout">Keluar</a>

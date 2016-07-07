@@ -109,7 +109,6 @@ Profiles.prototype.registerEndPoints = function() {
       self.register(request, reply);
     },
     config : {
-      auth: false,
       validate : {
         payload: Joi.object(registerSchema)
       }
@@ -262,15 +261,6 @@ Profiles.prototype.registerEndPoints = function() {
       self.setPasswordRecovery(request, reply);
     }
   });
-
-  // Other
-  self.server.route({
-    method: "POST",
-    path: "/api/user/{id}/hashtag",
-    handler: function(request, reply) {
-      self.setHashtag(request, reply);
-    }
-  });
 }
 
 /**
@@ -298,7 +288,8 @@ Profiles.prototype.list = function(request, reply) {
   var defaultLimit = 10;
   var limit = request.query.limit || defaultLimit;
   limit = parseInt(limit);
-  var page = request.query.page || 0;
+  var page = request.query.page || 1;
+  page--;
   page = parseInt(page);
 
   var q = {}
@@ -476,6 +467,7 @@ Profiles.prototype.register = function(request, reply) {
     var err = new Error('Repeat password not matched');
     return reply(err).statusCode = 400;
   }
+  console.log(request.auth);
   if (request.auth && request.auth.credentials) {
     console.log("registering new user by admin");
     profileModel()
@@ -485,6 +477,7 @@ Profiles.prototype.register = function(request, reply) {
         return reply(err).statusCode = 400;
       }
       if (result.rule == "admin") {
+        request.isActive = true;
         User.class.create(request, function(err, result) {
           if (err) {
             return reply(err).statusCode = 400;
@@ -1096,13 +1089,10 @@ Profiles.prototype.realRegister = function(request, cb) {
   newUser.joinedSince = request.payload.joinedSince;
   newUser.birthDate = moment(request.payload.birthDate);
   newUser.activationCode = uuid.v4();
-  if (request.payload.country) newUser.country = request.payload.country;
   profileModel().create(newUser, function(err, result) {
     if (err) {
       return cb(parse(err));
     }
-    // Async
-    Email.class.sendActivationUrl(result.email, result);
     var profile = {
       email : result.email,
       _id : result._id,

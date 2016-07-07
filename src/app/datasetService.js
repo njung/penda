@@ -17,11 +17,12 @@ DatasetService.prototype.upload = function(data, obj) {
   }
   console.log(payload);
   payload.content = data; 
+  var path = self.host + '/api/upload';
   var req = {
     method: 'POST',
     data : payload,
     timeout : 300000,
-    url: self.host + '/api/upload',
+    url: path,
     headers : JSON.parse(localStorage.getItem("HawkPairKey"))
   }
   return self.Upload.upload(req);

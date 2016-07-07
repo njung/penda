@@ -172,6 +172,9 @@ label {
 .form-control {
 	border-radius:0px !important;
 }
+.control-label-right {
+  text-align:right;
+}
 .input-group-addon {
 	border-radius:0px !important;
 }
@@ -658,12 +661,18 @@ button:active {
 
 .dataset-item:hover {
   background:#E8EEEA !important;
+  /* transition: background 0.5s ease-in-out; */
+  /* -moz-transition: background 0.5s ease-in-out; */
+  /* -webkit-transition: background 0.5s ease-in-out; */
 }
 .dataset-item {
   margin:10px;
   padding:10px;
   cursor:pointer;
   border-bottom:1px solid lightgrey;
+  transition: background 0.2s ease-in-out;
+  -moz-transition: background 0.2s ease-in-out;
+  -webkit-transition: background 0.2s ease-in-out;
 }
 .dataset-icon-container {
   width:55px;
@@ -688,6 +697,10 @@ button:active {
 /* OVERRIDE COLOR */
 
 .navbar-nav > li:hover {
+  background:#5d9e58 !important;
+}
+
+.navbar-nav-li-active {
   background:#5d9e58 !important;
 }
 
@@ -848,3 +861,5 @@ a,a:hover,a:active {
         border: 0;
         padding: 0;
     }
+
+
