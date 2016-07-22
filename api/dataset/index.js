@@ -155,8 +155,13 @@ Dataset.prototype.list = function(request, reply) {
   var count;
   limit = parseInt(limit);
   page = parseInt(page);
+  var opt = {status: { $ne : 'deleted' }};
+	if (request.query.status) {
+		opt.status = request.query.status;
+	}
+	console.log(opt);
   datasetModel()
-  .count({status: { $ne : 'deleted' }})
+  .count(opt)
   .exec(function(err, result) {
     if (err) {
       console.log(err);
@@ -164,7 +169,7 @@ Dataset.prototype.list = function(request, reply) {
     }
     count = result;
     datasetModel()
-    .find({status: { $ne : 'deleted' }})
+    .find(opt)
     .sort({_id:-1})
     .limit(limit)
     .skip(limit * (page - 1))
@@ -173,6 +178,7 @@ Dataset.prototype.list = function(request, reply) {
         console.log(err);
         return reply(boom.wrap(err));
       }
+			// TODO Assign uploader data
       var obj = {
         total : count,
         page : page,
@@ -251,6 +257,7 @@ Dataset.prototype.upload = function(request, reply) {
   request.payload.content.pipe(fws);
    
   fws.on("finish", function(){
+		console.log(request.auth);
     var data = {
       status : 'pending',
       filename : filename,
@@ -265,7 +272,7 @@ Dataset.prototype.upload = function(request, reply) {
       scope : request.payload.scope,
       reference : request.payload.reference,
       createdAt : new Date(),
-      /* uploaderId : request.auth.credentials.userId */
+			uploaderId : request.payload.uploaderId
     }
     datasetModel().create(data, function(err, result) {
       if (err) {
@@ -304,7 +311,7 @@ Dataset.prototype.upload = function(request, reply) {
   });
   fws.on("error", function(err){
     console.log(err);
-    reply(err).code(500);
+    reply(err);
   })
 }
 

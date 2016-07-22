@@ -1,3 +1,4 @@
+var boom = require('boom');
 var mongoose = require("mongoose");
 var Joi = require("joi");
 var _ = require("lodash");
@@ -817,6 +818,9 @@ Profiles.prototype.get = function(request, reply) {
 Profiles.prototype.delete = function(request, reply) {
   var self = this;
   var bogus = self.checkBogus(request.params.id);
+  if (!request.auth && request.auth.credentials) {
+    return reply(boom.unauthorized());
+  }
   if (bogus.isBogus) {
     return reply(bogus.reply).statusCode = 404;
   }
@@ -833,8 +837,18 @@ Profiles.prototype.delete = function(request, reply) {
         message: "User profile was not found"
       }).code(400);
     }
-    request.payload.userId = result.userId;
-    User.class.remove(request.payload.userId, function(err, result){
+    if (!result.userId) {
+      return realDelete(request, reply);
+    }
+    // Prevent self delete
+    if (result.userId.toString() === request.auth.credentials.userId.toString()) {
+      return reply({
+        error: "Not Found", 
+        statusCode: 404, 
+        message: "Couldn't self delete."
+      }).code(400);
+    }
+    User.class.remove(result.userId, function(err, result){
       if (err) {
         return reply(err).statusCode = 400;
       }
