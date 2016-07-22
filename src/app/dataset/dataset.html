@@ -292,7 +292,24 @@
             <img class="centered" src="/assets/img/spinners/spinner_64.gif" style="height:32px;">
           </div>
           <div ng-show="viewMode=='table'" id="view-table" class="recline-read-only animated fadeIn" style="margin-bottom: 30px; height: 500px;border:1px solid lightgrey">&nbsp;</div>
-          <div ng-show="viewMode=='graph'" class=" animated fadeIn">Coding in progress...</div>
+          <div ng-show="viewMode=='graph'" class=" animated fadeIn">
+            <div class="row">
+              <div class="col-md-8" id="view-graph" style="background:lightgrey;min-height:500px;padding-top:15px;">
+              </div>              
+              <div class="col-md-4">
+								<h4>Dikelompokkan berdasarkan : </h4>
+								<select ng-model="graphGroupBy" ng-change="dataset.loadGraph();">
+									<option ng-repeat="col in currentItem.schema track by $index">{{col.key}}</option>
+								</select>
+								<h4>Pilih kolom : </h4>
+                <ul style="list-style-type: none;padding-left:0px;">
+                  <li ng-repeat="col in currentItem.schema track by $index" ng-show="col.value=='number'">
+                    <input type="checkbox" ng-model="col.picked" ng-click="dataset.loadGraph();"> {{col.key}}
+                  </li>
+                </ul>      
+              </div>              
+            </div>
+          </div>
           <div ng-show="viewMode=='map'" class=" animated fadeIn">Coding in progress...</div>
         </div>
       </div>

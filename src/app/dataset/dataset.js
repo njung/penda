@@ -22,6 +22,7 @@ var Dataset = function ($stateParams, $scope, $state, $window, $rootScope, AuthS
   // Handle main spinners in one place.
   self.$scope.spinner = {
   };
+  self.$scope.viewMode = 'table';
   self.$scope.appearance = {}
   self.$scope.limits = [
     {
@@ -122,11 +123,16 @@ Dataset.prototype.list = function(option){
   })
 }
 
+Dataset.prototype.loadGraph = function() {
+  var self = this;
+  self.$scope.viewMode = 'graph';
+	self.getQuery();
+}
+
 Dataset.prototype.get = function(filename) {
   var self = this;
   self.$scope.spinner.dataset = true;
   self.$scope.mode = 'item';
-  self.$scope.viewMode = 'table';
   self.DatasetService.get(filename)
   .then(function(result) {
     self.$scope.currentItem = result.data;
@@ -179,71 +185,106 @@ Dataset.prototype.getQuerySearch = function(event) {
 }
 Dataset.prototype.getQuery = function() {
   var self = this;
-  var $el = $('#view-table');
-  $el.text('');
-  if (self.$scope.currentItem.status == 'done') {
-    self.$scope.spinner.datasetQuery = true;
-    // Fetch first page with 10 item limit
-    var sql;
-    var pagination = ' limit ' + self.$scope.datasetQuery.limit + ' offset ' + (self.$scope.datasetQuery.page - 1)*self.$scope.datasetQuery.limit;
-
-    // Use SQL query string
-    if (self.$scope.datasetQuery.searchKey && 
-    self.$scope.datasetQuery.searchKey.value == 'sql' && 
-    self.$scope.datasetQuery.searchString && 
-    self.$scope.datasetQuery.searchString.toLowerCase().indexOf('select') > -1) {
-      sql = self.$scope.datasetQuery.searchString;
-
-    // Just search the string
-    } else if (self.$scope.datasetQuery.searchKey && 
-    self.$scope.datasetQuery.searchKey.value != 'sql' &&
-    self.$scope.datasetQuery.searchString) {
-      sql = 'select * from ' + self.$scope.currentItem.filename + ' where ' + self.$scope.datasetQuery.searchKey.value + ' like "%' + self.$scope.datasetQuery.searchString + '%"';
-      sql += pagination;
-    } else {
-    
-    // Simple pagination
-      sql = 'select * from ' + self.$scope.currentItem.filename;
-      sql += pagination;
-    }
-    console.log(sql);
-    // replace the table name;
-    var splittedSql = sql.split(' ');
-    console.log(splittedSql);
-    var isFrom = false;
-    for (var i in splittedSql) {
-      console.log(splittedSql[i]);
-      if (isFrom) {
-        splittedSql[i] = self.$scope.currentItem.filename;
-        break;
-      }
-      if (splittedSql[i].toLowerCase() == 'from') {
-        isFrom = true;
-      }
-    }
-    console.log(splittedSql);
-    sql = splittedSql.join(' ');
-    console.log(sql);
-    var dataset = new recline.Model.Dataset({
-      url : '/api/dataset/' + self.$scope.currentItem.filename + '?type=csv&sql=' + sql,
-      backend:'csv',
-      delimiter: ',',
-      encoding : 'utf-8',
-    });
-    dataset.fetch().done(function(dataset){
-      console.log(dataset);
-      var grid = new recline.View.SlickGrid({
-        model: dataset,
-        el: $el
-      });
-      grid.visible = true;
-      grid.render();
-      self.$scope.spinner.datasetQuery = false;
-      self.$scope.$apply();
-    });
-  } else {
+		// Clear all view
+    var $el = $('#view-table');
+    var $el = $('#view-graph');
+    var $el = $('#view-map');
     $el.text('');
-  }
+    if (self.$scope.currentItem.status == 'done') {
+      self.$scope.spinner.datasetQuery = true;
+      // Fetch first page with 10 item limit
+      var sql;
+      var pagination = ' limit ' + self.$scope.datasetQuery.limit + ' offset ' + (self.$scope.datasetQuery.page - 1)*self.$scope.datasetQuery.limit;
+  
+      // Use SQL query string
+      if (self.$scope.datasetQuery.searchKey && 
+      self.$scope.datasetQuery.searchKey.value == 'sql' && 
+      self.$scope.datasetQuery.searchString && 
+      self.$scope.datasetQuery.searchString.toLowerCase().indexOf('select') > -1) {
+        sql = self.$scope.datasetQuery.searchString;
+  
+      // Just search the string
+      } else if (self.$scope.datasetQuery.searchKey && 
+      self.$scope.datasetQuery.searchKey.value != 'sql' &&
+      self.$scope.datasetQuery.searchString) {
+        sql = 'select * from ' + self.$scope.currentItem.filename + ' where ' + self.$scope.datasetQuery.searchKey.value + ' like "%' + self.$scope.datasetQuery.searchString + '%"';
+        sql += pagination;
+      } else {
+      
+      // Simple pagination
+        sql = 'select * from ' + self.$scope.currentItem.filename;
+        sql += pagination;
+      }
+      console.log(sql);
+      // replace the table name;
+      var splittedSql = sql.split(' ');
+      console.log(splittedSql);
+      var isFrom = false;
+      for (var i in splittedSql) {
+        console.log(splittedSql[i]);
+        if (isFrom) {
+          splittedSql[i] = self.$scope.currentItem.filename;
+          break;
+        }
+        if (splittedSql[i].toLowerCase() == 'from') {
+          isFrom = true;
+        }
+      }
+      console.log(splittedSql);
+      sql = splittedSql.join(' ');
+      console.log(sql);
+      var dataset = new recline.Model.Dataset({
+        url : '/api/dataset/' + self.$scope.currentItem.filename + '?type=csv&sql=' + sql,
+        backend:'csv',
+        delimiter: ',',
+        encoding : 'utf-8',
+      });
+      dataset.fetch().done(function(dataset){
+        if (self.$scope.viewMode === 'table') {
+          var $el = $('#view-table');
+          console.log(dataset);
+          var grid = new recline.View.SlickGrid({
+            model: dataset,
+            el: $el
+          });
+          grid.visible = true;
+          grid.render();
+          self.$scope.spinner.datasetQuery = false;
+          self.$scope.$apply();
+        } else if (self.$scope.viewMode === 'graph') {
+					// Collect selected field
+					var series = [];
+					for (var i in self.$scope.currentItem.schema) {
+						if (self.$scope.currentItem.schema[i].picked) {
+							series.push(self.$scope.currentItem.schema[i].key);
+						}
+					}
+					if (series.length < 1 || !self.$scope.graphGroupBy) {
+          	self.$scope.spinner.datasetQuery = false;
+						return;
+					}
+          var $el = $('#view-graph');
+    			$el.text('');
+					var opt = {
+            model: dataset,
+            state: {
+              graphType: "lines-and-points",
+              group: self.$scope.graphGroupBy,
+              series: series
+            }
+					}
+					console.log(opt);
+          var graph = new recline.View.Graph(opt);
+          $el.append(graph.el);
+          graph.render();
+          graph.redraw();
+          self.$scope.spinner.datasetQuery = false;
+          self.$scope.$apply();
+        }
+      });
+    } else {
+      $el.text('');
+    }
 }
 
 Dataset.prototype.paginate = function() {
