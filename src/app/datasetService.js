@@ -35,6 +35,9 @@ DatasetService.prototype.list = function(option) {
   var path = '/api/datasets';
   path += '?page=' + page;
   path += '&limit=' + limit;
+  if (option.status) {
+    path += '&status=' + option.status;
+  }
   return self.$http({
     headers : {
       Authorization : self.AuthService.generateMac(path, 'GET'),

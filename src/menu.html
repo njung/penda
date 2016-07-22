@@ -24,12 +24,28 @@
             <li ng-class="{'navbar-nav-li-active':state.current.name=='category'}">
               <a href="_HOST_/#/category/list">Kategori</a>
             </li>
-            <li ng-class="{'navbar-nav-li-active':state.current.name=='user'}">
+            <li ng-class="{'navbar-nav-li-active':state.current.name=='user'}" ng-show="currentUserRule=='admin'">
               <a href="_HOST_/#/user/list">Pengguna / Instansi</a>
+            </li>
+            <li>
             </li>
             <li>
               <a href="_HOST_/#/logout">Keluar</a>
             </li>
+            <!--li class="dropdown">
+            <a href="" class="dropdown-toggle" data-toggle="dropdown">
+                  {{currentUser}} <strong class="caret"></strong></a>
+              <ul class="dropdown-menu">
+                <li>
+                  <a href="#">Profil</a>
+                </li>
+                <li class="divider">
+                </li>
+                <li>
+              		<a href="_HOST_/#/logout">Keluar</a>
+                </li>
+              </ul>
+            </li-->
           </ul>
         </div>
       </nav>

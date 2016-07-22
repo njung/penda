@@ -57,6 +57,9 @@ Start.prototype.list = function(option){
   self.$scope.mode = 'list';
   self.$scope.currentItem = null;
   var option = option || { page : 1 };
+  if (!self.$rootScope.currentUser) {
+    option.status = 'done';
+  }
   self.DatasetService.list(option)
   .then(function(result){
     self.$scope.spinner.list = false;

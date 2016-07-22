@@ -54,6 +54,8 @@ UploadCtrl.prototype.upload = function(files, invalid) {
     }
     self.$rootScope.preventNavigation = true;
     self.uploadStatus = "uploading";
+    // Assign uploader ID
+    self.$scope.data.uploaderId = self.$rootScope.currentUserProfileId;
     self.DatasetService.upload(file, self.$scope.data)
       .then(function(data, status){
         self.$rootScope.preventNavigation = false;

@@ -105,8 +105,13 @@ User.prototype.create = function(data) {
 
 User.prototype.delete = function(id) {
   var self = this;
+  // Prevent self delete
+  if (id.toString()===self.$rootScope.currentUserProfileId.toString()) {
+    return;
+  }
   self.UserService.delete(id)
   .then(function(result) {
+    self.$rootScope.userModal.dismiss();
     self.list();
   })
 }

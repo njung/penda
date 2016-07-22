@@ -76,9 +76,9 @@ UserService.prototype.create = function(data) {
   });
 }
 
-UserService.prototype.delete = function(user) {
+UserService.prototype.delete = function(id) {
   var self = this;
-  var path = "/api/user/" + user._id;
+  var path = "/api/user/" + id;
   return self.$http({
     headers : {
       Authorization : self.AuthService.generateMac(path, "DELETE"),

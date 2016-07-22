@@ -19,7 +19,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat="data in list.data track by $index" ng-click="user.showUser(data)">
+          <tr ng-repeat="data in list.data track by $index" ng-click="user.showUser(data)" class="pointer">
             <td>
               {{data.email}}
             </td>
@@ -89,8 +89,16 @@
           <div class="row form-group">
             <label class="col-sm-4 control-label control-label-right" for="singlebutton"></label>
             <div class="col-sm-8">
-              <button class="btn btn-inline-right btn-default" ng-click="userModal.dismiss()">Batal</button>
-              <button class="btn btn-inline-right btn-primary" ng-click="user.create(currentItem)">Simpan</button>
+              <div ng-show="deleteConfirm">
+                Anda yakin ingin menghapus pengguna / instansi ini?
+                <button class="btn btn-inline-right btn-default" ng-click="deleteConfirm=false;">Batal</button>
+                <button class="btn btn-inline-right btn-danger" ng-click="user.delete(currentItem._id)">Ya, hapus</button>
+              </div>
+              <div ng-hide="deleteConfirm">
+                <button class="btn btn-inline-right btn-default" ng-click="userModal.dismiss()">Batal</button>
+                <button class="btn btn-inline-right btn-danger" ng-click="deleteConfirm=true;" ng-show="currentUserRule=='admin' && currentItem._id && currentItem._id!=currentUserProfileId">Hapus</button>
+                <button class="btn btn-inline-right btn-primary" ng-click="user.create(currentItem)">Simpan</button>
+              </div>
             </div>
           </div>
         </fieldset>
