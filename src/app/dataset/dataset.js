@@ -23,6 +23,7 @@ var Dataset = function ($stateParams, $scope, $state, $window, $rootScope, AuthS
   self.$scope.spinner = {
   };
   self.$scope.viewMode = 'table';
+  self.$scope.mapAvailable = false;
   self.$scope.appearance = {}
   self.$scope.limits = [
     {
@@ -185,11 +186,6 @@ Dataset.prototype.getQuerySearch = function(event) {
 }
 Dataset.prototype.getQuery = function() {
   var self = this;
-		// Clear all view
-    var $el = $('#view-table');
-    var $el = $('#view-graph');
-    var $el = $('#view-map');
-    $el.text('');
     if (self.$scope.currentItem.status == 'done') {
       self.$scope.spinner.datasetQuery = true;
       // Fetch first page with 10 item limit
@@ -280,6 +276,20 @@ Dataset.prototype.getQuery = function() {
           graph.redraw();
           self.$scope.spinner.datasetQuery = false;
           self.$scope.$apply();
+        } else if (self.$scope.viewMode === 'map') {
+          // Map field ( long, lang ) should be available on the schema.
+          var longExists, latExists;
+					for (var i in self.$scope.currentItem.schema) {
+						if (self.$scope.currentItem.schema[i].key === 'long') {
+              longExists = true;
+						}
+						if (self.$scope.currentItem.schema[i].key === 'lat') {
+              latExists = true;
+						}
+					}
+          if (longExits && latExists) {
+            self.$scope.mapAvailable = true;
+          }
         }
       });
     } else {
