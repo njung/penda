@@ -1,4 +1,4 @@
-var Dataset = function ($stateParams, $scope, $state, $window, $rootScope, AuthService, localStorageService, toastr, $location, ToastrService, $modal, $http, host, AlertService, DatasetService){
+var Dataset = function ($stateParams, $scope, $state, $window, $rootScope, AuthService, localStorageService, toastr, $location, ToastrService, $modal, $http, host, AlertService, DatasetService, $compile){
   this.$stateParams = $stateParams;
   this.$scope = $scope;
   this.$state = $state;
@@ -14,6 +14,7 @@ var Dataset = function ($stateParams, $scope, $state, $window, $rootScope, AuthS
   this.host = host;
   this.AlertService = AlertService;
   this.DatasetService = DatasetService;
+  this.$compile = $compile;
   
   var self = this;
 
@@ -22,6 +23,8 @@ var Dataset = function ($stateParams, $scope, $state, $window, $rootScope, AuthS
   // Handle main spinners in one place.
   self.$scope.spinner = {
   };
+  // For the map
+  self.$scope.center = {}
   self.$scope.viewMode = 'table';
   self.$scope.mapAvailable = false;
   self.$scope.appearance = {}
@@ -226,7 +229,6 @@ Dataset.prototype.getQuery = function() {
           isFrom = true;
         }
       }
-      console.log(splittedSql);
       sql = splittedSql.join(' ');
       console.log(sql);
       var dataset = new recline.Model.Dataset({
@@ -238,7 +240,6 @@ Dataset.prototype.getQuery = function() {
       dataset.fetch().done(function(dataset){
         if (self.$scope.viewMode === 'table') {
           var $el = $('#view-table');
-          console.log(dataset);
           var grid = new recline.View.SlickGrid({
             model: dataset,
             el: $el
@@ -277,8 +278,10 @@ Dataset.prototype.getQuery = function() {
           self.$scope.spinner.datasetQuery = false;
           self.$scope.$apply();
         } else if (self.$scope.viewMode === 'map') {
+          self.$scope.spinner.datasetQuery = false;
           // Map field ( long, lang ) should be available on the schema.
           var longExists, latExists;
+
 					for (var i in self.$scope.currentItem.schema) {
 						if (self.$scope.currentItem.schema[i].key === 'long') {
               longExists = true;
@@ -287,9 +290,41 @@ Dataset.prototype.getQuery = function() {
               latExists = true;
 						}
 					}
-          if (longExits && latExists) {
+          if (longExists && latExists) {
             self.$scope.mapAvailable = true;
+            // Collect markers
+            var markers = {};
+            var records = dataset.records.toJSON();
+            for (var i in records) {
+              var marker = {
+                lat : records[i].lat,
+                lng : records[i].long,
+              };
+              markers['m' + i] = marker;
+            }
+            angular.extend(self.$scope, {
+              center : {
+                lat : -2.5,
+                lng : 117.5,
+                zoom : 5
+              },
+              position : {
+                lat : -2.5,
+                lng : 117.5,
+                zoom : 5
+              },
+              defaults : {
+                scrollWheelZoom : false,
+              },
+              markers : markers
+            });
+            var mapTemplate = '<leaflet lf-center="center" defaults="defaults" markers="markers" height="480px"></leaflet>';
+            var content = self.$compile(mapTemplate)(self.$scope);
+            var $el = $('#view-map');
+            $el.text('');
+            $el.append(content);
           }
+          self.$scope.$apply();
         }
       });
     } else {
@@ -321,7 +356,7 @@ Dataset.prototype.someFunc = function(params) {
   var self = this;
 }
 
-Dataset.inject = [ '$stateParams', '$scope', '$state', '$window', '$rootScope', 'AuthService', 'localStorageService', 'toastr', '$location', 'ToastrService', '$modal', '$http', 'host' , 'AlertService', 'DatasetService'];
+Dataset.inject = [ '$stateParams', '$scope', '$state', '$window', '$rootScope', 'AuthService', 'localStorageService', 'toastr', '$location', 'ToastrService', '$modal', '$http', 'host' , 'AlertService', 'DatasetService', '$compile'];
 
 angular.module('dataset',[])
 .controller('DatasetCtrl', Dataset)

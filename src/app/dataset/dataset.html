@@ -104,7 +104,7 @@
               <small ng-show="appearance.hideMeta" class="pointer" ng-click="appearance.hideMeta=false">Tampilkan</small>
             </h4>
           </div>
-          <div class="pull-right" style="margin-bottom:15px;" ng-hide="confirmDelete">
+          <div class="pull-right" style="margin-bottom:15px;" ng-hide="confirmDelete || !currentUser">
             <a href="#/dataset/list" class="btn btn-default"><span class="fa fa-chevron-left"></span>&nbsp;Kembali</a>
             <button class="btn btn-default"><span class="fa fa-edit"></span>&nbsp;Sunting</button>
             <button class="btn btn-default" ng-click="confirmDelete=true;"><span class="fa fa-trash"></span>&nbsp;Hapus</button>
@@ -276,7 +276,7 @@
           <ul class="nav nav-tabs">
             <li ng-class="{'active':viewMode=='table'}"><a href="" ng-click="viewMode='table'">Tabel</a></li>
             <li ng-class="{'active':viewMode=='graph'}"><a href="" ng-click="viewMode='graph'">Grafik</a></li>
-            <li ng-class="{'active':viewMode=='map'}"><a href="" ng-click="viewMode='map'">Peta</a></li>
+            <li ng-class="{'active':viewMode=='map'}"><a href="" ng-click="viewMode='map';dataset.getQuery();">Peta</a></li>
           </ul>
           <div class="pull-right" style="margin-top:-35px;">
             <span ng-show="currentItem.status=='done'">
@@ -312,7 +312,7 @@
             </div>
           </div>
           <div ng-show="viewMode=='map'" class=" animated fadeIn">
-            <p class="alert alert-info">Tidak ada geodata pada dataset ini.</p>
+            <p class="alert alert-info" ng-hide="mapAvailable || spinner.datasetQuery">Tidak ada geodata pada dataset ini.</p>
             <div id="view-map"></div>
           </div>
         </div>

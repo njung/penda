@@ -38,6 +38,7 @@
     "bower_components/ng-debounce/angular-debounce.js",
     "node_modules/angular-fcsa-number/src/fcsaNumber.js",
     "bower_components/ng-file-upload/ng-file-upload-all.js",
+    "bower_components/angular-leaflet-directive/dist/angular-leaflet-directive.js",
     "src/libs/angular-dropdowns.js",
     "libs/*.js"
   ],

@@ -46,7 +46,8 @@ angular.module("App", [
   "ngImgCrop",
   "debounce",
   "fcsa-number",
-  "ngDropdowns"
+  "ngDropdowns",
+  "leaflet-directive"
 ])
 // The controller declared in their html file
 .config(function($stateProvider, $urlRouterProvider, toastrConfig) {
