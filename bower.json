@@ -57,6 +57,6 @@
   "resolutions": {
     "slick-carousel": "~1.4.1",
     "tinymce-dist": "~4.3.0",
-    "angular": "1.2.29"
+    "angular": "1.2.30"
   }
 }
