@@ -35,6 +35,8 @@ if (fs.existsSync(__dirname + mainJsonPath)) {
 }
 
 replacements.push(['_VERSION_', pkgDetail.version])
+replacements.push(['_AUTH_STRATEGY_', config.authStrategy]);
+replacements.push(['_APP_NAME_', config.appName]);
 console.log(replacements);
 for (var i in replacements) {
   if (replacements[i][0] == '_APP_NAME_') {
@@ -42,7 +44,6 @@ for (var i in replacements) {
   }
 }
 
-replacements.push(['_AUTH_STRATEGY_', config.authStrategy]);
 
 console.log('Settings: ', replacements);
 gulp.task('clean', function() {

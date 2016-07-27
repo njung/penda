@@ -6,7 +6,7 @@ var parse = require("mongoose-parse");
 var async = require("async");
 var mode = process.env.MODE || 'dev';
 var clientHost = JSON.parse(require('fs').readFileSync(__dirname + '/../../config/' + mode + '/main.json'))[0][1];
-var appName = JSON.parse(require('fs').readFileSync(__dirname + '/../../config/' + mode + '/main.json'))[2][1];
+var appName = require(__dirname + '/../../config.json').appName;
 
 var credential = {
   'key': 'key-8e9fdb5ab02c9f7ada8e460ea502a131',
