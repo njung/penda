@@ -97,7 +97,6 @@ Profiles.prototype.registerEndPoints = function() {
     method: "GET",
     path: "/api/users",
     config : {
-      auth: "default",
     },
     handler: function(request, reply) {
       self.list(request, reply);
@@ -141,7 +140,6 @@ Profiles.prototype.registerEndPoints = function() {
     method: "POST",
     path: "/api/user/{id}",
     config : {
-      auth: "default",
       validate : {
         payload: Joi.object(updateSchema)
       }
@@ -154,7 +152,6 @@ Profiles.prototype.registerEndPoints = function() {
     method: "POST",
     path: "/api/user/{id}/set-password",
     config : {
-      auth: "default",
       validate : {
         payload: Joi.object(passwordSchema)
       }
@@ -167,7 +164,6 @@ Profiles.prototype.registerEndPoints = function() {
     method: "GET",
     path: "/api/user/{id}",
     config : {
-      auth: "default",
     },
     handler: function(request, reply) {
       self.get(request, reply);
@@ -177,7 +173,6 @@ Profiles.prototype.registerEndPoints = function() {
     method: "DELETE",
     path: "/api/user/{id}",
     config : {
-      auth: "default",
     },
     handler: function(request, reply) {
       self.delete(request, reply);
@@ -189,7 +184,6 @@ Profiles.prototype.registerEndPoints = function() {
     method: "POST",
     path: "/api/user/{id}/avatar",
     config : {
-      auth: "default",
       payload: {
         maxBytes: 1048576 * 10, // 10MB
         output: "stream",
@@ -214,7 +208,6 @@ Profiles.prototype.registerEndPoints = function() {
     method: "DELETE",
     path: "/api/user/{id}/avatar",
     config : {
-      auth: "default",
     },
     handler: function(request, reply) {
       self.removeAvatar(request, reply);

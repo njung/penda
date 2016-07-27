@@ -1,3 +1,5 @@
 {
-  "datasetsPath": "/tmp/data"
+  "datasetsPath": "/tmp/data",
+  "authStrategy": "jwt",
+  "secretKey" : "secretString"
 }

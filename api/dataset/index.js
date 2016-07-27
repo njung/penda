@@ -76,8 +76,8 @@ Dataset.prototype.registerEndPoints = function() {
       self.upload(request, reply);
     },
     config: {
-      // TODO extend Hawk timeout
-			auth : false,
+      // Hawk is terible at handling long request. Switch to jwt.
+		  // auth : false,
       payload : {
         timeout : false,
         output : "stream",

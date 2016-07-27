@@ -6,18 +6,13 @@ var moment = require('moment');
 var _ = require('lodash');
 var uuid = require('uuid');
 var faker = require('faker');
+var jwt = require('jsonwebtoken');
 var profileModel = require(__dirname + '/../../api/profiles/index').model();
+var config = require(__dirname + '/../../config.json');
 
 var schema = {
   username : Joi.string().email().required(),
   password : Joi.string().required(),
-}
-
-var hawkTokenSchema = {
-  userId : Joi.string().required(),
-  tokenId : Joi.string().required(),
-  key : Joi.string().required(),
-  date : Joi.date().required()
 }
 
 var model = function() {
@@ -41,6 +36,15 @@ var model = function() {
   return m;
 }
 
+// Hawk specific
+
+var hawkTokenSchema = {
+  userId : Joi.string().required(),
+  tokenId : Joi.string().required(),
+  key : Joi.string().required(),
+  date : Joi.date().required()
+}
+
 var tokenModel = function() {
   var registered = false;
   var m;
@@ -62,9 +66,19 @@ var tokenModel = function() {
   return m;
 }
 
+// End of Hawk specific
+
 var User = function(server, options, next) {
   this.server = server;
-  
+ 
+  // JWT validate
+  var validateJwt = function(decoded, request, callback) {
+    // TODO check for existing user
+    console.log(decoded);
+
+    return callback(null, true);
+  }
+  // Hawk validate
   var getCredentials = function(id, callback) {
     tokenModel().findOne({tokenId:id}, function(err, result) {
       if (err) return callback(err);
@@ -85,7 +99,7 @@ var User = function(server, options, next) {
                 username : user.username,
                 userId : user._id,
                 profileId : profile._id,
-                rule : profile.rule,
+                role : profile.role,
                 key : result.key,
                 algorithm : 'sha256'
               }
@@ -119,38 +133,16 @@ var User = function(server, options, next) {
   }
 
   // Register hawk  
-  server.register([require('hapi-auth-hawk'), require('bell')]
+  server.register([require('hapi-auth-hawk'), require('hapi-auth-jwt2'), require('bell')]
 , function(err) {
-    server.auth.strategy('default', 'hawk', { getCredentialsFunc: getCredentials });
-
-    // Twitter auth integration
-    server.auth.strategy('twitter', 'bell', {
-      provider: 'twitter',
-      password : '!8jCRk%7mG}V$puqMML8`gy{,`gG=$U--',
-      clientId : 'GdSkm9bekgMHBsfEcQ2QAJTUi',
-      clientSecret : 'MJTwNa6b918ZjyJOPxA2qeC0OLmnZE3LyVDFRfqFpZMlSBwMei',
-      isSecure : false
-    });
-    
-    // Google auth integration
-    server.auth.strategy('google', 'bell', {
-      provider: 'google',
-      password : '!8jCRk%7mG}V$puqMML8`gy{,`gG=$U--',
-      clientId : '658115262746-ue3iki29g41q00vsmdousldkkjj9nscm.apps.googleusercontent.com',
-      clientSecret : 'l7o5FlhL7VH74G7OViSmq6Bz',
-      isSecure : false
-    });
-    
-    // Facebook auth integration
-    server.auth.strategy('facebook', 'bell', {
-      provider: 'facebook',
-      password : '!8jCRk%7mG}V$puqMML8`gy{,`gG=$U--',
-      clientId : '241101152912331',
-      clientSecret : 'd131f7dee2b72e28304b416d4976df86',
-      isSecure : false
-    });
-
-    server.auth.default('default');
+    server.auth.strategy('hawk', 'hawk', { getCredentialsFunc: getCredentials });
+    server.auth.strategy('jwt', 'jwt', {
+      validateFunc : validateJwt, 
+      key: config.secretKey,
+      verifyOptions: { algorithms: ['HS256'],
+      }
+    })
+    server.auth.default(config.authStrategy);
   });
 
   this.options = options || {};
@@ -238,32 +230,44 @@ User.prototype.login = function(request, reply) {
     }
     console.log(user);
     profileModel
-      /* .findOne({userId : user._id.toString()}) */
       .findOne({userId : user._id.toString()})
       .lean()
       .exec(function(err, profile){
       if (err) return reply(err);
       console.log(profile);
-      // Generate key pair for Hawk Auth
-      tokenModel().create({
-        userId : user._id,
-        tokenId : uuid.v4(),
-        key : uuid.v4(),
-        expire : moment().add(1, 'day').format()
-      }, function(err, result) {
-        if (err) return reply(err);
-
-        /* var redisClient = request.server.plugins['hapi-redis'].client; */
-        /* redisClient.set(request.auth.credentials.profileId, request.headers['socketid']); */
-
+      if (config.authStrategy === 'hawk') {
+        // Generate key pair for Hawk Auth
+        tokenModel().create({
+          userId : user._id,
+          tokenId : uuid.v4(),
+          key : uuid.v4(),
+          expire : moment().add(1, 'day').format()
+        }, function(err, result) {
+          if (err) return reply(err);
+          var response = reply({success:true, profile : profile})
+            .type('application/json')
+            .header('token', result.tokenId + ' ' + result.key)
+            .header('current_user', profile._id)
+            .header('role', profile.role)
+            .hold();
+          response.send();
+        })
+      } else if (config.authStrategy === 'jwt') {
+        // Sign jwt token
+        var token = jwt.sign({ 
+          username : user.username,
+          userId : user._id,
+          profileId : profile._id,
+          role : profile.role,
+        }, config.secretKey, { algorithm: 'HS256', expiresIn: "1h" } );
         var response = reply({success:true, profile : profile})
           .type('application/json')
-          .header('token', result.tokenId + ' ' + result.key)
+          .header('token', token)
           .header('current_user', profile._id)
-          .header('rule', profile.rule)
+          .header('role', profile.role)
           .hold();
         response.send();
-      })
+      }
     });
   });
 }
@@ -286,17 +290,23 @@ User.prototype.login = function(request, reply) {
 **/
 
 User.prototype.logout = function(request, reply) {
-  // Remove token from db
-  tokenModel().remove({key : request.auth.credentials.key, userId : request.auth.credentials.userId}, function(err, result){
-    if (err) reply(err).code(400);
-
+  var realLogout = function() {
     // leave all socket room;
     var io = request.server.plugins['hapi-io'].io;
     io.on('connection', function(socket) {
       socket.leave(request.auth.credentials.userId);
     });
-    reply({success: true}).type('application/json').statusCode = 200;
-  });
+  }
+
+  if (config.authStrategy === 'hawk') {
+    // Remove token from db
+    tokenModel().remove({key : request.auth.credentials.key, userId : request.auth.credentials.userId}, function(err, result){
+      if (err) reply(err).code(400);
+      realLogout(); 
+    });
+  } else {
+    realLogout(); 
+  }
 }
 
 User.prototype.create = function(request, cb) {
@@ -334,7 +344,7 @@ User.prototype.setPassword = function(id, currentPassword, password, cb) {
   });
 }
 
-// private func, set password by recovery. used by Profiles.setPasswordRecovery
+// Private func, set password by recovery. used by Profiles.setPasswordRecovery
 User.prototype.setPasswordRecovery = function(id, newPassword, cb) {
   var self = this;
   model().findOne({_id:id}, function(err, user) {
@@ -383,7 +393,7 @@ var generateUser = function(user, cb) {
     profileModel.create({
       fullName : faker.name.findName(),
       email : user.email,
-      rule : 'admin',
+      role : 'admin',
       userId : result._id,
       activationCode : uuid.v4(),
     }, function(err, profile) {
