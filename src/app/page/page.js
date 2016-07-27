@@ -27,7 +27,7 @@ var Page = function ($scope, $state, $window, $rootScope, AuthService, PageServi
             .success(function(data, status, headers) {
               /* self.$interval.cancel(checkToken); */
               self.$rootScope.currentUser = data.fullName;
-              self.$rootScope.currentUserRule = data.rule;
+              self.$rootScope.currentUserRole = data.role;
             })
         })
     }

@@ -98,7 +98,7 @@ var Dataset = function ($stateParams, $scope, $state, $window, $rootScope, AuthS
   /*     /1* self.UserService.getUserById(self.localStorageService.get('currentUser')) *1/ */
   /*     /1*   .success(function(data, status, headers) { *1/ */
   /*     /1*     self.$rootScope.currentUser = data.fullName; *1/ */
-  /*     /1*     self.$rootScope.currentUserRule = data.rule; *1/ */
+  /*     /1*     self.$rootScope.currentUserRole = data.role; *1/ */
   /*     /1*   }) *1/ */
   /*   }) */
  

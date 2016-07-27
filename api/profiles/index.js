@@ -50,7 +50,7 @@ var profileModel = function() {
       type : String,
       unique : true
     },
-    rule : String,
+    role : String,
     joinedSince : Date,
     activationCode : String,
     userId : String,
@@ -289,7 +289,7 @@ Profiles.prototype.list = function(request, reply) {
   var q = {}
   var count;
   
-  if (request.query.rule) q.rule = request.query.rule;
+  if (request.query.role) q.role = request.query.role;
   if (request.query.country) q.country = request.query.country;
   
   // count all record
@@ -424,7 +424,7 @@ Profiles.prototype.passwordRecovery = function(request, reply) {
   *
   * @apiParam {String} email Email of the new user, used as username for login
   * @apiParam {String} fullname Full name of the new user
-  * @apiParam {String} rule Rule of the new user, enums : admin, analyst, manager
+  * @apiParam {String} role Rule of the new user, enums : admin, analyst, manager
   * @apiParam {String} [team] Team that assigned to the user
   *
   * All of the above params is required, except team.
@@ -454,8 +454,8 @@ Profiles.prototype.passwordRecovery = function(request, reply) {
 Profiles.prototype.register = function(request, reply) {
   var self = this;
   console.log(request.payload);
-  // Force to have 'user' rule
-  request.payload.rule = 'user';
+  // Force to have 'user' role
+  request.payload.role = 'user';
   request.payload.joinedSince = new Date();
   if (request.payload.password != request.payload.repeatPassword) {
     var err = new Error('Repeat password not matched');
@@ -470,7 +470,7 @@ Profiles.prototype.register = function(request, reply) {
       if (err) {
         return reply(err).statusCode = 400;
       }
-      if (result.rule == "admin") {
+      if (result.role == "admin") {
         request.isActive = true;
         User.class.create(request, function(err, result) {
           if (err) {
@@ -494,7 +494,7 @@ Profiles.prototype.register = function(request, reply) {
     })
   } else {
     console.log("registering new user by anonym");
-    request.payload.rule = "user";
+    request.payload.role = "user";
     request.payload.country = "";
     User.class.create(request, function(err, result) {
       if (err) {
@@ -564,7 +564,7 @@ Profiles.prototype.confirm = function(request, reply) {
   * @apiGroups Users
   *
   * @apiParam {String} [fullname] Full name of the existing user
-  * @apiparam {string} [rule] rule of the new user, enums : admin, analyst, manager
+  * @apiparam {string} [role] role of the new user, enums : admin, analyst, manager
   * @apiParam {String} [team] Team that assigned to the user
   *
   * Not all of the above params is required
@@ -606,7 +606,7 @@ Profiles.prototype.update = function(request, reply) {
 
     // This request could be done by the same user or the current logged user is an admin
     if (request.params.id == result._id
-    || result.rule === "admin") {
+    || result.role === "admin") {
       if (_.isEmpty(request.payload)) {
         return reply({
           error: "Bad Request", 
@@ -615,23 +615,23 @@ Profiles.prototype.update = function(request, reply) {
         }).code(400);
       }
 
-      // The rule modification of an user only could be done if the current logged user is an admin
+      // The role modification of an user only could be done if the current logged user is an admin
       // TODO : 
-      // rule user : same id, 
-      // rule admin, same id, different id
-      console.log(result.rule);
-      console.log(request.payload.rule);
-      /* if ((result.rule != "admin" && request.payload.rule) */
-      /*   || (request.params.id == result._id && request.payload.rule!="admin") */
-        /* || (request.params.id != result._id && result.rule=="user") */
+      // role user : same id, 
+      // role admin, same id, different id
+      console.log(result.role);
+      console.log(request.payload.role);
+      /* if ((result.role != "admin" && request.payload.role) */
+      /*   || (request.params.id == result._id && request.payload.role!="admin") */
+        /* || (request.params.id != result._id && result.role=="user") */
         /* ){ */
-      if (request.auth.credentials.rule==="user" 
+      if (request.auth.credentials.role==="user" 
         && (
-            (result.rule != "admin" && request.payload.rule)
+            (result.role != "admin" && request.payload.role)
             || request.params.id != result._id 
-            || request.payload.rule === "admin"
-            || (result.rule === "admin")
-            || (request.params.id != result._id && result.rule=="user")
+            || request.payload.role === "admin"
+            || (result.role === "admin")
+            || (request.params.id != result._id && result.role=="user")
           )
         ){
         return reply({
@@ -695,7 +695,7 @@ Profiles.prototype.setPassword = function(request, reply) {
 
     // This request could be done by the same user or the current logged user is an admin
     if (request.params.id == result._id
-    || result.rule == "admin") {
+    || result.role == "admin") {
       if (_.isEmpty(request.payload)) {
         return reply({
           error: "Bad Request", 
@@ -1089,7 +1089,7 @@ Profiles.prototype.realRegister = function(request, cb) {
   var newUser = profileModel();
   newUser.fullName = request.payload.fullName;
   newUser.email = request.payload.email;
-  newUser.rule = request.payload.rule;
+  newUser.role = request.payload.role;
   newUser.userId = request.payload.userId;
   newUser.gender = request.payload.gender;
   newUser.city = request.payload.city;
@@ -1104,7 +1104,7 @@ Profiles.prototype.realRegister = function(request, cb) {
       email : result.email,
       _id : result._id,
       fullName : result.fullName,
-      rule : result.rule,
+      role : result.role,
       userId: result.userId
     }
     cb(null, profile);
@@ -1141,7 +1141,7 @@ var realUpdate = function(request, reply) {
         email : result.email,
         _id : result._id,
         fullName : result.fullName,
-        rule : result.rule,
+        role : result.role,
         userId: result.userId
       }
       reply(profile);

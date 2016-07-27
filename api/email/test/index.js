@@ -50,7 +50,7 @@ describe("Profiles", function() {
                 var newProfile = new Profile({
                   email : users[0].username,
                   fullName : "User Number One X",
-                  rule : "admin",
+                  role : "admin",
                   userId : result._id,
                 });
                 newProfile.save(function(err, result){
@@ -78,7 +78,7 @@ describe("Profiles", function() {
                     email : "user" + i + "@users.com",
                     password : "pass" + i,
                     fullName : "User Number " + i,
-                    rule : "admin"
+                    role : "admin"
                   }
                   server.inject({
                     headers : { Authorization : header.field, host : prefix.split("//")[1] },
@@ -122,7 +122,7 @@ describe("Profiles", function() {
         email : "user2@users.com",
         password : "pass2",
         fullName : "User Number Two",
-        rule : "analyst"
+        role : "analyst"
       }
       server.inject({
         headers : { Authorization : header.field, host : prefix.split("//")[1] },
@@ -134,11 +134,11 @@ describe("Profiles", function() {
         response.result._id.must.exist();
         response.result.email.must.exist();
         response.result.fullName.must.exist();
-        response.result.rule.must.exist();
+        response.result.role.must.exist();
         response.result.userId.must.exist();
         response.result.email.must.equal(user.email);
         response.result.fullName.must.equal(user.fullName);
-        response.result.rule.must.equal(user.rule);
+        response.result.role.must.equal(user.role);
         deactivatedUserId = response.result._id;
         done();
       });
@@ -192,7 +192,7 @@ describe("Profiles", function() {
     it("should fail to create new user if the current user is not an admin, /api/users", function(done) {
       Profile.findOne({_id:activatedUserId}, function(err, user){
         if (err) done(err);
-        user.rule = "manager";
+        user.role = "manager";
         user.save(function(err, result) {
           var path = "/api/users";
           var header = hawk.client.header(prefix + path, "POST", { credentials : hawkPairKey });
@@ -200,7 +200,7 @@ describe("Profiles", function() {
             email : "user2x@users.com",
             password : "pass2",
             fullName : "User Number Two",
-            rule : "analyst"
+            role : "analyst"
           }
           server.inject({
             headers : { Authorization : header.field, host : prefix.split("//")[1] },
@@ -218,7 +218,7 @@ describe("Profiles", function() {
             // Set it back as admin so it can be reused again.
             Profile.findOne({_id:activatedUserId}, function(err, user){
               if (err) done(err);
-              user.rule = "admin";
+              user.role = "admin";
               user.save(function(err, result) {
                 done();
               });
@@ -227,7 +227,7 @@ describe("Profiles", function() {
         })
       });
     });
-    it("should fail to post new user if it breaks validation rule", function(done) {
+    it("should fail to post new user if it breaks validation role", function(done) {
       var path = "/api/users";
       var header = hawk.client.header(prefix + path, "POST", { credentials : hawkPairKey });
       var user = {
@@ -348,7 +348,7 @@ describe("Profiles", function() {
         email : "user106@users.com",
         password : "pass106",
         fullName : "User Number 106",
-        rule : "analyst"
+        role : "analyst"
       }
       server.inject({
         headers : { Authorization : header.field, host : prefix.split("//")[1] },
@@ -424,7 +424,7 @@ describe("Profiles", function() {
         response.result._id.must.exist();
         response.result.email.must.exist();
         response.result.fullName.must.exist();
-        response.result.rule.must.exist();
+        response.result.role.must.exist();
         response.result.userId.must.exist();
         response.result.fullName.must.equal("User Number Two Edited");
         done();
@@ -495,7 +495,7 @@ describe("Profiles", function() {
         email : "otheruser@users.com",
         password : "otherpass",
         fullName : "Other",
-        rule : "analyst"
+        role : "analyst"
       }
       server.inject({
         headers : { Authorization : header.field, host : prefix.split("//")[1] },
@@ -507,7 +507,7 @@ describe("Profiles", function() {
         response.result._id.must.exist();
         response.result.email.must.exist();
         response.result.fullName.must.exist();
-        response.result.rule.must.exist();
+        response.result.role.must.exist();
         response.result.email.must.equal(user.email);
         var id = response.result._id;
         var path = "/api/user/" + id;
@@ -523,7 +523,7 @@ describe("Profiles", function() {
           response.result.must.be.an.object();
           response.result.email.must.exist();
           response.result.fullName.must.exist();
-          response.result.rule.must.exist();
+          response.result.role.must.exist();
           response.result.userId.must.exist();
           var path = "/api/user/" + id;
           var header = hawk.client.header(prefix + path, "GET", { credentials : hawkPairKey });
@@ -614,7 +614,7 @@ describe("Profiles", function() {
         done();
       });
     });
-    it("should fail to change its own rule by query /api/user/{id}", function(done) {
+    it("should fail to change its own role by query /api/user/{id}", function(done) {
       var path = "/api/user/" + activatedUserId;
       var header = hawk.client.header(prefix + path, "POST", { credentials : hawkPairKey });
       server.inject({
@@ -622,7 +622,7 @@ describe("Profiles", function() {
         url: path,
         method: "POST",
         payload : {
-          rule : "manager"
+          role : "manager"
         }
       }, function(response) {
         response.result.must.be.an.object();
@@ -634,15 +634,15 @@ describe("Profiles", function() {
         done();
       });
     });
-    it("should fail to change rule of other user if the current user is not an admin, by query /api/user/{id}", function(done) {
+    it("should fail to change role of other user if the current user is not an admin, by query /api/user/{id}", function(done) {
       Profile.findOne({_id:activatedUserId}, function(err, user){
         if (err) done(err);
-        user.rule = "manager";
+        user.role = "manager";
         user.save(function(err, result) {
           var path = "/api/user/" + deactivatedUserId;
           var header = hawk.client.header(prefix + path, "POST", { credentials : hawkPairKey });
           var user = {
-            rule : "manager"
+            role : "manager"
           }
           server.inject({
             headers : { Authorization : header.field, host : prefix.split("//")[1] },
@@ -659,7 +659,7 @@ describe("Profiles", function() {
             // Set it back as admin so it can be reused again.
             Profile.findOne({_id:activatedUserId}, function(err, user){
               if (err) done(err);
-              user.rule = "admin";
+              user.role = "admin";
               user.save(function(err, result) {
                 done();
               });
@@ -678,7 +678,7 @@ describe("Profiles", function() {
         email : "user104@users.com",
         password : "pass104",
         fullName : "User Number One Hundred and Four",
-        rule : "analyst"
+        role : "analyst"
       }
       server.inject({
         headers : { Authorization : header.field, host : prefix.split("//")[1] },
@@ -744,7 +744,7 @@ describe("Profiles", function() {
         email :  faker.internet.email(),
         password : faker.internet.password(),
         fullName : faker.name.findName(),
-        rule : "analyst"
+        role : "analyst"
       }
       server.inject({
         headers : { Authorization : header.field, host : prefix.split("//")[1] },

@@ -37,7 +37,7 @@ var Start = function ($stateParams, $scope, $state, $window, $rootScope, AuthSer
   /*       self.UserService.getUserById(self.localStorageService.get('currentUser')) */
   /*         .success(function(data, status, headers) { */
   /*           self.$rootScope.currentUser = data.fullName; */
-  /*           self.$rootScope.currentUserRule = data.rule; */
+  /*           self.$rootScope.currentUserRole = data.role; */
   /*         }) */
   /*     }) */
   /* } */

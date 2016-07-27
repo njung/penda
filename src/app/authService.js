@@ -114,7 +114,7 @@ AuthService.prototype.clearCredentials = function(){
   self.$rootScope.loginForm = true;
   self.$rootScope.frontPage = true;
   self.$rootScope.currentUser = false;
-  self.$rootScope.currentUserRule = false;
+  self.$rootScope.currentUserRole = false;
   self.$state.go('start');
 }
 
@@ -159,7 +159,7 @@ AuthService.prototype.checkToken = function(options) {
     }
     self.$rootScope.currentUser = data.fullName;
     self.$rootScope.currentUserProfileId = self.localStorageService.get('currentUser');
-    self.$rootScope.currentUserRule = data.rule;
+    self.$rootScope.currentUserRole = data.role;
     deferred.resolve();
   })
   .error(function(data, status, headers) {
