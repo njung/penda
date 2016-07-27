@@ -1,12 +1,12 @@
-var mongoose = require("mongoose");
-var Joi = require("joi");
+var mongoose = require('mongoose');
+var Joi = require('joi');
 var Boom = require('boom');
-var passportLocalMongoose = require("passport-local-mongoose");
-var moment = require("moment");
-var _ = require("lodash");
-var uuid = require("uuid");
-var faker = require("faker");
-var profileModel = require(__dirname + "/../../api/profiles/index").model();
+var passportLocalMongoose = require('passport-local-mongoose');
+var moment = require('moment');
+var _ = require('lodash');
+var uuid = require('uuid');
+var faker = require('faker');
+var profileModel = require(__dirname + '/../../api/profiles/index').model();
 
 var schema = {
   username : Joi.string().email().required(),
@@ -24,7 +24,7 @@ var model = function() {
   var registered = false;
   var m;
   try {
-    m = mongoose.model("User");
+    m = mongoose.model('User');
     registered = true;
   } catch(e) {
   }
@@ -36,8 +36,8 @@ var model = function() {
     isActive : Boolean,
   }
   var s = new mongoose.Schema(schema);
-  s.plugin(passportLocalMongoose, {usernameField : "username", hashField : "password"});
-  m = mongoose.model("User", s);
+  s.plugin(passportLocalMongoose, {usernameField : 'username', hashField : 'password'});
+  m = mongoose.model('User', s);
   return m;
 }
 
@@ -45,7 +45,7 @@ var tokenModel = function() {
   var registered = false;
   var m;
   try {
-    m = mongoose.model("HawkToken");
+    m = mongoose.model('HawkToken');
     registered = true;
   } catch(e) {
   }
@@ -58,7 +58,7 @@ var tokenModel = function() {
     expire : Date,
   }
   var s = new mongoose.Schema(schema);
-  m = mongoose.model("HawkToken", s);
+  m = mongoose.model('HawkToken', s);
   return m;
 }
 
@@ -69,8 +69,8 @@ var User = function(server, options, next) {
     tokenModel().findOne({tokenId:id}, function(err, result) {
       if (err) return callback(err);
       if (!result) return callback({
-        error: "Unauthorized",
-        message: "Unknown credentials",
+        error: 'Unauthorized',
+        message: 'Unknown credentials',
         statusCode: 401
       });
       model().findOne({_id: result.userId }, function(err, user) {
@@ -87,10 +87,10 @@ var User = function(server, options, next) {
                 profileId : profile._id,
                 rule : profile.rule,
                 key : result.key,
-                algorithm : "sha256"
+                algorithm : 'sha256'
               }
               // Renew expire time for each request.
-              result.expire = moment().add(1, "day").format();
+              result.expire = moment().add(1, 'day').format();
               result.save(function(err) {
                 if (err) return callback(err);
                 return callback(null, credentials);
@@ -102,15 +102,15 @@ var User = function(server, options, next) {
          } else {
             result.remove();
             return callback({
-              error: "Unauthorized",
-              message: "Expired token",
+              error: 'Unauthorized',
+              message: 'Expired token',
               statusCode: 401
             }, null)
           }
         } else {
           return callback({
-            error: "Unauthorized",
-            message: "Not active",
+            error: 'Unauthorized',
+            message: 'Not active',
             statusCode: 401
           }, null)
         }
@@ -119,9 +119,9 @@ var User = function(server, options, next) {
   }
 
   // Register hawk  
-  server.register([require("hapi-auth-hawk"), require('bell')]
+  server.register([require('hapi-auth-hawk'), require('bell')]
 , function(err) {
-    server.auth.strategy("default", "hawk", { getCredentialsFunc: getCredentials });
+    server.auth.strategy('default', 'hawk', { getCredentialsFunc: getCredentials });
 
     // Twitter auth integration
     server.auth.strategy('twitter', 'bell', {
@@ -150,7 +150,7 @@ var User = function(server, options, next) {
       isSecure : false
     });
 
-    server.auth.default("default");
+    server.auth.default('default');
   });
 
   this.options = options || {};
@@ -160,8 +160,8 @@ var User = function(server, options, next) {
 User.prototype.registerEndPoints = function() {
   var self = this;
   self.server.route({
-    method: "POST",
-    path: "/api/users/login",
+    method: 'POST',
+    path: '/api/users/login',
     // By default, all routes will automatically guarded by authentication.
     // This route is the only way to get the hawk pair key.
     // auth : false is used to bypass this authentication.
@@ -175,8 +175,8 @@ User.prototype.registerEndPoints = function() {
     },
   });
   self.server.route({
-    method: "GET",
-    path: "/api/users/logout",
+    method: 'GET',
+    path: '/api/users/logout',
     handler: function(request, reply) {
       self.logout(request, reply);
     },
@@ -224,15 +224,15 @@ User.prototype.login = function(request, reply) {
     if (err) return reply(err);
     if (!user) {
       return reply({
-        error: "Unauthorized",
-        message: "Unknown credentials",
+        error: 'Unauthorized',
+        message: 'Unknown credentials',
         statusCode: 401
       }).code(401);
     }
     if (!user.isActive) {
       return reply({
-        error: "Unauthorized",
-        message: "Not active",
+        error: 'Unauthorized',
+        message: 'Not active',
         statusCode: 401
       }).code(401);
     }
@@ -249,18 +249,18 @@ User.prototype.login = function(request, reply) {
         userId : user._id,
         tokenId : uuid.v4(),
         key : uuid.v4(),
-        expire : moment().add(1, "day").format()
+        expire : moment().add(1, 'day').format()
       }, function(err, result) {
         if (err) return reply(err);
 
         /* var redisClient = request.server.plugins['hapi-redis'].client; */
-        /* redisClient.set(request.auth.credentials.profileId, request.headers["socketid"]); */
+        /* redisClient.set(request.auth.credentials.profileId, request.headers['socketid']); */
 
         var response = reply({success:true, profile : profile})
-          .type("application/json")
-          .header("token", result.tokenId + " " + result.key)
-          .header("current_user", profile._id)
-          .header("rule", profile.rule)
+          .type('application/json')
+          .header('token', result.tokenId + ' ' + result.key)
+          .header('current_user', profile._id)
+          .header('rule', profile.rule)
           .hold();
         response.send();
       })
@@ -295,7 +295,7 @@ User.prototype.logout = function(request, reply) {
     io.on('connection', function(socket) {
       socket.leave(request.auth.credentials.userId);
     });
-    reply({success: true}).type("application/json").statusCode = 200;
+    reply({success: true}).type('application/json').statusCode = 200;
   });
 }
 
@@ -383,7 +383,7 @@ var generateUser = function(user, cb) {
     profileModel.create({
       fullName : faker.name.findName(),
       email : user.email,
-      rule : "admin",
+      rule : 'admin',
       userId : result._id,
       activationCode : uuid.v4(),
     }, function(err, profile) {
@@ -403,7 +403,7 @@ exports.register = function(server, options, next) {
 };
 
 exports.register.attributes = {
-  pkg: require("./package.json")
+  pkg: require('./package.json')
 };
 
 exports.model = model;
