@@ -208,12 +208,15 @@ Dataset.prototype.get = function(request, reply) {
       // TODO use non throw sqlite3
       tablespoon.createTable(JSON.parse(fs.readFileSync(config.datasetsPath + '/' + filename + '.valid.json', 'utf-8')), filename, null, null, function(err) {
         console.log(err);
-        console.log(request.query.sql);
+
         setTimeout(function(){
           // Get total
           var sql = 'select count(*) as total from ' + filename;
           tablespoon.query(sql, function(result) {
-            var sql = request.query.sql.replace(/%22/g,'"');
+            /* var sql = request.query.sql.replace(/%22/g,'"'); */
+            var sql = new Buffer(request.query.sql, 'base64');
+            sql = sql.toString();
+            console.log(sql);
             tablespoon.query(sql, function(rows) {
               if (request.query.type && request.query.type === 'csv') {
                 return reply(babyparse.unparse(rows.rows));

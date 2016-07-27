@@ -231,6 +231,7 @@ Dataset.prototype.getQuery = function() {
       }
       sql = splittedSql.join(' ');
       console.log(sql);
+      sql = window.btoa(sql);
       var dataset = new recline.Model.Dataset({
         url : '/api/dataset/' + self.$scope.currentItem.filename + '?type=csv&sql=' + sql,
         backend:'csv',
