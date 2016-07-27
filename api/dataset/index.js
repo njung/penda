@@ -68,24 +68,27 @@ var datasetModel = function() {
 
 Dataset.prototype.registerEndPoints = function() {
   var self = this;
- 
+
+  var uploadConfig = {
+    payload : {
+      timeout : false,
+      output : "stream",
+      maxBytes : 1000000000,
+      allow : "multipart/form-data",
+      parse : true,
+    }
+  }
+  // TODO Hawk is terible at handling long request. Switch to jwt.
+  if (config.authStrategy === 'hawk') {
+    uploadConfig.auth = false;
+  }
   self.server.route({
     method: "POST",
     path: "/api/upload",
     handler: function(request, reply) {
       self.upload(request, reply);
     },
-    config: {
-      // Hawk is terible at handling long request. Switch to jwt.
-		  // auth : false,
-      payload : {
-        timeout : false,
-        output : "stream",
-        maxBytes : 1000000000,
-        allow : "multipart/form-data",
-        parse : true,
-      }
-    }
+    config: uploadConfig
   });
  
   self.server.route({

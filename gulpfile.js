@@ -19,9 +19,8 @@ for (i = 0; i < process.argv.length; i ++) {
   }
 }
 
-var config = {
-  mode: process.env.NODE_ENV || 'dev'
-}
+var config = require(__dirname + '/config.json');
+config.mode = process.env.NODE_ENV || 'dev';
 
 console.log('Running in ' + config.mode + ' mode...');
 var mainJsonPath = '/config/' + config.mode + '/main.json';
@@ -42,6 +41,8 @@ for (var i in replacements) {
     replacements[i][1] += ' - ' + pkgDetail.version;
   }
 }
+
+replacements.push(['_AUTH_STRATEGY_', config.authStrategy]);
 
 console.log('Settings: ', replacements);
 gulp.task('clean', function() {

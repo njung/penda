@@ -18,12 +18,20 @@ DatasetService.prototype.upload = function(data, obj) {
   console.log(payload);
   payload.content = data; 
   var path = self.host + '/api/upload';
+  var headers;
+  if (self.authStrategy == 'hawk') {
+    headers = JSON.parse(localStorage.getItem("HawkPairKey"));
+  } else {
+    headers = {
+      Authorization : self.AuthService.generateMac(path, 'GET')
+    }
+  }
   var req = {
     method: 'POST',
     data : payload,
     timeout : 300000,
     url: path,
-    headers : JSON.parse(localStorage.getItem("HawkPairKey"))
+    headers : headers
   }
   return self.Upload.upload(req);
 }
