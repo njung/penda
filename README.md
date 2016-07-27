@@ -4,7 +4,7 @@ Penda is an Open Data management system.
 
 #### Requirements
 
-- ``node`` version 5.11. Symlink the binary to ``~/bin/node``.
+- ``node`` version 5.11. Symlink the binary to ``~/bin/node``. TODO : auto detect the node binary.
 - ``sqlite3``
 - ``mongodb`` verson >2.4
 
@@ -17,6 +17,10 @@ Penda is an Open Data management system.
 - ``DB=dev ./script/init.sh``
 - Prepare the dataset directory. See ``config.js``.
 - ``npm run server``
+
+#### JWT specific configuration
+
+There are Hawk and JWT auth in the backend. JWT auth used by default. Please use enforced strong secret key in `config.json`.
 
 #### Note
 
