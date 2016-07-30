@@ -47,6 +47,9 @@ var datasetModel = function() {
     releaseFreq : String,
     level : String,
     year : Number,
+    month : Number,
+    dateStart : Date,
+    dateEnd : Date,
     scope : String,
     reference : String,
     category : [],
@@ -263,7 +266,8 @@ Dataset.prototype.upload = function(request, reply) {
   request.payload.content.pipe(fws);
    
   fws.on("finish", function(){
-		console.log(request.auth);
+    console.log('Payload : ');
+    console.log(request.payload);
     var data = {
       status : 'pending',
       filename : filename,
@@ -274,12 +278,20 @@ Dataset.prototype.upload = function(request, reply) {
       contact : request.payload.contact,
       releaseFreq : request.payload.releaseFreq,
       level : request.payload.level,
-      year : request.payload.year,
       scope : request.payload.scope,
       reference : request.payload.reference,
       createdAt : new Date(),
-			uploaderId : request.payload.uploaderId
+			uploaderId : request.payload.uploaderId,
+      dateStart : request.payload.dateStart,
+      dateEnd : request.payload.dateEnd,
     }
+    if (data.releaseFreq === 'year') {
+      data.year = request.payload.year;
+    }
+    if (data.releaseFreq === 'month') {
+      data.month = request.payload.month;
+    }
+
     datasetModel().create(data, function(err, result) {
       if (err) {
         console.log(err);

@@ -28,13 +28,14 @@ var UploadCtrl = function ($stateParams, $scope, $state, $window, $rootScope, Au
 
   self.uploadStatus = "ready";
   self.$scope.data = {
-    title : 'Data of ' + (new Date()).valueOf(),
-    source : 'sample_source',
-    contact : 'sample_contact@contact',
+    /* title : 'Data of ' + (new Date()).valueOf(), */
+    /* source : 'sample_source', */
+    /* contact : 'sample_contact@contact', */
     releaseFreq : 'year',
-    year : 2016,
-    level : 'sample_level',
-    scope : 'sample_scope', 
+    year : (new Date()).getFullYear(),
+    month : '0',
+    /* level : 'sample_level', */
+    /* scope : 'sample_scope', */ 
   };
   self.$rootScope.preventNavigation = false;
 
@@ -51,6 +52,32 @@ UploadCtrl.prototype.upload = function(files, invalid) {
     console.log(extension);
     if (!(extension == 'xlsx' || extension == 'csv')) {
       return alert('Must be a .csv or .xlsx file. Please check the filename extension.');
+    }
+    // Transform releaseFreq value
+    if (self.$scope.data.releaseFreq === 'year') {
+      // 1 jan to 31 dec
+      var start = '01/01/' + self.$scope.data.year;
+      var end = '12/01/' + self.$scope.data.year;
+      console.log(start);
+      console.log(end);
+      self.$scope.data.dateStart = (new Date(start)).toISOString();
+      self.$scope.data.dateEnd = (new Date(end)).toISOString();
+      delete(self.$scope.data.month);
+    } else if (self.$scope.data.releaseFreq === 'month') {
+      var month = (parseInt(self.$scope.data.month) + 1).toString();
+      if (month.toString().length == 1) {
+        month = '0' + month;
+      }
+      console.log('selected month : ' + month);
+      var start = month + '/01/' + self.$scope.data.year;
+      var end = month + '/31/' + self.$scope.data.year;
+      console.log(start);
+      console.log(end);
+      self.$scope.data.dateStart = (new Date(start)).toISOString();
+      self.$scope.data.dateEnd = (new Date(end)).toISOString();
+    }
+    if (!self.$scope.data.dateStart || !self.$scope.data.dateEnd) {
+      alert('Please specify the release frequency values');
     }
     self.$rootScope.preventNavigation = true;
     self.uploadStatus = "uploading";

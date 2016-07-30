@@ -18,7 +18,10 @@ var Dataset = function ($stateParams, $scope, $state, $window, $rootScope, AuthS
   
   var self = this;
 
-  self.$window.scrollTo(0,0)
+  self.$window.scrollTo(0,0);
+
+  // Datepicker init
+  self.$scope.showDateStartPicker = false;
 
   // Handle main spinners in one place.
   self.$scope.spinner = {
