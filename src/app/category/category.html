@@ -55,7 +55,7 @@
               </div>
               <div ng-hide="deleteConfirm">
                 <button class="btn btn-inline-right btn-default" ng-click="categoryModal.dismiss()">Batal</button>
-                <button class="btn btn-inline-right btn-danger" ng-click="deleteConfirm=true;" ng-show="currentCategoryRole=='admin'">Hapus</button>
+                <button class="btn btn-inline-right btn-danger" ng-click="deleteConfirm=true;" ng-show="currentUserRole=='admin' && currentItem._id">Hapus</button>
                 <button ng-hide="currentItem._id" class="btn btn-inline-right btn-primary" ng-click="category.create(currentItem)">Simpan</button>
                 <button ng-show="currentItem._id" class="btn btn-inline-right btn-primary" ng-click="category.update(currentItem)">Simpan</button>
               </div>

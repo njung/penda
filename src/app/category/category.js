@@ -132,7 +132,7 @@ Category.prototype.update = function(data) {
 Category.prototype.delete = function(id) {
   var self = this;
   // Prevent self delete
-  if (id.toString()===self.$rootScope.currentCategoryProfileId.toString()) {
+  if (id.toString()===self.$rootScope.currentUserProfileId.toString()) {
     return;
   }
   self.CategoryService.delete(id)
