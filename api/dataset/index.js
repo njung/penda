@@ -117,6 +117,17 @@ Dataset.prototype.registerEndPoints = function() {
   });
   
   self.server.route({
+    method: "POST",
+    path: "/api/dataset/{filename}",
+    handler: function(request, reply) {
+      self.update(request, reply);
+    },
+		config : {
+			auth : false,
+    }
+  });
+  
+  self.server.route({
     method: "DELETE",
     path: "/api/dataset/{filename}",
     handler: function(request, reply) {
@@ -309,6 +320,14 @@ Dataset.prototype.upload = function(request, reply) {
 			uploaderId : request.payload.uploaderId,
       dateStart : request.payload.dateStart,
       dateEnd : request.payload.dateEnd,
+      category : [],
+    }
+    // Parse category
+    var keys = Object.keys(request.payload);
+    for (var i in keys) {
+      if (keys[i].indexOf('category') > -1) {
+        data.category.push(request.payload[keys[i]]);
+      }
     }
     if (data.releaseFreq === 'year') {
       data.year = request.payload.year;

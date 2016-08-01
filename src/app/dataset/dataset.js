@@ -1,4 +1,4 @@
-var Dataset = function ($stateParams, $scope, $state, $window, $rootScope, AuthService, localStorageService, toastr, $location, ToastrService, $modal, $http, host, AlertService, DatasetService, $compile){
+var Dataset = function ($stateParams, $scope, $state, $window, $rootScope, AuthService, localStorageService, toastr, $location, ToastrService, $modal, $http, host, AlertService, DatasetService, $compile, CategoryService){
   this.$stateParams = $stateParams;
   this.$scope = $scope;
   this.$state = $state;
@@ -15,6 +15,7 @@ var Dataset = function ($stateParams, $scope, $state, $window, $rootScope, AuthS
   this.AlertService = AlertService;
   this.DatasetService = DatasetService;
   this.$compile = $compile;
+  this.CategoryService = CategoryService;
   
   var self = this;
 
@@ -22,7 +23,19 @@ var Dataset = function ($stateParams, $scope, $state, $window, $rootScope, AuthS
 
   // Datepicker init
   self.$scope.showDateStartPicker = false;
-
+  self.$scope.months = new Array();
+  self.$scope.months[0] = "Januari";
+  self.$scope.months[1] = "Februari";
+  self.$scope.months[2] = "Maret";
+  self.$scope.months[3] = "April";
+  self.$scope.months[4] = "Mei";
+  self.$scope.months[5] = "Juni";
+  self.$scope.months[6] = "Juli";
+  self.$scope.months[7] = "Agustus";
+  self.$scope.months[8] = "September";
+  self.$scope.months[9] = "Oktober";
+  self.$scope.months[10] = "November";
+  self.$scope.months[11] = "Desember";
   // Handle main spinners in one place.
   self.$scope.spinner = {
   };
@@ -159,10 +172,12 @@ Dataset.prototype.get = function(filename) {
       var keys = Object.keys(result.data.tableSchema);
       for (var i in keys) {
         self.$scope.fields.push({text:keys[i], value:keys[i]});
-        self.$scope.currentItem.schema.push({
-          key : keys[i],
-          value : result.data.tableSchema[keys[i]]
-        })
+        if (keys[i] && result.data.tableSchema[keys[i]] && result.data.tableSchema[keys[i]] != undefined) {
+          self.$scope.currentItem.schema.push({
+            key : keys[i],
+            value : result.data.tableSchema[keys[i]]
+          })
+        }
       }
     }
     self.$scope.spinner.dataset = false;
@@ -375,10 +390,36 @@ Dataset.prototype.showEditForm = function(data) {
   var self = this;
   self.$scope.data = angular.copy(data);
   self.$scope.mode = 'edit';
+  self.CategoryService.list({limit:0})
+  .then(function(result){
+    self.$scope.categories = result.data.data;
+    if (self.$scope.data.category) {
+      for (var i in self.$scope.categories) {
+        for (var j in self.$scope.data.category) {
+          if (self.$scope.categories[i].name === self.$scope.data.category[j]) {
+            self.$scope.categories[i].selected = true;
+          }  
+        }
+      }
+    }
+  })
+  .catch(function(result) {
+    self.ToastrService.parse(result);
+  })
 }
 
 Dataset.prototype.update = function() {
   var self = this;
+  // Collect selected categories
+  self.$scope.data.category = [];
+  for (var i in self.$scope.categories) {
+    if (self.$scope.categories[i].selected) {
+      self.$scope.data.category.push(self.$scope.categories[i].name);
+    }
+  }
+  if (self.$scope.data.category.length < 1) {
+    return alert('Silakan pilih minimal satu kategori terlebih dahulu.');
+  }
   self.DatasetService.update(self.$scope.data)
   .then(function(result) {
     self.list(); 
@@ -392,7 +433,7 @@ Dataset.prototype.someFunc = function(params) {
   var self = this;
 }
 
-Dataset.inject = [ '$stateParams', '$scope', '$state', '$window', '$rootScope', 'AuthService', 'localStorageService', 'toastr', '$location', 'ToastrService', '$modal', '$http', 'host' , 'AlertService', 'DatasetService', '$compile'];
+Dataset.inject = [ '$stateParams', '$scope', '$state', '$window', '$rootScope', 'AuthService', 'localStorageService', 'toastr', '$location', 'ToastrService', '$modal', '$http', 'host' , 'AlertService', 'DatasetService', '$compile', 'CategoryService'];
 
 angular.module('dataset',[])
 .controller('DatasetCtrl', Dataset)

@@ -150,6 +150,14 @@ angular.module('App', [
 })
 .run([ '$rootScope', '$state', '$stateParams', 'amMoment', 'AuthService', 'UserService', 'ngProgressFactory',
   function ($rootScope, $state, $stateParams, amMoment, AuthService, UserService, ngProgressFactory) {
+
+    $rootScope.goTo = function(state, mode) {
+      $state.transitionTo(state, { mode : mode }, {
+        reload : true,
+        inherit : true,
+        notify : true
+      });
+    }
     amMoment.changeLocale('id');
     AuthService.checkToken({redirect:false});
     $rootScope.loading = ngProgressFactory.createInstance();
