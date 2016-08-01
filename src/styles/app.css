@@ -10,6 +10,12 @@ textarea {
   resize:vertical;
 }
 
+@media (max-width:1000px) {
+  .hide-on-minus-1000 {
+    display:none !important;;
+  }
+}
+
 @media (max-width:767px) {
   .hide-on-mobile {
     display:none !important;;
