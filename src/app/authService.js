@@ -87,38 +87,6 @@ AuthService.prototype.generateMac = function(path, method) {
   }
 }
 
-AuthService.prototype.logout = function() {
-  var self = this;
-  var path = '/api/users/logout';
-  self.$http({
-    headers : {
-      Authorization : self.generateMac(path, 'GET')
-    },
-    method: 'GET',
-    url : self.host + path,
-  })
-  .success(function(data, status, headers, config) {
-    self.clearCredentials();
-  })
-  .error(function(data, status, headers) {
-    self.clearCredentials();
-  });
-}
-
-AuthService.prototype.clearCredentials = function(){
-  var self = this;
-  self.localStorageService.remove('hawkPairKey'); // for hawk
-  self.localStorageService.remove('token'); // for jwt
-  self.localStorageService.remove('currentUser');
-  self.hawkPairKey = {};
-  self.$rootScope.loginForm = true;
-  self.$rootScope.frontPage = true;
-  self.$rootScope.currentUser = false;
-  self.$rootScope.currentUserRole = false;
-  self.$state.go('start');
-}
-
-
 AuthService.prototype.checkToken = function(options) {
   var self = this;
   var deferred = self.$q.defer();
