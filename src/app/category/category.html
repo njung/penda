@@ -14,12 +14,16 @@
         <thead>
           <tr>
             <td>Nama kategori</td>
+            <td>Terakhir diperbarui</td>
           </tr>
         </thead>
         <tbody>
           <tr ng-repeat="data in list.data track by $index" ng-click="category.showCategory(data)" class="pointer">
             <td>
               {{data.name}}
+            </td>
+            <td>
+              {{data.updatedAt | amDateFormat:'DD-MM-YYYY HH:mm:ss' || data.createdAt | amDateFormat:'DD-MM-YYYY HH:mm:ss'}}
             </td>
           </tr>
         </tbody>

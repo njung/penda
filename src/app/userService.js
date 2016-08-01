@@ -22,7 +22,12 @@ UserService.prototype.get = function(id) {
 UserService.prototype.list = function(option) {
   var self = this;
   var page = option.page || 1;
-  var limit = option.limit || 10;
+  var limit;
+  if (option.limit === 0) {
+    limit = 0;
+  } else {
+    limit = option.limit || 10;
+  }
   var path = "/api/users?page=" + page + "&limit=" + limit;
   return self.$http({
     headers : {

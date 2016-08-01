@@ -87,6 +87,16 @@
             <input name="scope" ng-model="data.scope" type="text" class="form-control input-md">
             </div>
           </div>
+          <div class="form-group">
+            <label class="col-sm-4 control-label" for="scope">Kategori</label>  
+            <div class="col-sm-8">
+              <div class="category-item" ng-repeat="c in categories track by $index" ng-click="c.selected=!c.selected;">
+                <span ng-show="c.selected" class="fa fa-check"></span>
+                <span ng-hide="c.selected" class="fa fa-minus"></span>
+                &nbsp;{{c.name}}
+              </div>
+            </div>
+          </div>
           <!-- Button -->
           <div class="form-group">
             <label class="col-sm-4 control-label" for="singlebutton"></label>

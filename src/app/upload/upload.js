@@ -1,4 +1,4 @@
-var UploadCtrl = function ($stateParams, $scope, $state, $window, $rootScope, AuthService, localStorageService, toastr, $location, ToastrService, $modal, $http, host, AlertService, DatasetService, Upload){
+var UploadCtrl = function ($stateParams, $scope, $state, $window, $rootScope, AuthService, localStorageService, toastr, $location, ToastrService, $modal, $http, host, AlertService, DatasetService, Upload, CategoryService){
   this.$stateParams = $stateParams;
   this.$scope = $scope;
   this.$state = $state;
@@ -15,12 +15,22 @@ var UploadCtrl = function ($stateParams, $scope, $state, $window, $rootScope, Au
   this.AlertService = AlertService;
   this.DatasetService = DatasetService;
   this.Upload = Upload;
+  this.CategoryService = CategoryService;
   
   var self = this;
 
   self.$window.scrollTo(0,0)
 
-  // Handle main spinners in one place.
+  // Load category list
+  self.CategoryService.list({limit:0})
+  .then(function(result){
+    self.$scope.categories = result.data.data;
+  })
+  .catch(function(result) {
+    self.ToastrService.parse(result);
+  })
+
+  // Handle spinners in one place.
   self.spinner = {
   };
 
@@ -100,7 +110,7 @@ UploadCtrl.prototype.upload = function(files, invalid) {
   }
 }
 
-UploadCtrl.inject = [ '$stateParams', '$scope', '$state', '$window', '$rootScope', 'AuthService', 'localStorageService', 'toastr' , '$location', 'ToastrService', '$modal', '$http', 'host' , 'AlertService', 'DatasetService', 'Upload'];
+UploadCtrl.inject = [ '$stateParams', '$scope', '$state', '$window', '$rootScope', 'AuthService', 'localStorageService', 'toastr' , '$location', 'ToastrService', '$modal', '$http', 'host' , 'AlertService', 'DatasetService', 'Upload', 'CategoryService'];
 
 angular.module('upload',[])
 .controller('UploadCtrl', UploadCtrl)
