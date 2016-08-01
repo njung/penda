@@ -68,6 +68,8 @@ Category.prototype.list = function(option){
   self.$scope.spinner.list = true;
   self.$scope.mode = 'list';
   var option = option || { page : 1 };
+  // Load all data
+  option.limit = 0;
   self.CategoryService.list(option)
   .then(function(result){
     self.$scope.spinner.list = false;

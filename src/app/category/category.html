@@ -10,27 +10,12 @@
         <br><br>
         <img class="centered" src="/assets/img/spinners/spinner_64.gif" style="height:32px;">
       </div>
-      <table class="table table-striped table-hover table-bordered" ng-hide="spinner.list">
-        <thead>
-          <tr>
-            <td>Nama kategori</td>
-            <td>Terakhir diperbarui</td>
-          </tr>
-        </thead>
-        <tbody>
-          <tr ng-repeat="data in list.data track by $index" ng-click="category.showCategory(data)" class="pointer">
-            <td>
-              {{data.name}}
-            </td>
-            <td>
-              {{data.updatedAt | amDateFormat:'DD-MM-YYYY HH:mm:ss' || data.createdAt | amDateFormat:'DD-MM-YYYY HH:mm:ss'}}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-	    <div class="content-centered centered" ng-hide="spinner.list">
+      <div class="category-block aceh-color-greygreen-bg pointer" ng-repeat="data in list.data track by $index" ng-click="category.showCategory(data)" class="pointer">
+        {{data.name}}
+      </div>
+	    <!--div class="content-centered centered" ng-hide="spinner.list">
 	    	<pagination total-items="list.total" ng-model="list.page" ng-change="category.paginate()" items-per-page="10"></pagination>
-	    </div>
+	    </div-->
 	  </div>
     <div ng-show="mode=='item'" class=" animated fadeIn">
       <div class="content-centered" ng-show="spinner.category">

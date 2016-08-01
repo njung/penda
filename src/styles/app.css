@@ -758,18 +758,13 @@ a,a:hover,a:active {
   margin-top:100px !important;
 }
 
-.category-item {
+.category-select-item {
   display:inline-block;
   margin: 5px;
   cursor: pointer;
   padding: 2px 5px 2px 5px;
   border: 1px solid grey;
 }
-
-.category-check {
-  width:50px;
-}
-
 
 /*-------------------------------------*/
     

@@ -90,7 +90,7 @@
           <div class="form-group">
             <label class="col-sm-4 control-label" for="scope">Kategori</label>  
             <div class="col-sm-8">
-              <div class="category-item" ng-repeat="c in categories track by $index" ng-click="c.selected=!c.selected;">
+              <div class="category-select-item" ng-repeat="c in categories track by $index" ng-click="c.selected=!c.selected;">
                 <span ng-show="c.selected" class="fa fa-check"></span>
                 <span ng-hide="c.selected" class="fa fa-minus"></span>
                 &nbsp;{{c.name}}
