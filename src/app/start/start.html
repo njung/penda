@@ -112,20 +112,25 @@
   </div>
   <div class="row margined-container" style="padding:0px !important">
     <div class="col-md-9" style="padding:30px;">
-      <h4 class="aceh-color-green-fg">Dataset Terbaru</h4>
-      <div class="dataset-item" ng-repeat="dataset in list.data" ng-click="start.showDataset(dataset.filename);">
-        <div class="dataset-icon-container"></div>
-        <div class="dataset-info">
-          <h4 class="dataset-title">{{dataset.title}}</h4>
-          {{dataset.createdAt | amDateFormat:'DD-MM-YYYY HH:mm:ss'}} &nbsp;
-          <span class="alert-info">{{dataset.totalRows}} record</span>
-          <span class="alert-info">Kesehatan</span>
-          <span class="alert-info">Kependudukan</span>
-          <p class="dataset-desc">{{dataset.desc}} </p>
-        </div>
+      <div ng-show="list.data && list.data.length < 1" class="content-centered animated fadeIn" style="margin-top:50px;">
+          <span class="alert alert-info">Belum ada data</span>
       </div>
-      <div class="content-centered">
-        <a href="#/dataset/list" class="btn btn-primary" style="color:white !important">Lihat semua...</a>
+      <div ng-show="list.data && list.data.length > 0">
+        <h4 class="aceh-color-green-fg">Dataset Terbaru</h4>
+        <div class="dataset-item" ng-repeat="dataset in list.data" ng-click="start.showDataset(dataset.filename);">
+          <div class="dataset-icon-container"></div>
+          <div class="dataset-info">
+            <h4 class="dataset-title">{{dataset.title}}</h4>
+            {{dataset.createdAt | amDateFormat:'DD-MM-YYYY HH:mm:ss'}} &nbsp;
+            <span class="alert-info">{{dataset.totalRows}} record</span>
+            <span class="alert-info">Kesehatan</span>
+            <span class="alert-info">Kependudukan</span>
+            <p class="dataset-desc">{{dataset.desc}} </p>
+          </div>
+        </div>
+        <div class="content-centered">
+          <a href="#/dataset/list" class="btn btn-primary" style="color:white !important">Lihat semua...</a>
+        </div>
       </div>
     </div>
     <div class="col-md-3">
