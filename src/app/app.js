@@ -1,175 +1,154 @@
 'use strict';
 var totalUserCount;
 
-angular.module("App", [
-  "ui.router", 
-  "ui.bootstrap",
-  "ngAnimate",
-  "html",
-  "start",
-  "login",
-  "signup",
-  "confirm",
-  "passrec",
-  "page",
-  "p",
-  "user",
-  "dataset",
-  "upload",
-  "logout",
-  "notfound",
-  "profile",
-  "feedback",
-  "cropAvatar",
-  "alert",
+angular.module('App', [
+  'ui.router', 
+  'ui.bootstrap',
+  'ngAnimate',
+  'html',
+  'start',
+  'login',
+  'signup',
+  'confirm',
+  'passrec',
+  'user',
+  'category',
+  'dataset',
+  'upload',
+  'logout',
+  'notfound',
+  'feedback',
+  'alert',
   // Services
-  "menu",
-  "alertService",
-  "authService",
-  "userService",
-  "pageService",
-  "toastrService",
-  "uploadService",
-  "feedbackService",
-  "datasetService",
+  'menu',
+  'alertService',
+  'authService',
+  'userService',
+  'categoryService',
+  'toastrService',
+  'uploadService',
+  'feedbackService',
+  'datasetService',
 
-  "LocalStorageModule",
-  "toastr",
-  "ngFileUpload",
-  "slick",
-  "angularMoment",
-  "colorpicker.module",
-  "ui.tinymce",
-  "ngProgress",
-  "ui.utils.masks",
-  "infinite-scroll",
-  "ngImgCrop",
-  "debounce",
-  "fcsa-number",
-  "ngDropdowns",
-  "leaflet-directive"
+  'LocalStorageModule',
+  'toastr',
+  'ngFileUpload',
+  'slick',
+  'angularMoment',
+  'colorpicker.module',
+  'ui.tinymce',
+  'ngProgress',
+  'ui.utils.masks',
+  'infinite-scroll',
+  'ngImgCrop',
+  'debounce',
+  'fcsa-number',
+  'ngDropdowns',
+  'leaflet-directive'
 ])
 // The controller declared in their html file
 .config(function($stateProvider, $urlRouterProvider, toastrConfig) {
 
   $urlRouterProvider.otherwise('/start/');
   $stateProvider
-  .state("start", {
-      url: "/start/{params}",
+  .state('start', {
+      url: '/start/{params}',
       cache: false,
       templateProvider: function($templateCache) {
-        return $templateCache.get("start/start.html");
+        return $templateCache.get('start/start.html');
       }
     }
   )
-  .state("login", {
-      url: "/login/{params}",
+  .state('login', {
+      url: '/login/{params}',
       cache: false,
       templateProvider: function($templateCache) {
-        return $templateCache.get("login/login.html");
+        return $templateCache.get('login/login.html');
       }
     }
   )
-  .state("signup", {
-      url: "/signup",
+  .state('signup', {
+      url: '/signup',
       cache: false,
       templateProvider: function($templateCache) {
-        return $templateCache.get("signup/signup.html");
+        return $templateCache.get('signup/signup.html');
       }
     }
   )
-  .state("confirm", {
-      url: "/confirm/{code}",
+  .state('confirm', {
+      url: '/confirm/{code}',
       cache: false,
       templateProvider: function($templateCache) {
-        return $templateCache.get("confirm/confirm.html");
+        return $templateCache.get('confirm/confirm.html');
       }
     }
   )
-  .state("passrec", {
-      url: "/passrec/{code}",
+  .state('passrec', {
+      url: '/passrec/{code}',
       cache: false,
       templateProvider: function($templateCache) {
-        return $templateCache.get("passrec/passrec.html");
+        return $templateCache.get('passrec/passrec.html');
       }
     }
   )
-  .state("setting", {
-      url: "/settings/{type}",
+  .state('setting', {
+      url: '/settings/{type}',
       cache: false,
       templateProvider: function($templateCache) {
-        return $templateCache.get("setting/setting.html");
+        return $templateCache.get('setting/setting.html');
       }
     }
   )
-  .state("page", {
-      url: "/page",
+  .state('user', {
+      url: '/user/{mode}',
       cache: false,
       templateProvider: function($templateCache) {
-        return $templateCache.get("page/page.html");
+        return $templateCache.get('user/user.html');
       }
     }
   )
-  .state("p", {
-      url: "/p/{url}",
+  .state('category', {
+      url: '/category/{mode}',
       cache: false,
-      /* controller: "ConfirmCtrl", */
       templateProvider: function($templateCache) {
-        return $templateCache.get("p/p.html");
+        return $templateCache.get('category/category.html');
       }
     }
   )
-  .state("user", {
-      url: "/user/{mode}",
+  .state('dataset', {
+      url: '/dataset/{mode}',
       cache: false,
       templateProvider: function($templateCache) {
-        return $templateCache.get("user/user.html");
+        return $templateCache.get('dataset/dataset.html');
       }
     }
   )
-  .state("dataset", {
-      url: "/dataset/{mode}",
+  .state('upload', {
+      url: '/upload/{mode}',
       cache: false,
       templateProvider: function($templateCache) {
-        return $templateCache.get("dataset/dataset.html");
+        return $templateCache.get('upload/upload.html');
       }
     }
   )
-  .state("upload", {
-      url: "/upload/{mode}",
+  .state('notfound', {
+      url: '/notfound',
       cache: false,
       templateProvider: function($templateCache) {
-        return $templateCache.get("upload/upload.html");
+        return $templateCache.get('notfound/notfound.html');
       }
     }
   )
-  .state("profile", {
-      url: "/profile",
+  .state('logout', {
+      url: '/logout',
       cache: false,
-      /* controller: "ProfileCtrl", */
-      templateProvider: function($templateCache) {
-        return $templateCache.get("profile/profile.html");
-      }
-    }
-  )
-  .state("notfound", {
-      url: "/notfound",
-      cache: false,
-      templateProvider: function($templateCache) {
-        return $templateCache.get("notfound/notfound.html");
-      }
-    }
-  )
-  .state("logout", {
-      url: "/logout",
-      cache: false,
-      controller: "LogoutCtrl"
+      controller: 'LogoutCtrl'
     }
   )
 })
-.controller("AppCtrl", function($scope) {
+.controller('AppCtrl', function($scope) {
 })
-.run([ "$rootScope", "$state", "$stateParams", "amMoment", "AuthService", "UserService", "ngProgressFactory",
+.run([ '$rootScope', '$state', '$stateParams', 'amMoment', 'AuthService', 'UserService', 'ngProgressFactory',
   function ($rootScope, $state, $stateParams, amMoment, AuthService, UserService, ngProgressFactory) {
     amMoment.changeLocale('id');
     AuthService.checkToken({redirect:false});

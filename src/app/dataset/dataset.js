@@ -31,6 +31,7 @@ var Dataset = function ($stateParams, $scope, $state, $window, $rootScope, AuthS
   self.$scope.viewMode = 'table';
   self.$scope.mapAvailable = false;
   self.$scope.appearance = {}
+  self.$scope.notFound = false;
   self.$scope.limits = [
     {
       text:'10',
@@ -128,6 +129,9 @@ Dataset.prototype.list = function(option){
     self.$scope.spinner.list = false;
     self.$scope.list = result.data;
   })
+  .catch(function(result) {
+    self.ToastrService.parse(result);
+  })
 }
 
 Dataset.prototype.loadGraph = function() {
@@ -138,6 +142,7 @@ Dataset.prototype.loadGraph = function() {
 
 Dataset.prototype.get = function(filename) {
   var self = this;
+  self.$scope.notFound = false;
   self.$scope.spinner.dataset = true;
   self.$scope.mode = 'item';
   self.DatasetService.get(filename)
@@ -162,6 +167,13 @@ Dataset.prototype.get = function(filename) {
     }
     self.$scope.spinner.dataset = false;
     self.getQuery();
+  })
+  .catch(function(result) {
+    self.$scope.spinner.dataset = false;
+    if (result.status === 404) {
+      self.$scope.notFound = true;
+    }
+    self.ToastrService.parse(result);
   })
 }
 
@@ -353,6 +365,9 @@ Dataset.prototype.delete = function(filename) {
   self.DatasetService.delete(filename)
   .then(function(result) {
     self.list();
+  })
+  .catch(function(result) {
+    self.ToastrService.parse(result);
   })
 }
 

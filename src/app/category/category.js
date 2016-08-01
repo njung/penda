@@ -1,4 +1,4 @@
-var User = function ($stateParams, $scope, $state, $window, $rootScope, AuthService, localStorageService, toastr, $location, ToastrService, $modal, $http, host, AlertService, UserService){
+var Category = function ($stateParams, $scope, $state, $window, $rootScope, AuthService, localStorageService, toastr, $location, ToastrService, $modal, $http, host, AlertService, CategoryService){
   this.$stateParams = $stateParams;
   this.$scope = $scope;
   this.$state = $state;
@@ -13,7 +13,7 @@ var User = function ($stateParams, $scope, $state, $window, $rootScope, AuthServ
   this.$http = $http;
   this.host = host;
   this.AlertService = AlertService;
-  this.UserService = UserService;
+  this.CategoryService = CategoryService;
   
   var self = this;
 
@@ -33,42 +33,42 @@ var User = function ($stateParams, $scope, $state, $window, $rootScope, AuthServ
   }
 }
 
-User.prototype.showUser = function(data) {
+Category.prototype.showCategory = function(data) {
   var self = this;
-  self.$rootScope.currentItem = data;
-  self.$rootScope.userModal = self.$modal.open({
-    templateUrl : 'userModal.html',
+  self.$rootScope.currentItem = angular.copy(data);
+  self.$rootScope.categoryModal = self.$modal.open({
+    templateUrl : 'categoryModal.html',
     size: 'md',
-    controller : 'UserCtrl as user'
+    controller : 'CategoryCtrl as category'
   })
-  self.$rootScope.userModal.result.then(function(){
+  self.$rootScope.categoryModal.result.then(function(){
   }, function(){
     self.$rootScope.currentItem = null;
     self.list();
   })
 }
 
-User.prototype.addUser = function() {
+Category.prototype.addCategory = function() {
   var self = this;
   self.$rootScope.currentItem = {};
-  self.$rootScope.userModal = self.$modal.open({
-    templateUrl : 'userModal.html',
+  self.$rootScope.categoryModal = self.$modal.open({
+    templateUrl : 'categoryModal.html',
     size: 'md',
-    controller : 'UserCtrl as user'
+    controller : 'CategoryCtrl as category'
   })
-  self.$rootScope.userModal.result.then(function(){
+  self.$rootScope.categoryModal.result.then(function(){
   }, function(){
     self.$rootScope.currentItem = null;
     self.list();
   })
 }
 
-User.prototype.list = function(option){
+Category.prototype.list = function(option){
   var self = this;
   self.$scope.spinner.list = true;
   self.$scope.mode = 'list';
   var option = option || { page : 1 };
-  self.UserService.list(option)
+  self.CategoryService.list(option)
   .then(function(result){
     self.$scope.spinner.list = false;
     self.$scope.list = result.data;
@@ -79,22 +79,22 @@ User.prototype.list = function(option){
   })
 }
 
-User.prototype.get = function(id) {
+Category.prototype.get = function(id) {
   var self = this;
-  self.$scope.spinner.user = true;
+  self.$scope.spinner.category = true;
   self.$scope.mode = 'item';
-  self.UserService.get(id)
+  self.CategoryService.get(id)
   .then(function(result) {
     self.$rootScope.currentItem = result.data;
-    self.$scope.spinner.user = false;
+    self.$scope.spinner.category = false;
   })
   .catch(function(result) {
-    self.$scope.spinner.user = false;
+    self.$scope.spinner.category = false;
     self.ToastrService.parse(result);
   })
 }
 
-User.prototype.paginate = function() {
+Category.prototype.paginate = function() {
   var self = this;
   var opt = {
     page : self.$scope.list.page
@@ -102,27 +102,40 @@ User.prototype.paginate = function() {
   self.list(opt);
 }
 
-User.prototype.create = function(data) {
+Category.prototype.create = function(data) {
   var self = this;
   var data = angular.copy(data);
-  self.UserService.create(data)
+  self.CategoryService.create(data)
   .then(function(result) {
-    self.$rootScope.userModal.dismiss();
+    self.$rootScope.categoryModal.dismiss();
   })
   .catch(function(result) {
     self.ToastrService.parse(result);
   })
 }
 
-User.prototype.delete = function(id) {
+Category.prototype.update = function(data) {
+  var self = this;
+  var data = angular.copy(data);
+  self.CategoryService.update(data)
+  .then(function(result) {
+    self.$rootScope.categoryModal.dismiss();
+  })
+  .catch(function(result) {
+    self.ToastrService.parse(result);
+  })
+}
+
+
+Category.prototype.delete = function(id) {
   var self = this;
   // Prevent self delete
-  if (id.toString()===self.$rootScope.currentUserProfileId.toString()) {
+  if (id.toString()===self.$rootScope.currentCategoryProfileId.toString()) {
     return;
   }
-  self.UserService.delete(id)
+  self.CategoryService.delete(id)
   .then(function(result) {
-    self.$rootScope.userModal.dismiss();
+    self.$rootScope.categoryModal.dismiss();
     self.list();
   })
   .catch(function(result) {
@@ -130,13 +143,13 @@ User.prototype.delete = function(id) {
   })
 }
 
-User.prototype.someFunc = function(params) {
+Category.prototype.someFunc = function(params) {
   var self = this;
 }
 
-User.inject = [ '$stateParams', '$scope', '$state', '$window', '$rootScope', 'AuthService', 'localStorageService', 'toastr', '$location', 'ToastrService', '$modal', '$http', 'host' , 'AlertService', 'UserService'];
+Category.inject = [ '$stateParams', '$scope', '$state', '$window', '$rootScope', 'AuthService', 'localStorageService', 'toastr', '$location', 'ToastrService', '$modal', '$http', 'host' , 'AlertService', 'CategoryService'];
 
-angular.module('user',[])
-.controller('UserCtrl', User)
+angular.module('category',[])
+.controller('CategoryCtrl', Category)
 ;
 

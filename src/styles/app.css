@@ -748,6 +748,10 @@ a,a:hover,a:active {
   background:#CFD9D1 !important;
 }
 
+.modal-dialog {
+  margin-top:100px !important;
+}
+
 /*-------------------------------------*/
     
     .cf:before, .cf:after{
