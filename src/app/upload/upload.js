@@ -18,6 +18,11 @@ var UploadCtrl = function ($stateParams, $scope, $state, $window, $rootScope, Au
   this.CategoryService = CategoryService;
   
   var self = this;
+  
+  // Catch iframe parameter
+  if (self.$location.search().iframe === 'true') {
+    self.$rootScope.iframe = true;
+  }
 
   self.$window.scrollTo(0,0)
 

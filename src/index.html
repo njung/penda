@@ -103,13 +103,13 @@
 <body class="bg-lightgrey">
   <main ng-controller="AppCtrl">
   	<div class="container">
-  	<div class="row">
+  	<div class="row" ng-hide="iframe">
   		<div class="col-md-12">
          <div ng-include src="'menu.html'"></div>
   		</div>
   	</div>
   	</div>
-    <div class="navbar-top-separator"></div>
+    <div class="navbar-top-separator" ng-hide="iframe"></div>
     <div id="main-area" ui-view></div>
 	</main>
 

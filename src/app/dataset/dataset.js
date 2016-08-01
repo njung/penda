@@ -18,6 +18,11 @@ var Dataset = function ($stateParams, $scope, $state, $window, $rootScope, AuthS
   this.CategoryService = CategoryService;
   
   var self = this;
+  
+  // Catch iframe parameter
+  if (self.$location.search().iframe === 'true') {
+    self.$rootScope.iframe = true;
+  }
 
   self.$window.scrollTo(0,0);
 
@@ -121,6 +126,7 @@ var Dataset = function ($stateParams, $scope, $state, $window, $rootScope, AuthS
   } else {
     self.list();
   }
+  
 }
 
 Dataset.prototype.showDataset = function(filename) {

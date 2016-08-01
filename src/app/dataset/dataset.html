@@ -1,5 +1,5 @@
-<div cjass="fluid-container" ng-controller="DatasetCtrl as dataset">
-  <div class="row animated fadeIn margined-container">
+<div class="fluid-container" ng-controller="DatasetCtrl as dataset">
+  <div class="row animated fadeIn" ng-class="{'margined-container-iframe':iframe, 'margined-container':!iframe}">
     <div ng-show="mode=='list' && list.data.length < 1" class="content-centered animated fadeIn" style="margin-top:50px;">
         <span class="alert alert-info">Belum ada data</span>
     </div>
@@ -88,7 +88,8 @@
           Sidebar
         </div>
       </div>
-	  </div>
+    </div>
+
     <div ng-show="mode=='item' && notFound" class="content-centered animated fadeIn" style="margin-top:50px;">
       <span class="alert alert-info">Dataset tidak ditemukan.</span>
     </div>
@@ -96,7 +97,8 @@
       <div class="content-centered" ng-show="spinner.dataset">
         <br><br>
         <img class="centered" src="/assets/img/spinners/spinner_64.gif" style="height:32px;">
-      </div>
+    </div>
+    
       <div ng-hide="spinner.dataset">
         <div class="row">
           <h1>Dataset : {{currentItem.title}}</h1>
@@ -107,7 +109,7 @@
               <small ng-show="appearance.hideMeta" class="pointer" ng-click="appearance.hideMeta=false">Tampilkan</small>
             </h4>
           </div>
-          <div class="pull-right" style="margin-bottom:15px;" ng-hide="confirmDelete || !currentUser">
+          <div class="pull-right" style="margin-bottom:15px;" ng-hide="confirmDelete || !currentUser || iframe">
             <a href="#/dataset/list" class="btn btn-default"><span class="fa fa-chevron-left"></span>&nbsp;Kembali</a>
             <button class="btn btn-default" ng-click="dataset.showEditForm(currentItem);"><span class="fa fa-edit"></span>&nbsp;Sunting</button>
             <button class="btn btn-default" ng-click="confirmDelete=true;"><span class="fa fa-trash"></span>&nbsp;Hapus</button>
@@ -260,8 +262,8 @@
               <h4>Tampilan Data</h4>
           </div>
           <hr>
-          <div class="pull-right" style="width:100px;">
-            <div class="btn btn-default"  style="height:33px;width:100px;padding:5px 10px;display:inline-block;position:absolute;" 
+          <div class="pull-right" style="margin-right:70px;">
+            <div class="btn btn-default"  style="height:33px;margin-right:100px;padding:5px 10px;display:inline-block;position:absolute;" 
   
                 dropdown-menu="limits"
                 dropdown-onchange="dataset.updateLimit(selected);"
@@ -269,10 +271,10 @@
               >Limit : {{datasetQuery.limit}}
             </div>
           </div>
-          <div class="pull-right" style="width:175px;margin-right:80px;">
-            <div class="input-group">
+          <div class="pull-right">
+            <div class="input-group" style="width:175px;margin-right:0px;">
               <span style="height:33px;width:33px;" class="input-group-addon pointer" ng-click="dataset.prevPageQuery()"><span class="fa fa-chevron-left"></span></span>
-              <input class="form-control" type="number" style="height:33px;padding:2px 10px;width:75px;" ng-model="datasetQuery.page" ng-keypress="dataset.getQuery()" ng-change="dataset.getQuery();">
+              <input class="form-control" type="number" style="height:33px;padding:2px 10px;width:110px;" ng-model="datasetQuery.page" ng-keypress="dataset.getQuery()" ng-change="dataset.getQuery();">
   
               <span style="height:33px;width:33px;" class="input-group-addon pointer" ng-click="dataset.nextPageQuery()"><span class="fa fa-chevron-right"></span></span>
             </div>

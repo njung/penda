@@ -1,5 +1,5 @@
-<div cjass="fluid-container" ng-controller="UploadCtrl as upload">
-  <div class="row animated fadeIn margined-container">
+<div class="fluid-container" ng-controller="UploadCtrl as upload">
+  <div class="row animated fadeIn" ng-class="{'margined-container-iframe':iframe, 'margined-container':!iframe}">
     <h1>Unggah</h1>
     <div class="row">
       <div class="col-sm-6" ng-include src="'upload-form.html'">

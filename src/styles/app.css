@@ -86,6 +86,13 @@ body {
 .navbar-top-separator {
   height:39px;
 }
+.margined-container-iframe {
+  background:white !important;
+  padding-left:30px;
+  padding-right:30px;
+  margin-left:0px !important;
+  margin-right:0px !important;
+}
 @media (min-width:400 && max-width:767px) {
   .auth-margined-container {
     margin-left:15% !important;
