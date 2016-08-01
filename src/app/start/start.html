@@ -105,26 +105,8 @@
   </div>
   <div class="row margined-container aceh-color-lightgreen-bg" style="padding-top:50px;">
     <div class="category-container centered content-centered">
-      <div class="pointer category-block aceh-color-greygreen-bg">
-        Pendidikan
-      </div>
-      <div class="pointer category-block aceh-color-greygreen-bg">
-        Kesehatan
-      </div>
-      <div class="pointer category-block aceh-color-greygreen-bg">
-        Transportasi
-      </div>
-      <div class="pointer category-block aceh-color-greygreen-bg">
-        Pariwisata
-      </div>
-      <div class="pointer category-block aceh-color-greygreen-bg">
-        Pangan
-      </div>
-      <div class="pointer category-block aceh-color-greygreen-bg">
-        Ekonomi
-      </div>
-      <div class="pointer category-block aceh-color-greygreen-bg">
-        Kependudukan
+      <div class="pointer category-block aceh-color-greygreen-bg" ng-repeat="c in categories track by $index">
+        {{c.name}}
       </div>
     </div>
   </div>

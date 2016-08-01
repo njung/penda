@@ -10,12 +10,11 @@
         <br><br>
         <img class="centered" src="/assets/img/spinners/spinner_64.gif" style="height:32px;">
       </div>
-      <div class="category-block aceh-color-greygreen-bg pointer" ng-repeat="data in list.data track by $index" ng-click="category.showCategory(data)" class="pointer">
-        {{data.name}}
+      <div class="category-container centered content-centered">
+        <div class="category-block aceh-color-greygreen-bg pointer" ng-repeat="data in list.data track by $index" ng-click="category.showCategory(data)" class="pointer">
+          {{data.name}}
+        </div>
       </div>
-	    <!--div class="content-centered centered" ng-hide="spinner.list">
-	    	<pagination total-items="list.total" ng-model="list.page" ng-change="category.paginate()" items-per-page="10"></pagination>
-	    </div-->
 	  </div>
     <div ng-show="mode=='item'" class=" animated fadeIn">
       <div class="content-centered" ng-show="spinner.category">
