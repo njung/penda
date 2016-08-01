@@ -4,7 +4,7 @@
         <span class="alert alert-info">Belum ada data</span>
     </div>
     <div ng-show="mode=='list' && list.data.length > 0 && currentUser" class=" animated fadeIn">
-      <button class="btn btn-primary pull-right" ng-click="dataset.list()">Muat ulang</button>
+      <button class="btn btn-primary pull-right" ng-click="dataset.list()"><span class="fa fa-refresh"></span>&nbsp;Muat ulang</button>
       <h1>Dataset</h1>
       <div class="content-centered" ng-show="spinner.list">
         <br><br>
@@ -13,9 +13,9 @@
       <table class="table table-striped table-hover table-bordered" ng-hide="spinner.list">
         <thead>
           <tr>
-            <td>Judul</td>
-            <td>Tanggal unggah</td>
-            <td style="width:215px;">Pengunggah</td>
+            <td class="content-centered">Judul</td>
+            <td class="content-centered">Tanggal unggah</td>
+            <td class="content-centered">Pengunggah</td>
           </tr>
         </thead>
         <tbody>
