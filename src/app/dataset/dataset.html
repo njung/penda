@@ -106,7 +106,7 @@
           </div>
           <div class="pull-right" style="margin-bottom:15px;" ng-hide="confirmDelete || !currentUser">
             <a href="#/dataset/list" class="btn btn-default"><span class="fa fa-chevron-left"></span>&nbsp;Kembali</a>
-            <button class="btn btn-default"><span class="fa fa-edit"></span>&nbsp;Sunting</button>
+            <button class="btn btn-default" ng-click="dataset.showEditForm(currentItem);"><span class="fa fa-edit"></span>&nbsp;Sunting</button>
             <button class="btn btn-default" ng-click="confirmDelete=true;"><span class="fa fa-trash"></span>&nbsp;Hapus</button>
           </div>
           <div class="pull-right" style="margin-bottom:15px;" ng-show="confirmDelete">
@@ -315,6 +315,13 @@
             <p class="alert alert-info" ng-hide="mapAvailable || spinner.datasetQuery">Tidak ada geodata pada dataset ini.</p>
             <div id="view-map"></div>
           </div>
+        </div>
+      </div>
+	  </div>
+    <div ng-show="mode=='edit'" class=" animated fadeIn">
+      <h1>Sunting</h1>
+      <div class="row container-fluid">
+        <div class="col-sm-6" ng-include src="'upload-form.html'">
         </div>
       </div>
 	  </div>

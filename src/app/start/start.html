@@ -159,3 +159,109 @@
       <div style="height:200px;"></div>
   </div>
 </div>
+<!-- All the ng-template should be loaded first -->
+<script type="text/ng-template" id="upload-form.html">
+  <form class="form-horizontal">
+    <fieldset>
+      <!--legend>Unggah</legend-->
+      <div class="form-group">
+        <label class="col-sm-4 control-label" for="title">Judul</label>  
+        <div class="col-sm-8">
+          <input name="title" ng-model="data.title" type="text" class="form-control input-md">
+          <small><i>*Harus diisi</i></small>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-4 control-label" for="source">Sumber</label>  
+        <div class="col-sm-8">
+          <input name="source" ng-model="data.source" type="text" class="form-control input-md">
+          <small><i>*Harus diisi</i></small>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-4 control-label" for="contact">Kontak</label>  
+        <div class="col-sm-8">
+        <input name="contact" ng-model="data.contact" type="text" class="form-control input-md">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-4 control-label" for="releaseFreq">Frekuensi rilis</label>
+        <div class="col-sm-8">
+          <select id="releaseFreq" type="text" ng-model="data.releaseFreq" name="releaseFreq" class="form-control">
+            <option value="year" ng-selected>Tahunan</option>
+            <option value="month">Bulanan</option>
+            <option value="dateRange">Pilih tanggal</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group" ng-hide="data.releaseFreq=='dateRange'">
+        <label class="col-sm-4 control-label" for="year">Tahun</label>  
+        <div class="col-sm-8">
+          <input name="year" ng-model="data.year" type="text" class="form-control input-md">
+        </div>
+      </div>
+      <div class="form-group" ng-show="data.releaseFreq=='month'">
+        <label class="col-sm-4 control-label" for="month">Bulan</label>  
+        <div class="col-sm-8">
+          <select name="month" ng-model="data.month" class="form-control input-md">
+            <option value="0">Januari</option>
+            <option value="1">Februari</option>
+            <option value="2">Maret</option>
+            <option value="3">April</option>
+            <option value="4">Mei</option>
+            <option value="5">Juni</option>
+            <option value="6">Juli</option>
+            <option value="7">Agustus</option>
+            <option value="8">September</option>
+            <option value="9">Oktober</option>
+            <option value="10">November</option>
+            <option value="11">Desember</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group" ng-show="data.releaseFreq=='dateRange'">
+        <label class="col-sm-4 control-label" for="dateStart">Tanggal awal</label>
+        <div class="col-sm-8">
+          <input id="dateStart" name="dateStart" ng-model="data.dateStart" type="text" class="form-control datepicker" datepicker-popup="dd/MM/yyyy" placeholder="dd/mm/yyyy" is-open="showDateStartPicker" ng-click="showDateStartPicker=true;">
+        </div>
+      </div>
+      <div class="form-group" ng-show="data.releaseFreq=='dateRange'">
+        <label class="col-sm-4 control-label" for="dateEnd">Tanggal akhir</label>
+        <div class="col-sm-8">
+          <input id="dateEnd" name="dateEnd" ng-model="data.dateEnd" type="text" class="form-control datepicker" datepicker-popup="dd/MM/yyyy" placeholder="dd/mm/yyyy" is-open="showDateEndPicker" ng-click="showDateEndPicker=true;">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-4 control-label" for="level">Level</label>  
+        <div class="col-sm-8">
+          <select name="level" ng-model="data.level" class="form-control input-md">
+            <option>Tinggi</option>
+            <option>Medium</option>
+            <option>Rendah</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-4 control-label" for="scope">Cakupan</label>  
+        <div class="col-sm-8">
+        <input name="scope" ng-model="data.scope" type="text" class="form-control input-md">
+        </div>
+      </div>
+      <!-- Button -->
+      <div class="form-group" ng-show="mode=='edit'">
+        <label class="col-sm-4 control-label" for="singlebutton"></label>
+        <div class="col-sm-8">
+          <button ng-disabled="!data.title || !data.source" ng-click="dataset.update()" class="btn btn-inline-right btn-primary">Simpan</button>
+        </div>
+      </div>
+      <div class="form-group" ng-hide="mode=='edit'">
+        <label class="col-sm-4 control-label" for="singlebutton"></label>
+        <div class="col-sm-8">
+          <button ng-disabled="!data.title || !data.source" ng-hide="upload.uploadStatus=='uploading'" ngf-select="upload.upload($files, $invalidFiles)" multiple class="btn btn-inline-right btn-primary">Pilih berkas dan unggah</button>
+          <button ng-show="upload.uploadStatus=='uploading' && upload.uploadPercentage < 100" class="btn btn-inline-right btn-primary">Mengunggah... {{upload.uploadPercentage}} %</button>
+          <button ng-show="upload.uploadStatus!=='uploaded' && upload.uploadStatus!=='failed' && upload.uploadPercentage==100" class="btn btn-inline-right btn-primary">Memproses...</button>
+        </div>
+      </div>
+    </fieldset>
+  </form>
+</script>

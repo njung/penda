@@ -130,17 +130,41 @@ Dataset.prototype.registerEndPoints = function() {
 
 // This dataset CRUD use filename as ID instead of MongoDB's _id
 
+Dataset.prototype.update = function(request, reply) {
+  var self = this;
+  var filename = request.params.filename
+  datasetModel().findOne({filename : filename}).lean().exec(function(err, result) {
+    if (err) {
+      console.log(err);
+      return reply(boom.wrap(err));
+    }
+    if (!result || result.length == 0) return reply(boom.notFound());
+    delete(request.payload._id);
+    delete(request.payload.__v);
+    datasetModel().findOneAndUpdate({filename : filename}, request.payload, function(err) {
+      if (err) {
+        console.log(err);
+        return reply(boom.wrap(err));
+      }
+      console.log(result);
+      reply();
+    })
+  })
+}
+
 Dataset.prototype.delete = function(request, reply) {
   var self = this;
   var filename = request.params.filename;
   // Check in db first
-  datasetModel().findOne({filename : filename}, function(err,result) {
+  datasetModel().findOne({filename : filename}).lean().exec(function(err,result) {
     if (err) {
       console.log(err);
       return reply(boom.wrap(err));
     }
     if (!result || result.length == 0) return reply(boom.notFound());
     result.status = 'deleted';
+    delete(result._id);
+    delete(result.__v);
     console.log(result);
     datasetModel().findOneAndUpdate({filename : filename}, result, function(err) {
       if (err) {

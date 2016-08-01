@@ -356,6 +356,23 @@ Dataset.prototype.delete = function(filename) {
   })
 }
 
+Dataset.prototype.showEditForm = function(data) {
+  var self = this;
+  self.$scope.data = angular.copy(data);
+  self.$scope.mode = 'edit';
+}
+
+Dataset.prototype.update = function() {
+  var self = this;
+  self.DatasetService.update(self.$scope.data)
+  .then(function(result) {
+    self.list(); 
+  })
+  .catch(function(result) {
+    self.ToastrService.parse(result);
+  })
+}
+
 Dataset.prototype.someFunc = function(params) {
   var self = this;
 }

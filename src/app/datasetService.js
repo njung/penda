@@ -71,6 +71,19 @@ DatasetService.prototype.get = function(filename, option) {
   });
 }
 
+DatasetService.prototype.update = function(data) {
+  var self = this;
+  var path = '/api/dataset/' + data.filename;
+  return self.$http({
+    headers : {
+      Authorization : self.AuthService.generateMac(path, 'POST'),
+    },
+    method: 'POST',
+    url : self.host + path,
+    data : data
+  })
+}
+
 DatasetService.prototype.delete = function(filename) {
   var self = this;
   var path = '/api/dataset/' + filename;
