@@ -122,10 +122,9 @@
           <div class="dataset-info">
             <h4 class="dataset-title">{{dataset.title}}</h4>
             {{dataset.createdAt | amDateFormat:'DD-MM-YYYY HH:mm:ss'}} &nbsp;
-            <span class="alert-info">{{dataset.totalRows}} record</span>
-            <span class="alert-info">Kesehatan</span>
-            <span class="alert-info">Kependudukan</span>
-            <p class="dataset-desc">{{dataset.desc}} </p>
+            <span class="alert-info">&nbsp;{{dataset.totalRows}} record&nbsp;</span>
+            <span class="alert-info" ng-repeat="cat in dataset.category">&nbsp;{{cat}}&nbsp;</span>
+            <p class="dataset-desc">&nbsp;{{dataset.desc}}&nbsp;</p>
           </div>
         </div>
         <div class="content-centered">

@@ -40,6 +40,7 @@ Login.prototype.login = function(account) {
     // success
     function(data){
       self.$rootScope.currentUser = data.profile.fullName;
+      self.$rootScope.currentUserId = data.profile.userId;
       self.$rootScope.currentUserProfileId = data.profile._id;
       self.$rootScope.currentUserRole = data.profile.role;
       self.$scope.spinner = false;

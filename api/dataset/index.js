@@ -17,6 +17,7 @@ var mongoose = require('mongoose');
 var tablespoon = require('tablespoon').sqlite();
 var boom = require('boom');
 var mongooseHistory = require('mongoose-history');
+var profileModel = require(__dirname + '/../../api/profiles/index').model();
 
 var Dataset = function(server, options, next) {
   this.server = server;
@@ -61,6 +62,7 @@ var datasetModel = function() {
     updatedAt : Date,
     error : {},
     uploaderId : String,
+    uploader : String,
   }
 
   var s = new mongoose.Schema(schema);
@@ -123,7 +125,6 @@ Dataset.prototype.registerEndPoints = function() {
       self.update(request, reply);
     },
 		config : {
-			auth : false,
     }
   });
   
@@ -134,7 +135,6 @@ Dataset.prototype.registerEndPoints = function() {
       self.delete(request, reply);
     },
 		config : {
-			/* auth : false, */
     }
   });
 }
@@ -150,6 +150,12 @@ Dataset.prototype.update = function(request, reply) {
       return reply(boom.wrap(err));
     }
     if (!result || result.length == 0) return reply(boom.notFound());
+
+    // role should be admin or the owner
+    if (!(request.auth.credentials.role == 'admin' || request.auth.credentials.userId == result.uploaderId)) {
+      return reply(boom.unauthorized()); 
+    }
+
     delete(request.payload._id);
     delete(request.payload.__v);
     datasetModel().findOneAndUpdate({filename : filename}, request.payload, function(err) {
@@ -173,6 +179,12 @@ Dataset.prototype.delete = function(request, reply) {
       return reply(boom.wrap(err));
     }
     if (!result || result.length == 0) return reply(boom.notFound());
+
+    // role should be admin or the owner
+    if (!(request.auth.credentials.role == 'admin' || request.auth.credentials.userId == result.uploaderId)) {
+      return reply(boom.unauthorized()); 
+    }
+
     result.status = 'deleted';
     delete(result._id);
     delete(result.__v);
@@ -252,7 +264,6 @@ Dataset.prototype.get = function(request, reply) {
           // Get total
           var sql = 'select count(*) as total from ' + filename;
           tablespoon.query(sql, function(result) {
-            /* var sql = request.query.sql.replace(/%22/g,'"'); */
             var sql = new Buffer(request.query.sql, 'base64');
             sql = sql.toString();
             console.log(sql);
@@ -318,6 +329,7 @@ Dataset.prototype.upload = function(request, reply) {
       reference : request.payload.reference,
       createdAt : new Date(),
 			uploaderId : request.payload.uploaderId,
+			uploader : request.payload.uploader,
       dateStart : request.payload.dateStart,
       dateEnd : request.payload.dateEnd,
       category : [],
@@ -335,41 +347,49 @@ Dataset.prototype.upload = function(request, reply) {
     if (data.releaseFreq === 'month') {
       data.month = request.payload.month;
     }
-
-    datasetModel().create(data, function(err, result) {
-      if (err) {
-        console.log(err);
-        return reply(boom.wrap(err));
+    profileModel
+    .findOne({userId : request.auth.credentials.userId})
+    .lean()
+    .exec(function(err, profile){
+      if (err || !profile) {
+        return reply(boom.unauthorized()); 
       }
-      console.log('converting...');
-      var cmd = '~/bin/node ' + __dirname + '/converter.js ' + path;
-      console.log(cmd);
-      var convert = exec(cmd, function(err, stdout, stderr) {
-        console.log('save2db...');
-        console.log(err);
-        console.log(stderr);
-        result.status = 'done';
-        result.filename = filename;
+      data.uploader = profile.fullName;
+      data.uploaderId = request.auth.credentials.userId;
+      datasetModel().create(data, function(err, result) {
         if (err) {
-          result.status = 'error';
-          result.error = util.format(err);
-        } else if (stderr) {
-          result.status = 'error';
-          result.error = util.format(stderr);
-        } else {
-          var output = JSON.parse(util.format(stdout.toString()));
-          console.log(output);
-          result.totalRows = output.totalRows; 
-          result.totalColumns = output.totalColumns; 
-          result.tableSchema = output.schema; 
+          console.log(err);
+          return reply(boom.wrap(err));
         }
-        result.save();
-        console.log('DONE');
-      })
-      // Do not wait 
-      return reply();
-    }) 
-
+        console.log('converting...');
+        var cmd = '~/bin/node ' + __dirname + '/converter.js ' + path;
+        console.log(cmd);
+        var convert = exec(cmd, function(err, stdout, stderr) {
+          console.log('save2db...');
+          console.log(err);
+          console.log(stderr);
+          result.status = 'done';
+          result.filename = filename;
+          if (err) {
+            result.status = 'error';
+            result.error = util.format(err);
+          } else if (stderr) {
+            result.status = 'error';
+            result.error = util.format(stderr);
+          } else {
+            var output = JSON.parse(util.format(stdout.toString()));
+            console.log(output);
+            result.totalRows = output.totalRows; 
+            result.totalColumns = output.totalColumns; 
+            result.tableSchema = output.schema; 
+          }
+          result.save();
+          console.log('DONE');
+        })
+        // Do not wait 
+        return reply();
+      }) 
+    })
   });
   fws.on("error", function(err){
     console.log(err);

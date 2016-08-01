@@ -28,7 +28,7 @@
               <!--a href="" ng-click="dataset.get(data.filename);">{{data.title}}</a-->
               {{data.title}}
             </td>
-            <td>
+            <td class="content-centered">
                 {{data.createdAt | amDateFormat:'DD-MM-YYYY HH:mm:ss'}}
             </td>
             <td class="content-centered">
@@ -111,8 +111,8 @@
           </div>
           <div class="pull-right" style="margin-bottom:15px;" ng-hide="confirmDelete || !currentUser || iframe">
             <a href="#/dataset/list" class="btn btn-default"><span class="fa fa-chevron-left"></span>&nbsp;Kembali</a>
-            <button class="btn btn-default" ng-click="dataset.showEditForm(currentItem);"><span class="fa fa-edit"></span>&nbsp;Sunting</button>
-            <button class="btn btn-default" ng-click="confirmDelete=true;"><span class="fa fa-trash"></span>&nbsp;Hapus</button>
+            <button class="btn btn-default" ng-click="dataset.showEditForm(currentItem);" ng-show="currentUserRole=='admin' || currentUserId==currentItem.uploaderId"><span class="fa fa-edit"></span>&nbsp;Sunting</button>
+            <button class="btn btn-default" ng-click="confirmDelete=true;" ng-show="currentUserRole=='admin' || currentUserId==currentItem.uploaderId"><span class="fa fa-trash"></span>&nbsp;Hapus</button>
           </div>
           <div class="pull-right" style="margin-bottom:15px;" ng-show="confirmDelete">
             Anda yakin ingin menghapus dataset ini?
@@ -208,7 +208,7 @@
               <tbody>
                 <tr>
                   <td class="bg-lightgrey" style="width:150px;">Pengunggah</td>
-                  <td>Admin</td>
+                  <td>{{currentItem.uploader}}</td>
                 </tr>
                 <tr>
                   <td class="bg-lightgrey">SKPD / Satuan</td>
