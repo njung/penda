@@ -62,7 +62,7 @@ exports.register = function(server, options, next) {
       var rooms = Object.keys(io.sockets.adapter.rooms);
       async.each(rooms, function(r, cb) {
         // leave another room
-        if (r != data.profileId && r != data.socketId && r != data.rule) {
+        if (r != data.profileId && r != data.socketId && r != data.role) {
           console.log("Leaving " + r);
           socket.leave(r);
         } else {
@@ -72,7 +72,7 @@ exports.register = function(server, options, next) {
       }, function(err) {
         // then join the room
         socket.join(data.profileId);
-        if (data.rule) socket.join(data.rule);
+        if (data.role) socket.join(data.role);
         console.log(io.sockets.adapter.rooms)
         console.log("end =======================");
       })

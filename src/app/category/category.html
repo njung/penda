@@ -1,0 +1,67 @@
+<div class="fluid-container" ng-controller="CategoryCtrl as category">
+  <div class="row animated fadeIn margined-container">
+    <div ng-show="mode=='list' && list.data.length < 1" class="content-centered animated fadeIn" style="margin-top:50px;">
+        <span class="alert alert-info">Belum ada data</span>
+    </div>
+    <div ng-show="mode=='list'" class=" animated fadeIn">
+      <button class="btn btn-primary pull-right" ng-click="category.addCategory()">Tambah kategori</button>
+      <h1>Kategori</h1>
+      <div class="content-centered" ng-show="spinner.list">
+        <br><br>
+        <img class="centered" src="/assets/img/spinners/spinner_64.gif" style="height:32px;">
+      </div>
+      <div class="category-container centered content-centered">
+        <div class="category-block aceh-color-greygreen-bg pointer" ng-repeat="data in list.data track by $index" ng-click="category.showCategory(data)" class="pointer">
+          {{data.name}}
+        </div>
+      </div>
+	  </div>
+    <div ng-show="mode=='item'" class=" animated fadeIn">
+      <div class="content-centered" ng-show="spinner.category">
+        <br><br>
+        <img class="centered" src="/assets/img/spinners/spinner_64.gif" style="height:32px;">
+      </div>
+      <div ng-hide="spinner.category">
+        <div class="row">
+          <h1>Kategori : {{currentItem.name}}</h1>
+        </div>
+	    </div>
+	  </div>
+  </div>
+</div>
+
+<!--ALERT-->
+<script type="text/ng-template" id="categoryModal.html">
+      <div class="modal-body" style="padding-bottom:15px">
+        <h3 ng-hide="currentItem._id">Tambah kategori</h3>
+        <h3 ng-show="currentItem._id">Sunting kategori</h3>
+        <hr>
+        <fieldset>
+          <div class="row form-group">
+            <label class="col-sm-4 control-label control-label-right" for="title">Nama</label>  
+            <div class="col-sm-8">
+            <input name="title" ng-model="currentItem.name" type="text" class="form-control input-md">
+            <small><i>*Harus diisi</i></small>
+            </div>
+          </div>
+          <!-- Button -->
+          <div class="row form-group">
+            <label class="col-sm-4 control-label control-label-right" for="singlebutton"></label>
+            <div class="col-sm-8">
+              <div ng-show="deleteConfirm">
+                Anda yakin ingin menghapus??
+                <button class="btn btn-inline-right btn-default" ng-click="deleteConfirm=false;">Batal</button>
+                <button class="btn btn-inline-right btn-danger" ng-click="category.delete(currentItem._id)">Ya, hapus</button>
+              </div>
+              <div ng-hide="deleteConfirm">
+                <button class="btn btn-inline-right btn-default" ng-click="categoryModal.dismiss()">Batal</button>
+                <button class="btn btn-inline-right btn-danger" ng-click="deleteConfirm=true;" ng-show="currentCategoryRole=='admin'">Hapus</button>
+                <button ng-hide="currentItem._id" class="btn btn-inline-right btn-primary" ng-click="category.create(currentItem)">Simpan</button>
+                <button ng-show="currentItem._id" class="btn btn-inline-right btn-primary" ng-click="category.update(currentItem)">Simpan</button>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+                
+</div>
+</script>

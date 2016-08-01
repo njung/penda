@@ -105,45 +105,32 @@
   </div>
   <div class="row margined-container aceh-color-lightgreen-bg" style="padding-top:50px;">
     <div class="category-container centered content-centered">
-      <div class="pointer category-block aceh-color-greygreen-bg">
-        Pendidikan
-      </div>
-      <div class="pointer category-block aceh-color-greygreen-bg">
-        Kesehatan
-      </div>
-      <div class="pointer category-block aceh-color-greygreen-bg">
-        Transportasi
-      </div>
-      <div class="pointer category-block aceh-color-greygreen-bg">
-        Pariwisata
-      </div>
-      <div class="pointer category-block aceh-color-greygreen-bg">
-        Pangan
-      </div>
-      <div class="pointer category-block aceh-color-greygreen-bg">
-        Ekonomi
-      </div>
-      <div class="pointer category-block aceh-color-greygreen-bg">
-        Kependudukan
+      <div class="pointer category-block aceh-color-greygreen-bg" ng-repeat="c in categories track by $index">
+        {{c.name}}
       </div>
     </div>
   </div>
   <div class="row margined-container" style="padding:0px !important">
     <div class="col-md-9" style="padding:30px;">
-      <h4 class="aceh-color-green-fg">Dataset Terbaru</h4>
-      <div class="dataset-item" ng-repeat="dataset in list.data" ng-click="start.showDataset(dataset.filename);">
-        <div class="dataset-icon-container"></div>
-        <div class="dataset-info">
-          <h4 class="dataset-title">{{dataset.title}}</h4>
-          {{dataset.createdAt | amDateFormat:'DD-MM-YYYY HH:mm:ss'}} &nbsp;
-          <span class="alert-info">{{dataset.totalRows}} record</span>
-          <span class="alert-info">Kesehatan</span>
-          <span class="alert-info">Kependudukan</span>
-          <p class="dataset-desc">{{dataset.desc}} </p>
-        </div>
+      <div ng-show="list.data && list.data.length < 1" class="content-centered animated fadeIn" style="margin-top:50px;">
+          <span class="alert alert-info">Belum ada data</span>
       </div>
-      <div class="content-centered">
-        <a href="#/dataset/list" class="btn btn-primary" style="color:white !important">Lihat semua...</a>
+      <div ng-show="list.data && list.data.length > 0">
+        <h4 class="aceh-color-green-fg">Dataset Terbaru</h4>
+        <div class="dataset-item" ng-repeat="dataset in list.data" ng-click="start.showDataset(dataset.filename);">
+          <div class="dataset-icon-container"></div>
+          <div class="dataset-info">
+            <h4 class="dataset-title">{{dataset.title}}</h4>
+            {{dataset.createdAt | amDateFormat:'DD-MM-YYYY HH:mm:ss'}} &nbsp;
+            <span class="alert-info">{{dataset.totalRows}} record</span>
+            <span class="alert-info">Kesehatan</span>
+            <span class="alert-info">Kependudukan</span>
+            <p class="dataset-desc">{{dataset.desc}} </p>
+          </div>
+        </div>
+        <div class="content-centered">
+          <a href="#/dataset/list" class="btn btn-primary" style="color:white !important">Lihat semua...</a>
+        </div>
       </div>
     </div>
     <div class="col-md-3">
@@ -245,6 +232,16 @@
         <label class="col-sm-4 control-label" for="scope">Cakupan</label>  
         <div class="col-sm-8">
         <input name="scope" ng-model="data.scope" type="text" class="form-control input-md">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-4 control-label" for="scope">Kategori</label>  
+        <div class="col-sm-8">
+          <div class="category-select-item" ng-repeat="c in categories track by $index" ng-click="c.selected=!c.selected;">
+            <span ng-show="c.selected" class="fa fa-check"></span>
+            <span ng-hide="c.selected" class="fa fa-minus"></span>
+            &nbsp;{{c.name}}
+          </div>
         </div>
       </div>
       <!-- Button -->

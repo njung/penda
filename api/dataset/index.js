@@ -212,6 +212,7 @@ Dataset.prototype.list = function(request, reply) {
       var obj = {
         total : count,
         page : page,
+        limit : limit,
         data : result,
       }
       reply(obj);

@@ -161,8 +161,8 @@ Pages.prototype.list = function(request, reply) {
 
 Pages.prototype.create = function(request, reply) {
   var self = this;
-  // rule should be admin only
-  if (request.auth.credentials.rule != "admin") {
+  // role should be admin only
+  if (request.auth.credentials.role != "admin") {
     return reply(boom.unauthorized()); 
   }
   pageModel().create(request.payload, function(err, result) {
@@ -224,8 +224,8 @@ Pages.prototype.update = function(request, reply) {
   if (bogus.isBogus) {
     return reply(bogus.reply).statusCode = 404;
   }
-  // rule should be admin only
-  if (request.auth.credentials.rule != "admin") {
+  // role should be admin only
+  if (request.auth.credentials.role != "admin") {
     return reply(boom.unauthorized()); 
   }
   var options = {upsert: true};
@@ -264,7 +264,7 @@ Pages.prototype.delete = function(request, reply) {
   if (bogus.isBogus) {
     return reply(bogus.reply).statusCode = 404;
   }
-  if (request.auth.credentials.rule != "admin") {
+  if (request.auth.credentials.role != "admin") {
     return reply(boom.unauthorized()); 
   }
   pageModel()

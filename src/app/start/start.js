@@ -1,4 +1,4 @@
-var Start = function ($stateParams, $scope, $state, $window, $rootScope, AuthService, localStorageService, toastr, UserService, $timeout, $http, $interval, ToastrService, host, $compile, DatasetService){
+var Start = function ($stateParams, $scope, $state, $window, $rootScope, AuthService, localStorageService, toastr, UserService, $timeout, $http, $interval, ToastrService, host, $compile, DatasetService, CategoryService){
   this.$stateParams = $stateParams;
   this.$scope = $scope;
   this.$state = $state;
@@ -15,6 +15,7 @@ var Start = function ($stateParams, $scope, $state, $window, $rootScope, AuthSer
   this.host = host;
   this.$compile = $compile;
   this.DatasetService = DatasetService;
+  this.CategoryService = CategoryService;
   var self = this;
 
   /* if (self.$rootScope.currentUser) { */
@@ -37,13 +38,21 @@ var Start = function ($stateParams, $scope, $state, $window, $rootScope, AuthSer
   /*       self.UserService.getUserById(self.localStorageService.get('currentUser')) */
   /*         .success(function(data, status, headers) { */
   /*           self.$rootScope.currentUser = data.fullName; */
-  /*           self.$rootScope.currentUserRule = data.rule; */
+  /*           self.$rootScope.currentUserRole = data.role; */
   /*         }) */
   /*     }) */
   /* } */
   /* realCheckToken(); */
   
-  self.list({limit:5})
+  self.list({limit:5});
+  // Load category list
+  self.CategoryService.list({limit:0})
+  .then(function(result){
+    self.$scope.categories = result.data.data;
+  })
+  .catch(function(result) {
+    self.ToastrService.parse(result);
+  })
 }
 
 Start.prototype.showDataset = function(filename) {
@@ -69,7 +78,7 @@ Start.prototype.list = function(option){
 
 
 
-Start.inject = [ '$stateParams', '$scope', '$state', '$window', '$rootScope', 'AuthService', 'localStorageService', 'toastr' , 'UserService', '$timeout', '$http', '$interval', 'ToastrService', 'host', '$compile', 'DatasetService'];
+Start.inject = [ '$stateParams', '$scope', '$state', '$window', '$rootScope', 'AuthService', 'localStorageService', 'toastr' , 'UserService', '$timeout', '$http', '$interval', 'ToastrService', 'host', '$compile', 'DatasetService', 'CategoryService'];
 
 angular.module('start',[])
 .controller('StartCtrl', Start)

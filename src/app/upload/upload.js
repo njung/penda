@@ -1,4 +1,4 @@
-var UploadCtrl = function ($stateParams, $scope, $state, $window, $rootScope, AuthService, localStorageService, toastr, $location, ToastrService, $modal, $http, host, AlertService, DatasetService, Upload){
+var UploadCtrl = function ($stateParams, $scope, $state, $window, $rootScope, AuthService, localStorageService, toastr, $location, ToastrService, $modal, $http, host, AlertService, DatasetService, Upload, CategoryService){
   this.$stateParams = $stateParams;
   this.$scope = $scope;
   this.$state = $state;
@@ -15,12 +15,22 @@ var UploadCtrl = function ($stateParams, $scope, $state, $window, $rootScope, Au
   this.AlertService = AlertService;
   this.DatasetService = DatasetService;
   this.Upload = Upload;
+  this.CategoryService = CategoryService;
   
   var self = this;
 
   self.$window.scrollTo(0,0)
 
-  // Handle main spinners in one place.
+  // Load category list
+  self.CategoryService.list({limit:0})
+  .then(function(result){
+    self.$scope.categories = result.data.data;
+  })
+  .catch(function(result) {
+    self.ToastrService.parse(result);
+  })
+
+  // Handle spinners in one place.
   self.spinner = {
   };
 
@@ -28,14 +38,9 @@ var UploadCtrl = function ($stateParams, $scope, $state, $window, $rootScope, Au
 
   self.uploadStatus = "ready";
   self.$scope.data = {
-    /* title : 'Data of ' + (new Date()).valueOf(), */
-    /* source : 'sample_source', */
-    /* contact : 'sample_contact@contact', */
     releaseFreq : 'year',
     year : (new Date()).getFullYear(),
     month : '0',
-    /* level : 'sample_level', */
-    /* scope : 'sample_scope', */ 
   };
   self.$rootScope.preventNavigation = false;
 
@@ -44,6 +49,16 @@ var UploadCtrl = function ($stateParams, $scope, $state, $window, $rootScope, Au
 
 UploadCtrl.prototype.upload = function(files, invalid) {
   var self = this;
+  // Collect selected categories
+  self.$scope.data.category = [];
+  for (var i in self.$scope.categories) {
+    if (self.$scope.categories[i].selected) {
+      self.$scope.data.category.push(self.$scope.categories[i].name);
+    }
+  }
+  if (self.$scope.data.category.length < 1) {
+    return alert('Silakan pilih minimal satu kategori terlebih dahulu.');
+  }
   if (files && files.length > 0) {
     var file = files[files.length - 1];
     // Check for extension / file type
@@ -51,7 +66,7 @@ UploadCtrl.prototype.upload = function(files, invalid) {
     extension = extension[extension.length-1];
     console.log(extension);
     if (!(extension == 'xlsx' || extension == 'csv')) {
-      return alert('Must be a .csv or .xlsx file. Please check the filename extension.');
+      return alert('Berkas unggahan harus berupa .csv or .xlsx. Silakan periksa ekstensi/format berkas.');
     }
     // Transform releaseFreq value
     if (self.$scope.data.releaseFreq === 'year') {
@@ -100,7 +115,7 @@ UploadCtrl.prototype.upload = function(files, invalid) {
   }
 }
 
-UploadCtrl.inject = [ '$stateParams', '$scope', '$state', '$window', '$rootScope', 'AuthService', 'localStorageService', 'toastr' , '$location', 'ToastrService', '$modal', '$http', 'host' , 'AlertService', 'DatasetService', 'Upload'];
+UploadCtrl.inject = [ '$stateParams', '$scope', '$state', '$window', '$rootScope', 'AuthService', 'localStorageService', 'toastr' , '$location', 'ToastrService', '$modal', '$http', 'host' , 'AlertService', 'DatasetService', 'Upload', 'CategoryService'];
 
 angular.module('upload',[])
 .controller('UploadCtrl', UploadCtrl)

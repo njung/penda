@@ -10,6 +10,12 @@ textarea {
   resize:vertical;
 }
 
+@media (max-width:1000px) {
+  .hide-on-minus-1000 {
+    display:none !important;;
+  }
+}
+
 @media (max-width:767px) {
   .hide-on-mobile {
     display:none !important;;
@@ -746,6 +752,18 @@ a,a:hover,a:active {
 }
 .aceh-color-greygreen-bg {
   background:#CFD9D1 !important;
+}
+
+.modal-dialog {
+  margin-top:100px !important;
+}
+
+.category-select-item {
+  display:inline-block;
+  margin: 5px;
+  cursor: pointer;
+  padding: 2px 5px 2px 5px;
+  border: 1px solid grey;
 }
 
 /*-------------------------------------*/

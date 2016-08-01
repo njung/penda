@@ -1,4 +1,4 @@
-<div cjass="fluid-container" ng-controller="UserCtrl as user">
+<div class="fluid-container" ng-controller="UserCtrl as user">
   <div class="row animated fadeIn margined-container">
     <div ng-show="mode=='list' && list.data.length < 1" class="content-centered animated fadeIn" style="margin-top:50px;">
         <span class="alert alert-info">Belum ada data</span>
@@ -27,7 +27,7 @@
               {{data.fullName}}
             </td>
             <td>
-              {{data.rule}}
+              {{data.role}}
             </td>
           </tr>
         </tbody>
@@ -96,7 +96,7 @@
               </div>
               <div ng-hide="deleteConfirm">
                 <button class="btn btn-inline-right btn-default" ng-click="userModal.dismiss()">Batal</button>
-                <button class="btn btn-inline-right btn-danger" ng-click="deleteConfirm=true;" ng-show="currentUserRule=='admin' && currentItem._id && currentItem._id!=currentUserProfileId">Hapus</button>
+                <button class="btn btn-inline-right btn-danger" ng-click="deleteConfirm=true;" ng-show="currentUserRole=='admin' && currentItem._id && currentItem._id!=currentUserProfileId">Hapus</button>
                 <button class="btn btn-inline-right btn-primary" ng-click="user.create(currentItem)">Simpan</button>
               </div>
             </div>
