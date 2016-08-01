@@ -137,6 +137,10 @@ AuthService.prototype.checkToken = function(options) {
   return deferred.promise;
 }
 
+AuthService.prototype.clearCredentials = function() {
+  // TODO Clear all credentials on client side.
+}
+
 AuthService.prototype.checkRecoveryCode = function(code) {
   var self = this;
   var path = '/api/users/check-recovery-code/' + code;

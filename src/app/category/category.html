@@ -1,14 +1,14 @@
 <div class="fluid-container" ng-controller="CategoryCtrl as category">
   <div class="row animated fadeIn margined-container">
-    <div ng-show="mode=='list' && list.data.length < 1" class="content-centered animated fadeIn" style="margin-top:50px;">
-        <span class="alert alert-info">Belum ada data</span>
-    </div>
     <div ng-show="mode=='list'" class=" animated fadeIn">
       <button class="btn btn-primary pull-right" ng-click="category.addCategory()">Tambah kategori</button>
       <h1>Kategori</h1>
       <div class="content-centered" ng-show="spinner.list">
         <br><br>
         <img class="centered" src="/assets/img/spinners/spinner_64.gif" style="height:32px;">
+      </div>
+      <div ng-show="mode=='list' && list.data.length < 1" class="content-centered animated fadeIn" style="margin-top:50px;">
+          <span class="alert alert-info">Belum ada data</span>
       </div>
       <div class="category-container centered content-centered">
         <div class="category-block aceh-color-greygreen-bg pointer" ng-repeat="data in list.data track by $index" ng-click="category.showCategory(data)" class="pointer">
