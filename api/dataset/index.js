@@ -82,7 +82,10 @@ Dataset.prototype.registerEndPoints = function() {
       maxBytes : 1000000000,
       allow : "multipart/form-data",
       parse : true,
-    }
+    },
+    tags : ['api'],
+    description : 'Dataset Upload',
+    notes : 'Upload dataset with its metadata',
   }
   // TODO Hawk is terible at handling long request. Switch to jwt.
   if (config.authStrategy === 'hawk') {

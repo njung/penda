@@ -3,12 +3,16 @@ var os = require("os");
 var Hapi = require('hapi');
 var sources = require("./api/");
 var Inert = require('inert');
+var Vision = require('vision');
+var HapiSwagger = require('hapi-swagger');
 var Path = require('path');
 var fs = require('fs');
 var server = new Hapi.Server();
 var mode = process.env.MODE || 'dev';
 var port = JSON.parse(fs.readFileSync(__dirname + '/config/' + mode + '/main.json'))[0][1].split(':')[2];
+
 if (process.env.PORT) port = parseInt(process.env.PORT)
+
 server.connection({ 
   port: port, 
   labels: ['api'], 
@@ -23,7 +27,18 @@ server.connection({
 
 sources.populate(server);
 
-server.register(Inert, function(){});
+var swaggerOptions = {
+ info : {
+    title : 'Penda API Documentation',
+    version : pkg.version.toString(),
+  }
+}
+server.register([Inert, Vision, { 'register' : HapiSwagger, 'options' : swaggerOptions }], function(err) {
+  if (err) {
+    console.log(err);
+  } else {
+  }
+});
 
 server.route({
   method: 'GET',
