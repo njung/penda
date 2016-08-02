@@ -23,6 +23,9 @@ var Dataset = function ($stateParams, $scope, $state, $window, $rootScope, AuthS
   if (self.$location.search().iframe === 'true') {
     self.$rootScope.iframe = true;
   }
+  if (!self.$rootScope.search) {
+    self.$rootScope.search = {}
+  }
 
   self.$window.scrollTo(0,0);
 
