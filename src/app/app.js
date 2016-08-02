@@ -17,11 +17,8 @@ angular.module('App', [
   'upload',
   'logout',
   'notfound',
-  'feedback',
-  'alert',
   // Services
   'menu',
-  'alertService',
   'authService',
   'userService',
   'categoryService',

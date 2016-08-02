@@ -15,7 +15,7 @@ Penda is an Open Data management system.
 - ``bower install``
 - ``NODE_ENV=dev npm run setenv``
 - ``DB=dev ./script/init.sh``
-- Prepare the dataset directory. See ``config.js``.
+- Prepare the dataset directory. See ``config.js``. For default configuration,``mkdir /tmp/data``
 - ``npm run server``
 
 #### JWT specific configuration
@@ -24,4 +24,4 @@ There are Hawk and JWT auth in the backend. JWT auth used by default. Please use
 
 #### Note
 
-You need configure specefic host in each mode in config. There are ``beta``, ``dev``, ``prod``, ``staging``, ``test``.
+You need configure specific host for each mode in config. There are ``beta``, ``dev``, ``prod``, and ``staging``.

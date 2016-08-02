@@ -1,4 +1,4 @@
-var Dataset = function ($stateParams, $scope, $state, $window, $rootScope, AuthService, localStorageService, toastr, $location, ToastrService, $modal, $http, host, AlertService, DatasetService, $compile, CategoryService, UserService){
+var Dataset = function ($stateParams, $scope, $state, $window, $rootScope, AuthService, localStorageService, toastr, $location, ToastrService, $modal, $http, host, DatasetService, $compile, CategoryService, UserService){
   this.$stateParams = $stateParams;
   this.$scope = $scope;
   this.$state = $state;
@@ -12,7 +12,6 @@ var Dataset = function ($stateParams, $scope, $state, $window, $rootScope, AuthS
   this.$modal = $modal;
   this.$http = $http;
   this.host = host;
-  this.AlertService = AlertService;
   this.DatasetService = DatasetService;
   this.$compile = $compile;
   this.CategoryService = CategoryService;
@@ -479,7 +478,7 @@ Dataset.prototype.someFunc = function(params) {
   var self = this;
 }
 
-Dataset.inject = [ '$stateParams', '$scope', '$state', '$window', '$rootScope', 'AuthService', 'localStorageService', 'toastr', '$location', 'ToastrService', '$modal', '$http', 'host' , 'AlertService', 'DatasetService', '$compile', 'CategoryService', 'UserService'];
+Dataset.inject = [ '$stateParams', '$scope', '$state', '$window', '$rootScope', 'AuthService', 'localStorageService', 'toastr', '$location', 'ToastrService', '$modal', '$http', 'host' , 'DatasetService', '$compile', 'CategoryService', 'UserService'];
 
 angular.module('dataset',[])
 .controller('DatasetCtrl', Dataset)

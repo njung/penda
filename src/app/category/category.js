@@ -1,4 +1,4 @@
-var Category = function ($stateParams, $scope, $state, $window, $rootScope, AuthService, localStorageService, toastr, $location, ToastrService, $modal, $http, host, AlertService, CategoryService){
+var Category = function ($stateParams, $scope, $state, $window, $rootScope, AuthService, localStorageService, toastr, $location, ToastrService, $modal, $http, host, CategoryService){
   this.$stateParams = $stateParams;
   this.$scope = $scope;
   this.$state = $state;
@@ -12,7 +12,6 @@ var Category = function ($stateParams, $scope, $state, $window, $rootScope, Auth
   this.$modal = $modal;
   this.$http = $http;
   this.host = host;
-  this.AlertService = AlertService;
   this.CategoryService = CategoryService;
   
   var self = this;
@@ -149,7 +148,7 @@ Category.prototype.someFunc = function(params) {
   var self = this;
 }
 
-Category.inject = [ '$stateParams', '$scope', '$state', '$window', '$rootScope', 'AuthService', 'localStorageService', 'toastr', '$location', 'ToastrService', '$modal', '$http', 'host' , 'AlertService', 'CategoryService'];
+Category.inject = [ '$stateParams', '$scope', '$state', '$window', '$rootScope', 'AuthService', 'localStorageService', 'toastr', '$location', 'ToastrService', '$modal', '$http', 'host' , 'CategoryService'];
 
 angular.module('category',[])
 .controller('CategoryCtrl', Category)

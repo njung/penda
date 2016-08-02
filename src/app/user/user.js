@@ -1,4 +1,4 @@
-var User = function ($stateParams, $scope, $state, $window, $rootScope, AuthService, localStorageService, toastr, $location, ToastrService, $modal, $http, host, AlertService, UserService){
+var User = function ($stateParams, $scope, $state, $window, $rootScope, AuthService, localStorageService, toastr, $location, ToastrService, $modal, $http, host, UserService){
   this.$stateParams = $stateParams;
   this.$scope = $scope;
   this.$state = $state;
@@ -12,7 +12,6 @@ var User = function ($stateParams, $scope, $state, $window, $rootScope, AuthServ
   this.$modal = $modal;
   this.$http = $http;
   this.host = host;
-  this.AlertService = AlertService;
   this.UserService = UserService;
   
   var self = this;
@@ -134,7 +133,7 @@ User.prototype.someFunc = function(params) {
   var self = this;
 }
 
-User.inject = [ '$stateParams', '$scope', '$state', '$window', '$rootScope', 'AuthService', 'localStorageService', 'toastr', '$location', 'ToastrService', '$modal', '$http', 'host' , 'AlertService', 'UserService'];
+User.inject = [ '$stateParams', '$scope', '$state', '$window', '$rootScope', 'AuthService', 'localStorageService', 'toastr', '$location', 'ToastrService', '$modal', '$http', 'host' , 'UserService'];
 
 angular.module('user',[])
 .controller('UserCtrl', User)
