@@ -150,6 +150,13 @@ angular.module('App', [
 })
 .run([ '$rootScope', '$state', '$stateParams', 'amMoment', 'AuthService', 'UserService', 'ngProgressFactory',
   function ($rootScope, $state, $stateParams, amMoment, AuthService, UserService, ngProgressFactory) {
+    $rootScope.iframe = false; 
+    $rootScope.uniSearch = function(e) {
+      if (e.keyCode === 13) {
+        $rootScope.goTo('dataset','list');
+        $rootScope.search.lastString = $rootScope.search.string;
+      }
+    }
 
     $rootScope.goTo = function(state, mode) {
       $state.transitionTo(state, { mode : mode }, {

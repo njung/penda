@@ -126,7 +126,7 @@ var Dataset = function ($stateParams, $scope, $state, $window, $rootScope, AuthS
   } else {
     self.list();
   }
-  
+
 }
 
 Dataset.prototype.showDataset = function(filename) {
@@ -142,6 +142,12 @@ Dataset.prototype.list = function(option){
   var option = option || { page : 1 };
   if (!self.$rootScope.currentUser) {
     option.status = 'done';
+  }
+  if (self.$rootScope.search && self.$rootScope.search.string) {
+    option.title = self.$rootScope.search.string;
+    option.description = self.$rootScope.search.string;
+    option.category = self.$rootScope.search.string;
+    option.uploader = self.$rootScope.search.string;
   }
   self.DatasetService.list(option)
   .then(function(result){

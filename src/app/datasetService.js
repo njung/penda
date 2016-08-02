@@ -43,8 +43,14 @@ DatasetService.prototype.list = function(option) {
   var path = '/api/datasets';
   path += '?page=' + page;
   path += '&limit=' + limit;
-  if (option.status) {
-    path += '&status=' + option.status;
+  var keys = Object.keys(option);
+  for (var i in keys) {
+    if (keys[i] === 'page' || keys[i] === 'limit') {
+      continue;
+    }
+    if (typeof keys[i] === 'string') {
+      path += '&' + keys[i] + '=' + option[keys[i]];
+    }
   }
   return self.$http({
     headers : {

@@ -12,8 +12,8 @@
           <!--h2>SECOND SLIDE <br><small>with an <i>amazing caption</i></small></h2>
           <p>Aren`t you impressed?</p-->
           <form class="form-wrapper cf">
-              <input type="text" placeholder="Cari..." required>
-              <button type="submit" class="aceh-color-bg-green">Cari</button>
+              <input type="text" placeholder="Cari..." ng-model="search.string" ng-keypress="uniSearch($event);">
+              <button type="submit" ng-click="uniSearch({keyCode:13});" class="aceh-color-bg-green">Cari</button>
           </form>
         </div>
       </div>

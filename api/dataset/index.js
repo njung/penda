@@ -26,6 +26,34 @@ var Dataset = function(server, options, next) {
   this.cached = [];
 }
 
+var schema = {
+  status : String,
+  filename : String,
+  title : String,
+  description : String,
+  keywords : String,
+  source : String,
+  contact : String,
+  releaseFreq : String,
+  level : String,
+  year : Number,
+  month : Number,
+  dateStart : Date,
+  dateEnd : Date,
+  scope : String,
+  reference : String,
+  category : [],
+  keywords : String,
+  totalRows : Number,
+  totalColumns : Number,
+  tableSchema : {},
+  createdAt : Date,
+  updatedAt : Date,
+  error : {},
+  uploaderId : String,
+  uploader : String,
+}
+
 var datasetModel = function() {
   var registered = false;
   var m;
@@ -37,33 +65,6 @@ var datasetModel = function() {
 
   if (registered) return m;
   
-  var schema = {
-    status : String,
-    filename : String,
-    title : String,
-    description : String,
-    keywords : String,
-    source : String,
-    contact : String,
-    releaseFreq : String,
-    level : String,
-    year : Number,
-    month : Number,
-    dateStart : Date,
-    dateEnd : Date,
-    scope : String,
-    reference : String,
-    category : [],
-    keywords : String,
-    totalRows : Number,
-    totalColumns : Number,
-    tableSchema : {},
-    createdAt : Date,
-    updatedAt : Date,
-    error : {},
-    uploaderId : String,
-    uploader : String,
-  }
 
   var s = new mongoose.Schema(schema);
   s.plugin(mongooseHistory);
@@ -140,7 +141,6 @@ Dataset.prototype.registerEndPoints = function() {
 }
 
 // This dataset CRUD use filename as ID instead of MongoDB's _id
-
 Dataset.prototype.update = function(request, reply) {
   var self = this;
   var filename = request.params.filename
@@ -212,6 +212,36 @@ Dataset.prototype.list = function(request, reply) {
 	if (request.query.status) {
 		opt.status = request.query.status;
 	}
+  // Set operator
+  let operator = request.query.operator || 'or';
+  // Searchable fields
+  let searchable = ['title', 'description', 'uploader', 'category'];
+  // Handle query by fields
+  let queryKeys = Object.keys(request.query);
+  opt['$' + operator] = [];
+  for (var i in queryKeys) {
+    // Except page and limit. Search will be handled separatedly
+    if (Object.keys(schema).indexOf(queryKeys[i]) < 0) {
+      continue;
+    }
+    if (searchable.indexOf(queryKeys[i]) < 0) {
+      continue;
+    }
+    let r = new RegExp('^' +  request.query[queryKeys[i]] + '$','i');
+    let obj = {};
+    if (queryKeys[i] === 'category') {
+      /* obj[queryKeys[i]] = { $in : [request.query[queryKeys[i]]] } */
+      obj[queryKeys[i]] = { $in : [r] }
+    } else {
+      obj[queryKeys[i]] = { $regex : r }
+    }
+    opt['$' + operator].push(obj);
+  }
+  // Is OR empty?
+  if (opt['$' + operator].length < 1) {
+    delete(opt['$' + operator]);
+  }
+  // TODO Handle wide search
 	console.log(opt);
   datasetModel()
   .count(opt)
@@ -290,14 +320,6 @@ Dataset.prototype.get = function(request, reply) {
     } else {
       reply(result);
     }
-  })
-}
-
-// TODO remote this sample API
-Dataset.prototype.sample = function(request, reply) {
-  fs.readFile(config.datasetsPath + '/sample.csv', 'utf-8', function(err, result){
-    if (err || !result) return reply(boom.notFound());
-    reply(result).type('text/plain');
   })
 }
 
