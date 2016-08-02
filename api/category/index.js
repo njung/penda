@@ -57,6 +57,7 @@ Categories.prototype.registerEndPoints = function() {
     method: 'GET',
     path: '/api/categories',
     config : {
+      auth : false
     },
     handler: function(request, reply) {
       self.list(request, reply);

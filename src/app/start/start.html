@@ -105,7 +105,7 @@
   </div>
   <div class="row margined-container aceh-color-lightgreen-bg" style="padding-top:50px;">
     <div class="category-container centered content-centered">
-      <div class="pointer category-block aceh-color-greygreen-bg" ng-repeat="c in categories track by $index">
+      <div class="pointer category-block aceh-color-greygreen-bg" ng-repeat="c in categories track by $index" ng-click="search.string=c.name;uniSearch({keyCode:13})">
         {{c.name}}
       </div>
     </div>
