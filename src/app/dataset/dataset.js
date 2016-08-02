@@ -1,4 +1,4 @@
-var Dataset = function ($stateParams, $scope, $state, $window, $rootScope, AuthService, localStorageService, toastr, $location, ToastrService, $modal, $http, host, AlertService, DatasetService, $compile, CategoryService){
+var Dataset = function ($stateParams, $scope, $state, $window, $rootScope, AuthService, localStorageService, toastr, $location, ToastrService, $modal, $http, host, AlertService, DatasetService, $compile, CategoryService, UserService){
   this.$stateParams = $stateParams;
   this.$scope = $scope;
   this.$state = $state;
@@ -16,6 +16,7 @@ var Dataset = function ($stateParams, $scope, $state, $window, $rootScope, AuthS
   this.DatasetService = DatasetService;
   this.$compile = $compile;
   this.CategoryService = CategoryService;
+  this.UserService = UserService;
   
   var self = this;
   
@@ -78,31 +79,15 @@ var Dataset = function ($stateParams, $scope, $state, $window, $rootScope, AuthS
       value:'all'
     },
   }
-  self.$scope.uploader = [{
+  self.$scope.uploaderSelection = [{
       text:'Semua',
       value:'all'
-    },{divider:true},
-    {
-      text:'Provinsi',
-      value:'Provinsi'
-    },
-    {
-      text:'Diskes',
-      value:'Diskes'
-    },
+    },{divider:true}
   ]
-  self.$scope.categories = [{
+  self.$scope.categorySelection = [{
       text:'Semua',
       value:'all'
-    },{divider:true},
-    {
-      text:'Pendidikan',
-      value:'Pendidikan'
-    },
-    {
-      text:'Kesehatan',
-      value:'Kesehatan'
-    },
+    },{divider:true}
   ]
   self.$scope.datasetQuery = {
     limit : 10,
@@ -122,16 +107,59 @@ var Dataset = function ($stateParams, $scope, $state, $window, $rootScope, AuthS
   /*   }) */
  
   if (self.$stateParams.mode && self.$stateParams.mode !== 'list') {
+    self.$rootScope.search.string = null;
+    self.$rootScope.search.lastString = null;
     self.get(self.$stateParams.mode);
   } else {
     self.list();
   }
-
+  
+  self.CategoryService.list({limit:0})
+  .then(function(result){
+    self.$scope.categories = result.data.data;
+    for (var i in self.$scope.categories) {
+      self.$scope.categories[i];
+      self.$scope.categorySelection.push({
+        text : self.$scope.categories[i].name,
+        value : self.$scope.categories[i].name
+      })
+    }
+    return self.UserService.list({limit:0})
+  })
+  .then(function(result){
+    self.$scope.users = result.data.data;
+    for (var i in self.$scope.users) {
+      self.$scope.users[i];
+      self.$scope.uploaderSelection.push({
+        text : self.$scope.users[i].fullName,
+        value : self.$scope.users[i].fullName
+      })
+    }
+    self.$scope.listQueryWatch = false;
+    setTimeout(function(){
+      self.$scope.listQueryWatch = true;
+    }, 1000)
+    self.$scope.$watch('listQuery.uploader', function(val){
+      if (self.$scope.mode == 'list' && listQueryWatch) {
+        var opt = { limit : 0, operator : 'and' }
+        self.list(opt);
+      }
+    })
+    self.$scope.$watch('listQuery.category', function(val){
+      if (self.$scope.mode == 'list' && listQueryWatch) {
+        var opt = { limit : 0, operator : 'and' }
+        self.list(opt);
+      }
+    })
+  })
+  .catch(function(result) {
+    self.ToastrService.parse(result);
+  })
 }
 
 Dataset.prototype.showDataset = function(filename) {
   var self = this;
-  self.$state.go('dataset', { mode : filename });
+  self.$rootScope.goTo('dataset', filename);
 }
 
 Dataset.prototype.list = function(option){
@@ -148,6 +176,12 @@ Dataset.prototype.list = function(option){
     option.description = self.$rootScope.search.string;
     option.category = self.$rootScope.search.string;
     option.uploader = self.$rootScope.search.string;
+  }
+  if (self.$scope.listQuery.category.value !== 'all') {
+    option.category = self.$scope.listQuery.category.value;
+  }
+  if (self.$scope.listQuery.uploader.value !== 'all') {
+    option.uploader = self.$scope.listQuery.uploader.value;
   }
   self.DatasetService.list(option)
   .then(function(result){
@@ -445,7 +479,7 @@ Dataset.prototype.someFunc = function(params) {
   var self = this;
 }
 
-Dataset.inject = [ '$stateParams', '$scope', '$state', '$window', '$rootScope', 'AuthService', 'localStorageService', 'toastr', '$location', 'ToastrService', '$modal', '$http', 'host' , 'AlertService', 'DatasetService', '$compile', 'CategoryService'];
+Dataset.inject = [ '$stateParams', '$scope', '$state', '$window', '$rootScope', 'AuthService', 'localStorageService', 'toastr', '$location', 'ToastrService', '$modal', '$http', 'host' , 'AlertService', 'DatasetService', '$compile', 'CategoryService', 'UserService'];
 
 angular.module('dataset',[])
 .controller('DatasetCtrl', Dataset)

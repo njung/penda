@@ -3,7 +3,7 @@
     <div ng-show="search.lastString && currentUser" style="margin-top:15px;:w" class="alert alert-info">Hasil pencarian untuk kata kunci "{{search.lastString}}"
       <span class="pointer fa fa-close clear-search" ng-click="search.string=null;search.lastString=null;uniSearch({keyCode:13});"></span>
     </div>
-    <div ng-show="mode=='list' && list.data.length < 1" class="content-centered animated fadeIn" style="margin-top:50px;">
+    <div ng-show="mode=='list' && list.data.length < 1 && currentUser" class="content-centered animated fadeIn" style="margin-top:50px;">
         <span class="alert alert-info">Belum ada data</span>
     </div>
     <div ng-show="mode=='list' && list.data.length > 0 && currentUser" class=" animated fadeIn">
@@ -44,20 +44,23 @@
 	    	<pagination total-items="list.total" ng-model="list.page" ng-change="dataset.paginate()" items-per-page="10"></pagination>
 	    </div>
 	  </div>
-    <div ng-show="mode=='list' && list.data.length > 0 && !currentUser" class=" animated fadeIn">
+    <div ng-show="mode=='list' && !currentUser" class=" animated fadeIn">
       <div class="row">
         <div ng-class="{'col-md-9':!iframe}">
           <div>
             <h1>Dataset</h1>
             <div class="pull-right" style="margin-top:-45px;">
+              <span style="line-height:30px;">Penyedia&nbsp;</span>
               <div style="height:33px;width:150px;padding:5px 10px;display:inline-block;vertical-align:top;" 
-                  dropdown-select="uploader"
+                  dropdown-select="uploaderSelection"
                   dropdown-model="listQuery.uploader"
                   dropdown-item-label="text"
                >
               </div>
+              &nbsp;&nbsp;
+              <span style="line-height:30px;">Kategori&nbsp;</span>
               <div style="height:33px;width:150px;padding:5px 10px;display:inline-block;vertical-align:top;" 
-                  dropdown-select="categories"
+                  dropdown-select="categorySelection"
                   dropdown-model="listQuery.category"
                   dropdown-item-label="text"
                >
@@ -71,18 +74,23 @@
             <br><br>
             <img class="centered" src="/assets/img/spinners/spinner_64.gif" style="height:32px;">
           </div>
-          <div class="dataset-item" ng-repeat="data in list.data" ng-click="dataset.showDataset(data.filename);">
-            <div class="dataset-icon-container"></div>
-            <div class="dataset-info">
-              <h4 class="dataset-title">{{data.title}}</h4>
-              {{data.createdAt | amDateFormat:'DD-MM-YYYY HH:mm:ss'}} &nbsp;
-              <span class="alert-info">{{data.totalRows}} record</span>
-              <span class="alert-info" ng-repeat="cat in data.category">&nbsp;{{cat}}&nbsp;</span>
-              <p class="dataset-desc">{{data.desc}} </p>
-            </div>
+          <div ng-show="mode=='list' && list.data.length < 1" class="content-centered animated fadeIn" style="margin-top:50px;">
+              <span class="alert alert-info">Belum ada data</span>
           </div>
-          <div class="content-centered centered" ng-hide="spinner.list">
-	    	    <pagination total-items="list.total" ng-model="list.page" ng-change="dataset.paginate()" items-per-page="10"></pagination>
+          <div ng-show="list.data && list.data.length > 0">
+            <div class="dataset-item" ng-repeat="data in list.data" ng-click="dataset.showDataset(data.filename);">
+              <div class="dataset-icon-container"></div>
+              <div class="dataset-info">
+                <h4 class="dataset-title">{{data.title}}</h4>
+                {{data.createdAt | amDateFormat:'DD-MM-YYYY HH:mm:ss'}} &nbsp;
+                <span class="alert-info">{{data.totalRows}} record</span>
+                <span class="alert-info" ng-repeat="cat in data.category">&nbsp;{{cat}}&nbsp;</span>
+                <p class="dataset-desc">{{data.desc}} </p>
+              </div>
+            </div>
+            <div class="content-centered centered" ng-hide="spinner.list">
+	    	      <pagination total-items="list.total" ng-model="list.page" ng-change="dataset.paginate()" items-per-page="10"></pagination>
+            </div>
           </div>
         </div>
         <div class="col-md-3 aceh-color-greygreen-bg" style="height:500px;margin-top:15px" ng-hide="iframe">

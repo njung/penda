@@ -153,6 +153,7 @@ angular.module('App', [
     $rootScope.iframe = false; 
     $rootScope.uniSearch = function(e) {
       if (e.keyCode === 13) {
+        $rootScope.searchOperator = 'or';
         $rootScope.goTo('dataset','list');
         $rootScope.search.lastString = $rootScope.search.string;
       }

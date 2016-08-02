@@ -97,6 +97,7 @@ Profiles.prototype.registerEndPoints = function() {
     method: "GET",
     path: "/api/users",
     config : {
+      auth : false
     },
     handler: function(request, reply) {
       self.list(request, reply);
