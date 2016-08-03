@@ -142,13 +142,13 @@ var Dataset = function ($stateParams, $scope, $state, $window, $rootScope, AuthS
       self.$scope.listQueryWatch = true;
     }, 1000)
     self.$scope.$watch('listQuery.uploader', function(val){
-      if (self.$scope.mode == 'list' && listQueryWatch) {
+      if (self.$scope.mode == 'list' && self.$scope.listQueryWatch) {
         var opt = { limit : 0, operator : 'and' }
         self.list(opt);
       }
     })
     self.$scope.$watch('listQuery.category', function(val){
-      if (self.$scope.mode == 'list' && listQueryWatch) {
+      if (self.$scope.mode == 'list' && self.$scope.listQueryWatch) {
         var opt = { limit : 0, operator : 'and' }
         self.list(opt);
       }
