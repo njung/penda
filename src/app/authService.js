@@ -26,7 +26,6 @@ AuthService.prototype.login = function(account) {
   .success(function(data, status, headers, config) {
     self.localStorageService.set('currentUser', headers('current_user'));
     self.localStorageService.set('currentUserProfileId', headers('current_user'));
-    self.localStorageService.set('currentUserCountry', headers('country'));
     // Hawk specific
     if (self.authStrategy === 'hawk') {
       self.localStorageService.set('hawkPairKey', headers('token'));

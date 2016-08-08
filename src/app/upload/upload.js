@@ -23,6 +23,14 @@ var UploadCtrl = function ($stateParams, $scope, $state, $window, $rootScope, Au
     self.$rootScope.iframe = true;
   }
 
+  // Check for external credential 
+  if (self.$location.search().credential && self.$location.search().credential.length > 0) {
+    var b64str = self.$location.search().credential;
+    var credential = JSON.parse(atob(b64str));
+    self.localStorageService.set('currentUser', credential.username);
+    self.localStorageService.set('token', credential.token);
+  }
+
   self.$window.scrollTo(0,0)
 
   // Load category list
