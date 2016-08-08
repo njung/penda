@@ -73,10 +73,13 @@ var User = function(server, options, next) {
  
   // JWT validate
   var validateJwt = function(decoded, request, callback) {
-    // TODO check for existing user
-    console.log(decoded);
-
-    return callback(null, true);
+    model().findOne({username: decoded.username }, function(err, user) {
+      if (err) {
+        return callback(new Error('Unauthorized'), false);
+      }
+      decoded.userId = user._id;
+      return callback(null, true);
+    })
   }
   // Hawk validate
   var getCredentials = function(id, callback) {
@@ -256,7 +259,6 @@ User.prototype.login = function(request, reply) {
         // Sign jwt token
         var tokenObj = {
           username : user.username,
-          userId : user._id,
           role : profile.role,
         }
         var token = jwt.sign(tokenObj, config.secretKey, { algorithm: 'HS256', expiresIn: "1h" } );
