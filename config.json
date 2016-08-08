@@ -2,5 +2,12 @@
   "appName" : "OpenData",
   "datasetsPath": "/tmp/data",
   "authStrategy": "jwt",
-  "secretKey" : "secretString"
+  "secretKey" : "secretString",
+  "syncUser" : true,
+  "ppidDb" : {
+    "host" : "localhost",
+    "database" : "ppid",
+    "user" : "root",
+    "password" : "root"
+  }
 }

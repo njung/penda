@@ -147,7 +147,8 @@ angular.module('App', [
 })
 .run([ '$rootScope', '$state', '$stateParams', 'amMoment', 'AuthService', 'UserService', 'ngProgressFactory',
   function ($rootScope, $state, $stateParams, amMoment, AuthService, UserService, ngProgressFactory) {
-    $rootScope.iframe = false; 
+    $rootScope.iframe = false;
+    $rootScope.syncUser = _SYNC_USER_;
     $rootScope.uniSearch = function(e) {
       if (e.keyCode === 13) {
         $rootScope.searchOperator = 'or';

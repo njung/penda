@@ -11,8 +11,13 @@ var profileModel = require(__dirname + '/../../api/profiles/index').model();
 var config = require(__dirname + '/../../config.json');
 
 var schema = {
-  username : Joi.string().email().required(),
+  username : Joi.string().required(),
   password : Joi.string().required(),
+}
+var userSchema = {
+  username : {type : String, unique : true},
+  password : String,
+  isActive : Boolean,
 }
 
 var model = function() {
@@ -25,12 +30,7 @@ var model = function() {
   }
 
   if (registered) return m;
-  var schema = {
-    username : {type : String, unique : true},
-    password : String,
-    isActive : Boolean,
-  }
-  var s = new mongoose.Schema(schema);
+  var s = new mongoose.Schema(userSchema);
   s.plugin(passportLocalMongoose, {usernameField : 'username', hashField : 'password'});
   m = mongoose.model('User', s);
   return m;
@@ -210,7 +210,7 @@ User.prototype.tokenModel = function() {
 User.prototype.login = function(request, reply) {
   var self = this;
   model().authenticate()(
-    request.payload.email, 
+    request.payload.username, 
     request.payload.password, 
   function(err, user) {
     if (err) return reply(err);
@@ -256,6 +256,7 @@ User.prototype.login = function(request, reply) {
         // Sign jwt token
         var tokenObj = {
           username : user.username,
+          userId : user._id,
           role : profile.role,
         }
         var token = jwt.sign(tokenObj, config.secretKey, { algorithm: 'HS256', expiresIn: "1h" } );
@@ -314,7 +315,7 @@ User.prototype.create = function(request, cb) {
   }
   var self = this;
   var newUser = model();
-  newUser.username = request.payload.email;
+  newUser.username = request.payload.username;
   newUser.isActive = true;
   model().register(newUser, request.payload.password, function(err, result) {
     if (err) return cb({error: err.name, message: err.message, statusCode: 400}, null);
@@ -381,7 +382,7 @@ var generateUser = function(user, cb) {
   console.log('Generating sample user ...');
   console.log(user);
   var newUser = model();
-  newUser.username = user.email;
+  newUser.username = user.username;
   if (user.isActive == false) {
     newUser.isActive = false;
   } else {
@@ -391,7 +392,7 @@ var generateUser = function(user, cb) {
     if (err) return cb(err);
     profileModel.create({
       fullName : faker.name.findName(),
-      email : user.email,
+      username : user.username,
       role : 'admin',
       userId : result._id,
       activationCode : uuid.v4(),
@@ -419,3 +420,4 @@ exports.model = model;
 exports.tokenModel = tokenModel;
 
 exports.class = User.prototype;
+exports.schema = userSchema;

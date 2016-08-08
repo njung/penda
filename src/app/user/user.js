@@ -34,6 +34,9 @@ var User = function ($stateParams, $scope, $state, $window, $rootScope, AuthServ
 
 User.prototype.showUser = function(data) {
   var self = this;
+  if (self.$rootScope.syncUser) {
+    return;
+  }
   self.$rootScope.currentItem = data;
   self.$rootScope.userModal = self.$modal.open({
     templateUrl : 'userModal.html',

@@ -4,7 +4,7 @@
         <span class="alert alert-info">Belum ada data</span>
     </div>
     <div ng-show="mode=='list' && list.data.length > 0 && currentUser" class=" animated fadeIn">
-      <button class="btn btn-primary pull-right" ng-click="user.addUser()"><span class="fa fa-plus"></span> Tambah pengguna / Instansi</button>
+      <button ng-hide="syncUser" class="btn btn-primary pull-right" ng-click="user.addUser()"><span class="fa fa-plus"></span> Tambah pengguna / Instansi</button>
       <h1>Pengguna / Instansi</h1>
       <div class="content-centered" ng-show="spinner.list">
         <br><br>
@@ -21,7 +21,7 @@
         <tbody>
           <tr ng-repeat="data in list.data track by $index" ng-click="user.showUser(data)" class="pointer">
             <td>
-              {{data.email}}
+              {{data.username}}
             </td>
             <td>
               {{data.fullName}}
@@ -58,9 +58,16 @@
         <hr>
         <fieldset>
           <div class="row form-group">
-            <label class="col-sm-4 control-label control-label-right" for="title">E-mail</label>  
+            <label class="col-sm-4 control-label control-label-right" for="title">Username</label>  
             <div class="col-sm-8">
-            <input name="title" ng-model="currentItem.email" type="text" class="form-control input-md">
+            <input name="title" ng-model="currentItem.username" type="text" class="form-control input-md">
+            <small><i>*Harus diisi</i></small>
+            </div>
+          </div>
+          <div class="row form-group">
+            <label class="col-sm-4 control-label control-label-right" for="email">E-mail</label>  
+            <div class="col-sm-8">
+            <input name="title" ng-model="currentItem.email" type="email" class="form-control input-md">
             <small><i>*Harus diisi</i></small>
             </div>
           </div>

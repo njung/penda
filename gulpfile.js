@@ -21,6 +21,7 @@ for (i = 0; i < process.argv.length; i ++) {
 
 var config = require(__dirname + '/config.json');
 config.mode = process.env.NODE_ENV || 'dev';
+config.syncUser = config.syncUser || false;
 
 console.log('Running in ' + config.mode + ' mode...');
 var mainJsonPath = '/config/' + config.mode + '/main.json';
@@ -37,6 +38,7 @@ if (fs.existsSync(__dirname + mainJsonPath)) {
 replacements.push(['_VERSION_', pkgDetail.version])
 replacements.push(['_AUTH_STRATEGY_', config.authStrategy]);
 replacements.push(['_APP_NAME_', config.appName]);
+replacements.push(['_SYNC_USER_', config.syncUser]);
 console.log(replacements);
 for (var i in replacements) {
   if (replacements[i][0] == '_APP_NAME_') {

@@ -11,14 +11,29 @@ Grid.mongo = mongoose.mongo;
 var User = require("../00-user");
 var Email = require("../email");
 
+var profileSchema = {
+  fullName : String,
+  email : String,
+  username : {
+    type : String,
+    unique : true
+  },
+  role : String,
+  joinedSince : Date,
+  activationCode : String,
+  userId : String,
+  avatar: mongoose.Schema.ObjectId,
+}
 var schema = {
   fullName : Joi.string().required(),
+  username : Joi.string().required(),
   email : Joi.string().email().required(),
   password : Joi.string().required(),
 }
 
 var registerSchema = {
   fullName : Joi.string().required(),
+  username : Joi.string().required(),
   email : Joi.string().email().required(),
   password : Joi.string().required(),
   repeatPassword : Joi.string().required(),
@@ -27,6 +42,7 @@ var registerSchema = {
 var updateSchema = {
   fullName : Joi.string().optional(),
   email : Joi.forbidden(),
+  username : Joi.forbidden(),
 }
 
 var passwordSchema = {
@@ -44,20 +60,8 @@ var profileModel = function() {
   }
 
   if (registered) return m;
-  var schema = {
-    fullName : String,
-    email : {
-      type : String,
-      unique : true
-    },
-    role : String,
-    joinedSince : Date,
-    activationCode : String,
-    userId : String,
-    avatar: mongoose.Schema.ObjectId,
-  }
 
-  var s = new mongoose.Schema(schema);
+  var s = new mongoose.Schema(profileSchema);
   m = mongoose.model("Profiles", s);
   return m;
 }
@@ -835,6 +839,7 @@ Profiles.prototype.delete = function(request, reply) {
       return realDelete(request, reply);
     }
     // Prevent self delete
+    console.log(result);
     if (result.userId.toString() === request.auth.credentials.userId.toString()) {
       return reply({
         error: "Not Found", 
@@ -1089,6 +1094,7 @@ Profiles.prototype.realRegister = function(request, cb) {
   var self = this;
   var newUser = profileModel();
   newUser.fullName = request.payload.fullName;
+  newUser.username = request.payload.username;
   newUser.email = request.payload.email;
   newUser.role = request.payload.role;
   newUser.userId = request.payload.userId;
@@ -1103,6 +1109,7 @@ Profiles.prototype.realRegister = function(request, cb) {
     }
     var profile = {
       email : result.email,
+      username : result.username,
       _id : result._id,
       fullName : result.fullName,
       role : result.role,
@@ -1140,6 +1147,7 @@ var realUpdate = function(request, reply) {
       }
       var profile = {
         email : result.email,
+        username : result.username,
         _id : result._id,
         fullName : result.fullName,
         role : result.role,
@@ -1223,3 +1231,4 @@ exports.register.attributes = {
 exports.model = profileModel;
 
 exports.class = Profiles.prototype;
+exports.schema = profileSchema;
