@@ -254,13 +254,12 @@ User.prototype.login = function(request, reply) {
         })
       } else if (config.authStrategy === 'jwt') {
         // Sign jwt token
-        var token = jwt.sign({ 
+        var tokenObj = {
           username : user.username,
-          userId : user._id,
-          profileId : profile._id,
           role : profile.role,
-        }, config.secretKey, { algorithm: 'HS256', expiresIn: "1h" } );
-        var response = reply({success:true, profile : profile})
+        }
+        var token = jwt.sign(tokenObj, config.secretKey, { algorithm: 'HS256', expiresIn: "1h" } );
+        var response = reply({success:true, profile : profile, tokenObj})
           .type('application/json')
           .header('token', token)
           .header('current_user', profile._id)
