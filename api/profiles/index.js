@@ -6,6 +6,7 @@ var uuid = require("uuid");
 var Grid = require("gridfs-stream");
 var parse = require("mongoose-parse");
 var moment = require('moment');
+var config = require(__dirname + '/../../config.json');
 Grid.mongo = mongoose.mongo;
 
 var User = require("../00-user");
@@ -598,6 +599,9 @@ Profiles.prototype.confirm = function(request, reply) {
 
 Profiles.prototype.update = function(request, reply) {
   var self = this;
+  if (config.syncUser) {
+    return reply(boom.methodNotAllowed());
+  }
   var bogus = self.checkBogus(request.params.id);
   if (bogus.isBogus) {
     return reply(bogus.reply).statusCode = 404;
@@ -687,6 +691,9 @@ Profiles.prototype.update = function(request, reply) {
 
 Profiles.prototype.setPassword = function(request, reply) {
   var self = this;
+  if (config.syncUser) {
+    return reply(boom.methodNotAllowed());
+  }
   var bogus = self.checkBogus(request.params.id);
   if (bogus.isBogus) {
     return reply(bogus.reply).statusCode = 404;
@@ -815,6 +822,9 @@ Profiles.prototype.get = function(request, reply) {
 
 Profiles.prototype.delete = function(request, reply) {
   var self = this;
+  if (config.syncUser) {
+    return reply(boom.methodNotAllowed());
+  }
   var bogus = self.checkBogus(request.params.id);
   if (!request.auth && request.auth.credentials) {
     return reply(boom.unauthorized());
@@ -1181,31 +1191,6 @@ Profiles.prototype.getUserId = function(profileId, cb) {
     if (err) return cb(err);
     cb(null, result.userId);
   })
-}
-
-Profiles.prototype.setHashtag = function(request, reply) {
-  var self = this;
-  var bogus = self.checkBogus(request.params.id);
-  if (bogus.isBogus) {
-    return reply(bogus.reply).statusCode = 404;
-  }
-  profileModel()
-    .findOneAndUpdate(
-    {_id:request.auth.credentials.profileId}, 
-    { $set : { 'hashtag' : request.payload.hashtag } },
-    function(err, result) {
-    if (err) {
-      return reply(err).statusCode = 400;
-    }
-    if (!result) {
-      return reply({
-        error: "Not Found", 
-        statusCode: 404, 
-        message: "User profile was not found"
-      }).code(400);
-    }
-    reply();
-  });
 }
 
 var realDelete = function(request, reply) {
