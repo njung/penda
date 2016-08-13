@@ -1,4 +1,4 @@
-var Start = function ($stateParams, $scope, $state, $window, $rootScope, AuthService, localStorageService, toastr, UserService, $timeout, $http, $interval, ToastrService, host, $compile, DatasetService, CategoryService){
+var Start = function ($stateParams, $scope, $state, $window, $rootScope, AuthService, localStorageService, toastr, UserService, $timeout, $http, $interval, ToastrService, host, $compile, DatasetService, CategoryService, StatService){
   this.$stateParams = $stateParams;
   this.$scope = $scope;
   this.$state = $state;
@@ -16,11 +16,8 @@ var Start = function ($stateParams, $scope, $state, $window, $rootScope, AuthSer
   this.$compile = $compile;
   this.DatasetService = DatasetService;
   this.CategoryService = CategoryService;
+  this.StatService = StatService;
   var self = this;
-
-  /* if (self.$rootScope.currentUser) { */
-  /*   self.$state.go('main'); */
-  /* } */
 
   self.$window.scrollTo(0,0)
   console.log(this.$stateParams.action);
@@ -53,6 +50,53 @@ var Start = function ($stateParams, $scope, $state, $window, $rootScope, AuthSer
   .catch(function(result) {
     self.ToastrService.parse(result);
   })
+  // Load stat
+  self.StatService.sum()
+  .then(function(result) {
+    // Make it global so it will be accessible by CountUp library
+    var recordOptions = {
+      useEasing : true, 
+      useGrouping : true, 
+      separator : ',', 
+      decimal : '.', 
+      suffix : ' record' 
+    };
+    var recordCounterUp = new CountUp("recordCounterUp", 0, result.data.row, 0, 10, recordOptions);
+    recordCounterUp.start();
+
+    var datasetOptions = {
+      useEasing : true, 
+      useGrouping : true, 
+      separator : ',', 
+      decimal : '.', 
+      suffix : ' dataset' 
+    };
+    var datasetCounterUp = new CountUp("datasetCounterUp", 0, result.data.dataset, 0, 5, datasetOptions);
+    datasetCounterUp.start();
+    
+    var organizationOptions = {
+      useEasing : true, 
+      useGrouping : true, 
+      separator : ',', 
+      decimal : '.', 
+      suffix : ' dinas/instansi' 
+    };
+    var organizationCounterUp = new CountUp("organizationCounterUp", 0, result.data.org, 0, 5, organizationOptions);
+    organizationCounterUp.start();
+
+    var categoryOptions = {
+      useEasing : true, 
+      useGrouping : true, 
+      separator : ',', 
+      decimal : '.', 
+      suffix : ' kategori' 
+    };
+    var categoryCounterUp = new CountUp("categoryCounterUp", 0, result.data.category, 0, 5, categoryOptions);
+    categoryCounterUp.start();
+  })
+  .catch(function(result) {
+    self.ToastrService.parse(result);
+  })
 }
 
 Start.prototype.showDataset = function(filename) {
@@ -76,9 +120,7 @@ Start.prototype.list = function(option){
   })
 }
 
-
-
-Start.inject = [ '$stateParams', '$scope', '$state', '$window', '$rootScope', 'AuthService', 'localStorageService', 'toastr' , 'UserService', '$timeout', '$http', '$interval', 'ToastrService', 'host', '$compile', 'DatasetService', 'CategoryService'];
+Start.inject = [ '$stateParams', '$scope', '$state', '$window', '$rootScope', 'AuthService', 'localStorageService', 'toastr' , 'UserService', '$timeout', '$http', '$interval', 'ToastrService', 'host', '$compile', 'DatasetService', 'CategoryService', 'StatService'];
 
 angular.module('start',[])
 .controller('StartCtrl', Start)

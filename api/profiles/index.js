@@ -1214,6 +1214,5 @@ exports.register.attributes = {
 };
 
 exports.model = profileModel;
-
 exports.class = Profiles.prototype;
 exports.schema = profileSchema;

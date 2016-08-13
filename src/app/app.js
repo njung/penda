@@ -26,6 +26,7 @@ angular.module('App', [
   'uploadService',
   'feedbackService',
   'datasetService',
+  'statService',
 
   'LocalStorageModule',
   'toastr',

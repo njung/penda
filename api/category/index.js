@@ -267,7 +267,6 @@ exports.register.attributes = {
 };
 
 exports.model = categoryModel;
-
 exports.class = Categories.prototype;
 
 
