@@ -7,7 +7,6 @@ var runSequence = require('run-sequence');
 var ngHtml2Js = require('gulp-ng-html2js');
 var minifyHtml = require('gulp-minify-html');
 var replace = require('gulp-batch-replace');
-var prepend = require('prepend-file');
 var gulpSequence = require('gulp-sequence');
 var fs = require('fs');
 var pkgDetail = JSON.parse(fs.readFileSync(__dirname + '/package.json'));
@@ -43,6 +42,8 @@ replacements.push(['_VERSION_', pkgDetail.version])
 replacements.push(['_AUTH_STRATEGY_', config.authStrategy]);
 replacements.push(['_APP_NAME_', config.appName]);
 replacements.push(['_SYNC_USER_', config.syncUser]);
+replacements.push(['_RSS_URL_', config.rss.url]);
+replacements.push(['_RSS_TITLE_', config.rss.title]);
 console.log(replacements);
 for (var i in replacements) {
   if (replacements[i][0] == '_APP_NAME_') {

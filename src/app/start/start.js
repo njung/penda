@@ -1,4 +1,4 @@
-var Start = function ($stateParams, $scope, $state, $window, $rootScope, AuthService, localStorageService, toastr, UserService, $timeout, $http, $interval, ToastrService, host, $compile, DatasetService, CategoryService, StatService){
+var Start = function ($stateParams, $scope, $state, $window, $rootScope, AuthService, localStorageService, toastr, UserService, $timeout, $http, $interval, ToastrService, host, $compile, DatasetService, CategoryService, StatService, $http, host){
   this.$stateParams = $stateParams;
   this.$scope = $scope;
   this.$state = $state;
@@ -17,6 +17,8 @@ var Start = function ($stateParams, $scope, $state, $window, $rootScope, AuthSer
   this.DatasetService = DatasetService;
   this.CategoryService = CategoryService;
   this.StatService = StatService;
+  this.host = host;
+  this.$http = $http;
   var self = this;
 
   self.$window.scrollTo(0,0)
@@ -27,20 +29,6 @@ var Start = function ($stateParams, $scope, $state, $window, $rootScope, AuthSer
   self.$rootScope.frontPage = false;
   self.$rootScope.directPage= false;
           
-  /* var realCheckToken = function(){ */
-  /*   self.AuthService.checkToken({redirect:true}) */
-  /*     .then(function(){ */
-  /*       self.$state.go('main'); */
-  /*       self.$rootScope.loginForm = false; */
-  /*       self.UserService.getUserById(self.localStorageService.get('currentUser')) */
-  /*         .success(function(data, status, headers) { */
-  /*           self.$rootScope.currentUser = data.fullName; */
-  /*           self.$rootScope.currentUserRole = data.role; */
-  /*         }) */
-  /*     }) */
-  /* } */
-  /* realCheckToken(); */
-  
   self.list({limit:5});
   // Load category list
   self.CategoryService.list({limit:0})
@@ -50,6 +38,22 @@ var Start = function ($stateParams, $scope, $state, $window, $rootScope, AuthSer
   .catch(function(result) {
     self.ToastrService.parse(result);
   })
+
+  // Load RSS
+  var rss = '_RSS_URL_';
+  console.log(rss);
+  self.$scope.spinner.rss = true;
+  if (rss.indexOf('http') > -1) {
+    self.$http({method:"GET", url : self.host + '/api/rss?url=' + rss })
+    .then(function(result){
+      self.$scope.spinner.rss = false;
+      self.$scope.rssData = result.data;
+    })
+    .catch(function(result) {
+      self.$scope.spinner.rss = false;
+    })
+  }
+
   // Load stat
   self.StatService.sum()
   .then(function(result) {
@@ -120,7 +124,7 @@ Start.prototype.list = function(option){
   })
 }
 
-Start.inject = [ '$stateParams', '$scope', '$state', '$window', '$rootScope', 'AuthService', 'localStorageService', 'toastr' , 'UserService', '$timeout', '$http', '$interval', 'ToastrService', 'host', '$compile', 'DatasetService', 'CategoryService', 'StatService'];
+Start.inject = [ '$stateParams', '$scope', '$state', '$window', '$rootScope', 'AuthService', 'localStorageService', 'toastr' , 'UserService', '$timeout', '$http', '$interval', 'ToastrService', 'host', '$compile', 'DatasetService', 'CategoryService', 'StatService', 'host'];
 
 angular.module('start',[])
 .controller('StartCtrl', Start)

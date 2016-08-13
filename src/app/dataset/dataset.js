@@ -1,4 +1,4 @@
-var Dataset = function ($stateParams, $scope, $state, $window, $rootScope, AuthService, localStorageService, toastr, $location, ToastrService, $modal, $http, host, DatasetService, $compile, CategoryService, UserService){
+var Dataset = function ($stateParams, $scope, $state, $window, $rootScope, AuthService, localStorageService, toastr, $location, ToastrService, $modal, $http, host, DatasetService, $compile, CategoryService, UserService, $http, host){
   this.$stateParams = $stateParams;
   this.$scope = $scope;
   this.$state = $state;
@@ -16,6 +16,8 @@ var Dataset = function ($stateParams, $scope, $state, $window, $rootScope, AuthS
   this.$compile = $compile;
   this.CategoryService = CategoryService;
   this.UserService = UserService;
+  this.$http = $http;
+  this.host = host;
   
   var self = this;
   
@@ -106,16 +108,6 @@ var Dataset = function ($stateParams, $scope, $state, $window, $rootScope, AuthS
     }
   }
 
-  // TODO this function costs too many request, please think for alternative solution 
-  /* self.AuthService.checkToken({redirect:true}) */
-  /*   .then(function(){ */
-  /*     /1* self.UserService.getUserById(self.localStorageService.get('currentUser')) *1/ */
-  /*     /1*   .success(function(data, status, headers) { *1/ */
-  /*     /1*     self.$rootScope.currentUser = data.fullName; *1/ */
-  /*     /1*     self.$rootScope.currentUserRole = data.role; *1/ */
-  /*     /1*   }) *1/ */
-  /*   }) */
- 
   if (self.$stateParams.mode && self.$stateParams.mode !== 'list') {
     self.$rootScope.search.string = null;
     self.$rootScope.search.lastString = null;
@@ -165,6 +157,20 @@ var Dataset = function ($stateParams, $scope, $state, $window, $rootScope, AuthS
   .catch(function(result) {
     self.ToastrService.parse(result);
   })
+  
+  // Load RSS
+  var rss = '_RSS_URL_';
+  self.$scope.spinner.rss = true;
+  if (rss.indexOf('http') > -1) {
+    self.$http({method:"GET", url : self.host + '/api/rss?url=' + rss })
+    .then(function(result){
+      self.$scope.spinner.rss = false;
+      self.$scope.rssData = result.data;
+    })
+    .catch(function(result) {
+      self.$scope.spinner.rss = false;
+    })
+  }
 }
 
 Dataset.prototype.showDataset = function(filename) {
@@ -489,7 +495,7 @@ Dataset.prototype.someFunc = function(params) {
   var self = this;
 }
 
-Dataset.inject = [ '$stateParams', '$scope', '$state', '$window', '$rootScope', 'AuthService', 'localStorageService', 'toastr', '$location', 'ToastrService', '$modal', '$http', 'host' , 'DatasetService', '$compile', 'CategoryService', 'UserService'];
+Dataset.inject = [ '$stateParams', '$scope', '$state', '$window', '$rootScope', 'AuthService', 'localStorageService', 'toastr', '$location', 'ToastrService', '$modal', '$http', 'host' , 'DatasetService', '$compile', 'CategoryService', 'UserService', '$http', 'host'];
 
 angular.module('dataset',[])
 .controller('DatasetCtrl', Dataset)

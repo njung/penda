@@ -93,8 +93,18 @@
             </div>
           </div>
         </div>
-        <div class="col-md-3 aceh-color-greygreen-bg" style="height:500px;margin-top:15px" ng-hide="iframe">
-          Sidebar
+        <div class="col-md-3 aceh-color-greygreen-bg" ng-hide="iframe" style="padding-bottom:10px;">
+          <div class="content-centered" ng-show="spinner.rss">
+            <br><br>
+            <img class="centered" src="/assets/img/spinners/spinner_64.gif" style="height:32px;">
+          </div>
+          <div ng-show="!spinner.rss && rssData.length > 0">
+            <h4 class="rss-title">_RSS_TITLE_</h4>
+            <div class="rss-container">
+              <div class="rss-item" ng-repeat="item in rssData track by $index"><a href="{{item.link}}" target="_blank">{{item.title}}</a>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

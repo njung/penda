@@ -880,3 +880,18 @@ a,a:hover,a:active {
 }
 
 
+.rss-container {
+  overflow:hidden;
+  margin-top:15px;
+  padding:10px;
+  height:500px;
+}
+.rss-container:hover {
+  overflow:auto;
+}
+.rss-title {
+  padding:10px 10px 0px 10px;
+}
+.rss-item {
+  margin-bottom:10px;
+}

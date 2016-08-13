@@ -9,5 +9,9 @@
     "database" : "ppid",
     "user" : "root",
     "password" : "root"
+  },
+  "rss" : {
+    "url" : "https://news.ycombinator.com/rss",
+    "title" : "Y Combinator"
   }
 }
