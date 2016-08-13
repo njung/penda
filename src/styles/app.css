@@ -254,14 +254,10 @@ label {
   font-size: 11px;
   text-align: left;
 }
-.trip-tag {
-  font-size:12px;
-  padding: 2px 5px 2px 5px;
-  background: #F9E6DF;
-  margin-right:3px;
-  margin-bottom:2px;
-  color:#DB746A;
-  display: inline-block;
+
+.footer {
+  padding-top: 15px;;
+  padding-bottom: 15px;
 }
 
 .map-box-shadow {

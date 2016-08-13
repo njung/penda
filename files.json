@@ -76,6 +76,7 @@
     "src/fonts/*"
   ],
   "html": [
+    "src/footer.html",
     "src/app/*/*.html",
     "src/app/*.html",
     "src/menu.html"

@@ -1,54 +1,18 @@
 <div class="container-fluid" ng-controller="StartCtrl as start">
-
-    <div id="css-carousel" class="css-carousel">
-      <input class="css-carousel-active" type="radio" id="css-carousel-1" name="css-carousel" aria-hidden="true" hidden checked="checked">
-      <div class="css-carousel-item" style="background:lightgrey">
-        <!--div class="css-carousel-controls" aria-hidden="true">
-          <label for="css-carousel-3" class="css-carousel-control prev" title="Prev">«</label>
-          <label for="css-carousel-2" class="css-carousel-control next" title="Next">»</label>
-        </div-->
-        <img src="/assets/img/carousel/2.jpg" alt="First slide">
-        <div class="css-carousel-caption">
-          <!--h2>SECOND SLIDE <br><small>with an <i>amazing caption</i></small></h2>
-          <p>Aren`t you impressed?</p-->
-          <form class="form-wrapper cf">
-              <input type="text" placeholder="Cari..." ng-model="search.string" ng-keypress="uniSearch($event);">
-              <button type="submit" ng-click="uniSearch({keyCode:13});" class="aceh-color-bg-green">Cari</button>
-          </form>
-        </div>
+  <div id="css-carousel" class="css-carousel">
+    <input class="css-carousel-active" type="radio" id="css-carousel-1" name="css-carousel" aria-hidden="true" hidden checked="checked">
+    <div class="css-carousel-item" style="background:lightgrey">
+      <img src="/assets/img/carousel/2.jpg" alt="First slide">
+      <div class="css-carousel-caption">
+        <!--h2>SECOND SLIDE <br><small>with an <i>amazing caption</i></small></h2>
+        <p>Aren`t you impressed?</p-->
+        <form class="form-wrapper cf">
+            <input type="text" placeholder="Cari..." ng-model="search.string" ng-keypress="uniSearch($event);">
+            <button type="submit" ng-click="uniSearch({keyCode:13});" class="aceh-color-bg-green">Cari</button>
+        </form>
       </div>
-    
-      <!--input class="css-carousel-active" type="radio" id="css-carousel-2" name="css-carousel" aria-hidden="true" hidden>
-      <div class="css-carousel-item" style="background:greenyellow">
-        <div class="css-carousel-controls" aria-hidden="true">
-          <label for="css-carousel-1" class="css-carousel-control prev" title="Prev">«</label>
-          <label for="css-carousel-3" class="css-carousel-control next" title="Next">»</label>
-        </div>
-        <img src="/assets/img/carousel/1.jpg" alt="First slide">
-      </div>
-    
-      <input class="css-carousel-active" type="radio" id="css-carousel-3" name="css-carousel" aria-hidden="true" hidden>
-      <div class="css-carousel-item" style="background:lightskyblue">
-        <div class="css-carousel-controls" aria-hidden="true">
-          <label for="css-carousel-2" class="css-carousel-control prev" title="Prev">«</label>
-          <label for="css-carousel-1" class="css-carousel-control next" title="Next">»</label>
-        </div>
-        <img src="/assets/img/carousel/3.jpg" alt="First slide">
-      </div>
-    
-      <ol class="css-carousel-indicators" aria-label="Carousel navigation" aria-hidden="true">
-        <li>
-          <label for="css-carousel-1" class="css-carousel-indicator" title="Jump to css-carousel item #1">●</label>
-        </li>
-        <li>
-          <label for="css-carousel-2" class="css-carousel-indicator" title="Jump to css-carousel item #2">●</label>
-        </li>
-        <li>
-          <label for="css-carousel-3" class="css-carousel-indicator" title="Jump to css-carousel item #3">●</label>
-        </li>
-      </ol-->
     </div>
-
+  </div>
   <div class="row margined-container" style="padding-top:50px;">
     <div class="counter-up-container centered content-centered aceh-color-gold-fg">
       <h3>
@@ -58,9 +22,6 @@
       <span class="counter-up" id="categoryCounterUp"></span>
       </h3>
     </div>
-    <script>
-
-    </script>
   </div>
   <div class="row margined-container aceh-color-gold-bg" style="height:5px;padding:0px !important">
   </div>
@@ -101,8 +62,6 @@
   </div>
   <div class="row margined-container aceh-color-gold-bg" style="height:5px;padding:0px !important">
   </div>
-  <div class="row margined-container aceh-color-lightgreen-bg">
-     Footer
-      <div style="height:200px;"></div>
+  <div class="row margined-container aceh-color-lightgreen-bg footer" ng-include src="'footer.html'">
   </div>
 </div>

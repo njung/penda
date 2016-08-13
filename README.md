@@ -10,6 +10,8 @@ Penda is an Open Data management system.
 
 #### Deployment
 
+You need configure specific host for each mode in config. There are ``beta``, ``dev``, ``prod``, and ``staging``.
+
 - ``npm install``
 - ``npm install -g bower gulp``
 - ``bower install``
@@ -47,6 +49,7 @@ node api/ppid-sync/syncUser
 
 This command will destroy `users` and `profiles` in the database that used in `api/hapi-mongoose-db-connector.settings.json`. Make sure you take a backup. With syncUser enabled, you will not be able to modify users data on frontend and API.
 
-#### Note
+#### Footer
 
-You need configure specific host for each mode in config. There are ``beta``, ``dev``, ``prod``, and ``staging``.
+The `FOOTER.md`, which is written on markdown syntax, will be compiled to HTML and used as footer.
+

@@ -7,10 +7,14 @@ var runSequence = require('run-sequence');
 var ngHtml2Js = require('gulp-ng-html2js');
 var minifyHtml = require('gulp-minify-html');
 var replace = require('gulp-batch-replace');
+var prepend = require('prepend-file');
+var gulpSequence = require('gulp-sequence');
 var fs = require('fs');
 var pkgDetail = JSON.parse(fs.readFileSync(__dirname + '/package.json'));
+var markdown2html = require('markdown-to-html').Markdown;
+var md = new markdown2html();
+md.bufmax = 2048;
 
-var lr;
 var bootMode = 'normal';
 
 for (i = 0; i < process.argv.length; i ++) {
@@ -97,6 +101,20 @@ gulp.task('fonts', function() {
   .pipe(gulp.dest('./public/fonts'))
 });
 
+gulp.task('footer', function(cb) {
+  var dest = __dirname + '/src/footer.html';
+  fs.writeFile(dest, '<script type="text/ng-template" id="footer.html">', function(err){
+    var ws = fs.createWriteStream(__dirname + '/src/footer.html');
+    md.once('end', function(){
+      cb();
+    });
+    md.render(__dirname + '/FOOTER.md', {},  function(err) {
+      md.pipe(ws);
+    })
+  })
+});
+
+
 gulp.task('html', function() {
   gulp.src('src/index.html')
   .pipe(replace(replacements))
@@ -140,6 +158,8 @@ gulp.task('watch', function(){
   gulp.watch(['src/**', 'src/**/**'], notifyLivereload);
 });
 
-var tasks = ['clean', 'styles', 'libs', 'src', 'fonts', 'favicon', 'skins', 'tinymcefonts'];
+var tasks = ['clean', 'footer', ['styles', 'libs', 'src', 'fonts', 'favicon', 'skins', 'tinymcefonts']];
 
-gulp.task('default', tasks);
+gulp.task('default', function(cb){
+  gulpSequence('clean', 'footer', ['styles', 'libs', 'src', 'fonts', 'favicon', 'skins', 'tinymcefonts'], cb);
+});
