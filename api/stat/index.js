@@ -1,3 +1,4 @@
+var Joi = require('joi');
 var mongoose = require('mongoose');
 var moment = require('moment');
 var async = require('async');
@@ -18,7 +19,31 @@ Stat.prototype.registerEndPoints = function() {
     method: 'GET',
     path: '/api/stat/sum',
     config : {
-      auth : false
+      auth : false,
+      tags : ['api'],
+      description : 'Dataset statistic (public)',
+      notes : 'This endpoint returns the total of : rows, datasets, uploader/organization, and categories',
+      plugins : {
+        'hapi-swagger' : {
+          responses : {
+            '200': {
+              description : 'OK',
+              schema : Joi.object({
+                row : Joi.string(),
+                dataset : Joi.number(),
+                org : Joi.number(),
+                category : Joi.number(),
+              })
+            },
+            '400' : {
+              description : 'Bad request',
+            },
+            '500': {
+              description : 'Internal server error',
+            },
+          }
+        }
+      },
     },
     handler: function(request, reply) {
       self.getSum(request, reply);

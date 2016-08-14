@@ -85,7 +85,7 @@ Dataset.prototype.registerEndPoints = function() {
       parse : true,
     },
     tags : ['api'],
-    description : 'Dataset Upload',
+    description : 'Dataset Upload (restricted)',
     notes : 'Upload dataset with its metadata',
   }
   // TODO Hawk is terible at handling long request. Switch to jwt.

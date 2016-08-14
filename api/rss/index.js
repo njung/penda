@@ -1,6 +1,7 @@
 var req = require('request');
 var boom = require('boom');
 var xml2json = require('xml2json');
+var Joi = require('joi');
 
 var RSS = function(server, options, next) {
   this.server = server;
@@ -14,7 +15,37 @@ RSS.prototype.registerEndPoints = function() {
     method: 'GET',
     path: '/api/rss',
     config : {
-      auth : false
+      auth : false,
+      tags : ['api'],
+      description : 'RSS (public)',
+      notes : 'This is a RSS helper to fetch RSS data and returns the converted-XML object. You need to describe the RSS url in the url query.',
+      plugins : {
+        'hapi-swagger' : {
+          responses : {
+            '200': {
+              description : 'OK',
+              schema : Joi.array().items({
+                title : Joi.string(),
+                link : Joi.string(),
+                pubDate : Joi.string(),
+                comments : Joi.string(),
+                description : Joi.string(),
+              })
+            },
+            '400' : {
+              description : 'Bad request',
+            },
+            '500': {
+              description : 'Internal server error',
+            },
+          }
+        }
+      },
+      validate : {
+        query : {
+          url : Joi.string().required(),
+        }
+      }
     },
     handler: function(request, reply) {
       req(request.query.url, function(error, response, body){

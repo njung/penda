@@ -162,6 +162,46 @@ User.prototype.registerEndPoints = function() {
     // auth : false is used to bypass this authentication.
     config : {
       auth: false,
+      tags : ['api'],
+      description : 'Login (public)',
+      notes : 'Log in to get a JWT token. The token will be shipped in header response as :  <code>token</code>',
+      plugins : {
+        'hapi-swagger' : {
+          responses : {
+            '200': {
+              description : 'OK',
+              schema : Joi.object({
+                "success": Joi.boolean(),
+                "profile": {
+                  "_id": Joi.string(),
+                  "userId": Joi.string(),
+                  "username": Joi.string(),
+                  "email": Joi.string(),
+                  "fullName": Joi.string(),
+                  "role": Joi.string(),
+                  "__v": Joi.number(),
+                },
+                "tokenObj": {
+                  "username": Joi.string(),
+                  "role": Joi.string()
+                }
+              }),
+            },
+            '400' : {
+              description : 'Bad request',
+            },
+            '500': {
+              description : 'Internal server error',
+            },
+          }
+        }
+      },
+      validate : {
+        payload : {
+          username : Joi.string().required(),
+          password : Joi.string().required(),
+        }
+      }
     },
     // This /api/users/login is the only way to grab the pair key
     // Let the request pass here without auth
