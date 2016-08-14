@@ -52,6 +52,7 @@ var schema = {
   error : {},
   uploaderId : String,
   uploader : String,
+  uploaderFullName : String,
 }
 
 var datasetModel = function() {
@@ -379,7 +380,8 @@ Dataset.prototype.upload = function(request, reply) {
       if (err || !profile) {
         return reply(boom.unauthorized()); 
       }
-      data.uploader = profile.fullName;
+      data.uploader = request.auth.credentials.username;
+      data.uploaderFullName = profile.fullName;
       data.uploaderId = request.auth.credentials.userId;
       datasetModel().create(data, function(err, result) {
         if (err) {

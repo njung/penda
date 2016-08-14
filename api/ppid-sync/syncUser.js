@@ -37,7 +37,8 @@ connection.connect(function(err) {
     console.log(err);
     process.exit();
   }
-  var sql = 'select *, adm_groups.name as group_name from adm_users JOIN adm_users_groups ON adm_users.id=adm_users_groups.user_id JOIN adm_groups ON adm_users_groups.group_id=adm_groups.id';
+  /* var sql = 'select *, adm_groups.name as group_name from adm_users JOIN adm_users_groups ON adm_users.id=adm_users_groups.user_id JOIN adm_groups ON adm_users_groups.group_id=adm_groups.id'; */
+  var sql = 'select *, adm_groups.name as group_name, m_skpa.name as name from adm_users JOIN adm_users_groups ON adm_users.id=adm_users_groups.user_id JOIN adm_groups ON adm_users_groups.group_id=adm_groups.id JOIN m_skpa ON adm_users.company=m_skpa.id';
   console.log('Sync in progress...');
   connection.query(sql, function(err, rows, fields) {
     if (err) {
@@ -58,7 +59,7 @@ connection.connect(function(err) {
         var profile = {
           username : row.username,
           email : row.email,
-          fullName : row.username,
+          fullName : row.name,
           group : row.group_name,
         }
   
