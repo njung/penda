@@ -1,15 +1,12 @@
-var Logout = function (AuthService, $state, localStorageService, hawkPairKey, $rootScope){
+var Logout = function (AuthService, $state, localStorageService, $rootScope){
   this.AuthService = AuthService;
   this.$state = $state;
   this.localStorageService = localStorageService;
-  this.hawkPairKey = hawkPairKey;
   this.$rootScope = $rootScope;
   var self = this;
   
-  self.localStorageService.remove('hawkPairKey'); // for hawk
   self.localStorageService.remove('token'); // for jwt
   self.localStorageService.remove('currentUser');
-  self.hawkPairKey = {};
   self.$rootScope.loginForm = true;
   self.$rootScope.frontPage = true;
   self.$rootScope.currentUser = null;
@@ -18,7 +15,7 @@ var Logout = function (AuthService, $state, localStorageService, hawkPairKey, $r
 
 }
 
-Logout.inject = ['AuthService', '$state', 'localStorageService', 'hawkPairKey', '$rootScope'];
+Logout.inject = ['AuthService', '$state', 'localStorageService', '$rootScope'];
 
 angular.module('logout',[])
 .controller('LogoutCtrl', Logout)

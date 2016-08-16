@@ -37,7 +37,6 @@
     "gulp-sequence": "^0.4.5",
     "gulp-uglify": "1.5.3",
     "hapi": "13.4.1",
-    "hapi-auth-hawk": "3.0.1",
     "hapi-auth-jwt2": "^7.0.1",
     "hapi-io": "0.0.12",
     "hapi-mongoose-db-connector": "2.1.3",

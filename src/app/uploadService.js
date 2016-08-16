@@ -10,19 +10,19 @@ var UploadService = function($http, AuthService, host, localStorageService, $upl
 
 UploadService.prototype.uploadAvatar = function(file) {
   var self = this;
-  var path = "/api/user/" + self.localStorageService.get("currentUser") + "/avatar";
+  var path = '/api/user/' + self.localStorageService.get('currentUser') + '/avatar';
   return self.$upload.upload({
     url : self.host + path,
     headers : {
-      Authorization : self.AuthService.generateMac(path, "POST")
+      Authorization : self.localStorageService.get('token')
     },
     file: file,
-    fileFormDataName : "avatar",
+    fileFormDataName : 'avatar',
   });
 }
 
-UploadService.inject = ["$http", "AuthService", "host", "localStorageService"]
+UploadService.inject = ['$http', 'AuthService', 'host', 'localStorageSevic']
 
 angular.module('uploadService', [])
-.service("UploadService", UploadService)
+.service('UploadService', UploadService)
 

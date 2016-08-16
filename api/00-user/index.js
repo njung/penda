@@ -36,38 +36,6 @@ var model = function() {
   return m;
 }
 
-// Hawk specific
-
-var hawkTokenSchema = {
-  userId : Joi.string().required(),
-  tokenId : Joi.string().required(),
-  key : Joi.string().required(),
-  date : Joi.date().required()
-}
-
-var tokenModel = function() {
-  var registered = false;
-  var m;
-  try {
-    m = mongoose.model('HawkToken');
-    registered = true;
-  } catch(e) {
-  }
-
-  if (registered) return m;
-  var schema = {
-    userId : String,
-    tokenId : String,
-    key : String,
-    expire : Date,
-  }
-  var s = new mongoose.Schema(schema);
-  m = mongoose.model('HawkToken', s);
-  return m;
-}
-
-// End of Hawk specific
-
 var User = function(server, options, next) {
   this.server = server;
  
@@ -81,64 +49,9 @@ var User = function(server, options, next) {
       return callback(null, true);
     })
   }
-  // Hawk validate
-  var getCredentials = function(id, callback) {
-    tokenModel().findOne({tokenId:id}, function(err, result) {
-      if (err) return callback(err);
-      if (!result) return callback({
-        error: 'Unauthorized',
-        message: 'Unknown credentials',
-        statusCode: 401
-      });
-      model().findOne({_id: result.userId }, function(err, user) {
-        if (user.isActive) {
-          // Check expire time
-          if (moment().isBefore(result.expire)) {
-            profileModel
-              .findOne({userId : result.userId})
-              .lean()
-              .exec(function(err, profile){
-              var credentials = {
-                username : user.username,
-                userId : user._id,
-                profileId : profile._id,
-                role : profile.role,
-                key : result.key,
-                algorithm : 'sha256'
-              }
-              // Renew expire time for each request.
-              result.expire = moment().add(1, 'day').format();
-              result.save(function(err) {
-                if (err) return callback(err);
-                return callback(null, credentials);
-              });
 
-            });
-
-         
-         } else {
-            result.remove();
-            return callback({
-              error: 'Unauthorized',
-              message: 'Expired token',
-              statusCode: 401
-            }, null)
-          }
-        } else {
-          return callback({
-            error: 'Unauthorized',
-            message: 'Not active',
-            statusCode: 401
-          }, null)
-        }
-      })
-    })
-  }
-
-  // Register hawk  
-  server.register([require('hapi-auth-hawk'), require('hapi-auth-jwt2'), require('bell')]
+  server.register([require('hapi-auth-jwt2'), require('bell')]
 , function(err) {
-    server.auth.strategy('hawk', 'hawk', { getCredentialsFunc: getCredentials });
     server.auth.strategy('jwt', 'jwt', {
       validateFunc : validateJwt, 
       key: config.secretKey,
@@ -158,7 +71,6 @@ User.prototype.registerEndPoints = function() {
     method: 'POST',
     path: '/api/users/login',
     // By default, all routes will automatically guarded by authentication.
-    // This route is the only way to get the hawk pair key.
     // auth : false is used to bypass this authentication.
     config : {
       auth: false,
@@ -222,12 +134,8 @@ User.prototype.model = function() {
   return model();
 }
 
-User.prototype.tokenModel = function() {
-  return tokenModel();
-}
-
 /**
-  * @api {post} /api/users/login Login to get Hawk MAC
+  * @api {post} /api/users/login Login to get JWT
   * @apiName loginUser
   * @apiGroups Users
   *
@@ -244,9 +152,7 @@ User.prototype.tokenModel = function() {
   *
   * If login attemp is succeeded, the server return a token in header.
   * This token contains an id and a key which separated by a space character.
-  * In front-end side, they should be used to generate Hawk MAC which needed for next authorized request.
   * 
-  * More about Hawk Auth : https://github.com/hueniverse/hawk
   *
 **/
 
@@ -278,38 +184,19 @@ User.prototype.login = function(request, reply) {
       .exec(function(err, profile){
       if (err) return reply(err);
       console.log(profile);
-      if (config.authStrategy === 'hawk') {
-        // Generate key pair for Hawk Auth
-        tokenModel().create({
-          userId : user._id,
-          tokenId : uuid.v4(),
-          key : uuid.v4(),
-          expire : moment().add(1, 'day').format()
-        }, function(err, result) {
-          if (err) return reply(err);
-          var response = reply({success:true, profile : profile})
-            .type('application/json')
-            .header('token', result.tokenId + ' ' + result.key)
-            .header('current_user', profile._id)
-            .header('role', profile.role)
-            .hold();
-          response.send();
-        })
-      } else if (config.authStrategy === 'jwt') {
-        // Sign jwt token
-        var tokenObj = {
-          username : user.username,
-          role : profile.role,
-        }
-        var token = jwt.sign(tokenObj, config.secretKey, { algorithm: 'HS256', expiresIn: "1h" } );
-        var response = reply({success:true, profile : profile, tokenObj})
-          .type('application/json')
-          .header('token', token)
-          .header('current_user', profile._id)
-          .header('role', profile.role)
-          .hold();
-        response.send();
+      // Sign jwt token
+      var tokenObj = {
+        username : user.username,
+        role : profile.role,
       }
+      var token = jwt.sign(tokenObj, config.secretKey, { algorithm: 'HS256', expiresIn: "1h" } );
+      var response = reply({success:true, profile : profile, tokenObj})
+        .type('application/json')
+        .header('token', token)
+        .header('current_user', profile._id)
+        .header('role', profile.role)
+        .hold();
+      response.send();
     });
   });
 }
@@ -327,7 +214,6 @@ User.prototype.login = function(request, reply) {
   * @apiError unauthorized {Object} result.error Error code
   * @apiError unauthorized {Object} result.message Description about the error
   *
-  * This end point requires a Hawk MAC header
   *
 **/
 
@@ -340,15 +226,7 @@ User.prototype.logout = function(request, reply) {
     });
   }
 
-  if (config.authStrategy === 'hawk') {
-    // Remove token from db
-    tokenModel().remove({key : request.auth.credentials.key, userId : request.auth.credentials.userId}, function(err, result){
-      if (err) reply(err).code(400);
-      realLogout(); 
-    });
-  } else {
-    realLogout(); 
-  }
+  realLogout(); 
 }
 
 User.prototype.create = function(request, cb) {
@@ -459,7 +337,6 @@ exports.register.attributes = {
 };
 
 exports.model = model;
-exports.tokenModel = tokenModel;
 
 exports.class = User.prototype;
 exports.schema = userSchema;

@@ -1,10 +1,11 @@
 'use strict';
-var DatasetService = function($http, AuthService, host, $rootScope, Upload) {
+var DatasetService = function($http, AuthService, host, $rootScope, Upload, localStorageService) {
   this.$http = $http;
   this.host = host;
   this.AuthService = AuthService;
   this.$rootScope = $rootScope;
   this.Upload = Upload;
+  this.localStorageService = localStorageService;
   var self = this;
 }
 
@@ -19,12 +20,8 @@ DatasetService.prototype.upload = function(data, obj) {
   payload.content = data; 
   var path = self.host + '/api/upload';
   var headers;
-  if (self.authStrategy == 'hawk') {
-    headers = JSON.parse(localStorage.getItem("HawkPairKey"));
-  } else {
-    headers = {
-      Authorization : self.AuthService.generateMac(path, 'GET')
-    }
+  headers = {
+    Authorization : self.localStorageService.get('token')
   }
   var req = {
     method: 'POST',
@@ -54,7 +51,7 @@ DatasetService.prototype.list = function(option) {
   }
   return self.$http({
     headers : {
-      Authorization : self.AuthService.generateMac(path, 'GET'),
+      Authorization : self.localStorageService.get('token'),
     },
     method: 'GET',
     url : self.host + path,
@@ -70,7 +67,7 @@ DatasetService.prototype.get = function(filename, option) {
   }
   return self.$http({
     headers : {
-      Authorization : self.AuthService.generateMac(path, 'GET'),
+      Authorization : self.localStorageService.get('token'),
     },
     method: 'GET',
     url : self.host + path,
@@ -82,7 +79,7 @@ DatasetService.prototype.update = function(data) {
   var path = '/api/dataset/' + data.filename;
   return self.$http({
     headers : {
-      Authorization : self.AuthService.generateMac(path, 'POST'),
+      Authorization : self.localStorageService.get('token'),
     },
     method: 'POST',
     url : self.host + path,
@@ -95,7 +92,7 @@ DatasetService.prototype.delete = function(filename) {
   var path = '/api/dataset/' + filename;
   return self.$http({
     headers : {
-      Authorization : self.AuthService.generateMac(path, 'DELETE'),
+      Authorization : self.localStorageService.get('token'),
     },
     method: 'DELETE',
     url : self.host + path,
@@ -103,7 +100,7 @@ DatasetService.prototype.delete = function(filename) {
 }
 
 
-DatasetService.inject = ['$http', 'AuthService', 'host', 'Upload']
+DatasetService.inject = ['$http', 'AuthService', 'host', 'Upload', 'localStorageService']
 
 angular.module('datasetService', [])
 .service("DatasetService", DatasetService)

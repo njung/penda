@@ -10,9 +10,7 @@
   "dependencies": {
     "async": "^1.2.1",
     "faker": "^2.1.5",
-    "hapi-auth-hawk": "^2.0.0",
     "hat": "0.0.3",
-    "hawk": "^2.3.1",
     "joi": "^6.4.3",
     "lodash": "^3.9.3",
     "moment": "^2.10.3",

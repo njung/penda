@@ -12,7 +12,7 @@ CategoryService.prototype.get = function(id) {
   var path = '/api/category/' + id;
   return self.$http({
     headers : {
-      Authorization : self.AuthService.generateMac(path, 'GET'),
+      Authorization : self.localStorageService.get('token'),
     },
     method: 'GET',
     url : self.host + path,
@@ -31,7 +31,7 @@ CategoryService.prototype.list = function(option) {
   var path = '/api/categories?page=' + page + '&limit=' + limit;
   return self.$http({
     headers : {
-      Authorization : self.AuthService.generateMac(path, 'GET'),
+      Authorization : self.localStorageService.get('token'),
     },
     method: 'GET',
     url : self.host + path,
@@ -43,7 +43,7 @@ CategoryService.prototype.update = function(data) {
   var path = '/api/category/' + data._id;
   return self.$http({
     headers : {
-      Authorization : self.AuthService.generateMac(path, 'POST'),
+      Authorization : self.localStorageService.get('token'),
     },
     method: 'POST',
     url : self.host + path,
@@ -56,7 +56,7 @@ CategoryService.prototype.create = function(data) {
   var path = '/api/categories';
   return self.$http({
     headers : {
-      Authorization : self.AuthService.generateMac(path, 'POST'),
+      Authorization : self.localStorageService.get('token'),
     },
     method: 'POST',
     url : self.host + path,
@@ -69,7 +69,7 @@ CategoryService.prototype.delete = function(id) {
   var path = '/api/category/' + id;
   return self.$http({
     headers : {
-      Authorization : self.AuthService.generateMac(path, 'DELETE'),
+      Authorization : self.localStorageService.get('token'),
     },
     method: 'DELETE',
     url : self.host + path,

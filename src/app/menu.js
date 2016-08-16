@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 var MenuService = function($rootScope, $state) {
   this.$rootScope = $rootScope;
   this.$state = $state;
@@ -25,23 +25,10 @@ MenuController.prototype.logout = function(selected) {
   }, 500);
 }
 
-MenuService.inject = ["$rootScope"];
-MenuController.inject = ["$rootScope", "MenuService", "$scope", "AuthService"];
+MenuService.inject = ['$rootScope'];
+MenuController.inject = ['$rootScope', 'MenuService', '$scope', 'AuthService'];
 
-angular.module("menu", [])
-.service("MenuService", MenuService)
-.directive("sidebarChild", function($rootScope) {
-  return {
-    restrict: "A",
-    replace: "true",
-    link: function(scope, elem, attrs) {
-      elem.bind("click", function() {
-        $rootScope.expandedClass = "";
-        $rootScope.submenuClass = "";
-        $rootScope.selectedMenu = "";
-      });
-    }
-  };
-})
-.controller("MenuCtrl", MenuController)
+angular.module('menu', [])
+.service('MenuService', MenuService)
+.controller('MenuCtrl', MenuController)
 ;
