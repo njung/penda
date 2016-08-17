@@ -1,6 +1,6 @@
-var req = require('request');
 var boom = require('boom');
-var xml2json = require('xml2json');
+var xml2json = require('xml2json-light');
+var rssParser = require('rss-parser');
 var Joi = require('joi');
 
 var RSS = function(server, options, next) {
@@ -28,8 +28,8 @@ RSS.prototype.registerEndPoints = function() {
                 title : Joi.string(),
                 link : Joi.string(),
                 pubDate : Joi.string(),
-                comments : Joi.string(),
-                description : Joi.string(),
+                content : Joi.string(),
+                contentSnippet : Joi.string(),
               })
             },
             '400' : {
@@ -48,14 +48,12 @@ RSS.prototype.registerEndPoints = function() {
       }
     },
     handler: function(request, reply) {
-      req(request.query.url, function(error, response, body){
-        try {
-          var data = JSON.parse(xml2json.toJson(body));
-          reply(data.rss.channel.item);
-        } catch(err) {
-          console.log(err);
-          reply(err);
-        }
+      rssParser.parseURL(request.query.url, function(err, parsed) {
+				if (err) {
+					console.log(err);
+					return reply(err);
+				}
+				reply(parsed.feed.entries);
       })
     }
   });
