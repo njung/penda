@@ -1,5 +1,4 @@
 var boom = require('boom');
-var xml2json = require('xml2json-light');
 var rssParser = require('rss-parser');
 var Joi = require('joi');
 
