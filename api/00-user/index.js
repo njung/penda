@@ -224,6 +224,7 @@ User.prototype.logout = function(request, reply) {
     io.on('connection', function(socket) {
       socket.leave(request.auth.credentials.userId);
     });
+    reply();
   }
 
   realLogout(); 

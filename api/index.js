@@ -10,7 +10,6 @@ var populate = function(server) {
       settings = require(dir + ".settings.json");
     }
     var options = settings.options || {};
-    console.log(options);
     if (fs.existsSync(dir + "/package.json")) {
       var pkg = require(dir + "/package.json");
 

@@ -318,7 +318,7 @@ Profiles.prototype.list = function(request, reply) {
       }
       var obj = {
         total : count,
-        page : page,
+        page : page++,
         limit : limit,
         data : result
       }
@@ -356,14 +356,12 @@ Profiles.prototype.checkRecoveryCode = function(request, reply) {
 }
 
 Profiles.prototype.setPasswordRecovery = function(request, reply) {
-  console.log(request.payload);
   var self = this;
   passwordRecoveryModel()
     .findOne({recoveryCode:request.params.code, isActive:true})
     .exec(function(err, result){
     if (err) return reply(parse(err));
     if (result) {
-      console.log(result);
       User.class.setPasswordRecovery(result.userId, request.payload.password, function(err, user) {
         if (err) return reply(parse(err));
         result.isActive = false;
@@ -380,7 +378,6 @@ Profiles.prototype.setPasswordRecovery = function(request, reply) {
 
 
 Profiles.prototype.passwordRecovery = function(request, reply) {
-  console.log("password recovery endpoint");
   var self = this;
   passwordRecoveryModel()
     .findOne({email: request.payload.email, isActive : true})
@@ -459,7 +456,6 @@ Profiles.prototype.passwordRecovery = function(request, reply) {
 
 Profiles.prototype.register = function(request, reply) {
   var self = this;
-  console.log(request.payload);
   // Force to have 'user' role
   request.payload.role = 'user';
   request.payload.joinedSince = new Date();
@@ -467,7 +463,6 @@ Profiles.prototype.register = function(request, reply) {
     var err = new Error('Repeat password not matched');
     return reply(err).statusCode = 400;
   }
-  console.log(request.auth);
   if (request.auth && request.auth.credentials) {
     console.log("registering new user by admin");
     profileModel()
@@ -482,7 +477,6 @@ Profiles.prototype.register = function(request, reply) {
           if (err) {
             return reply(err).statusCode = 400;
           } else {
-            console.log(result);
             request.payload.userId = result.id;
             self.realRegister(request, function(err, profile) {
               if (err) return reply(err).statusCode = 500;
@@ -898,7 +892,10 @@ Profiles.prototype.uploadAvatar = function(request, reply) {
   profileModel()
     .findOne({_id:id})
     .lean().exec(function(err, result) {
-    if (err) return reply(err);
+    if (err) {
+      console.log(err);
+      return reply(err);
+    }
     if (result == null) {
       return reply({
         statusCode: 404,
@@ -915,7 +912,7 @@ Profiles.prototype.uploadAvatar = function(request, reply) {
     var avatarId = mongoose.Types.ObjectId();
     var writeStream = gfs.createWriteStream({
       _id: avatarId, 
-      filename: image.hapi.filename,
+      filename: image.filename,
       root: "profiles",
       metadata: {
         profile: mongoose.Types.ObjectId(id) 
@@ -1174,7 +1171,6 @@ Profiles.prototype.getUserMap = function(users, cb) {
   .find({_id:{$in : users}})
   .lean()
   .exec(function(err, users){
-    console.log(users);
     var userMap = {};
     for (var i in users) {
       userMap[users[i]._id] = users[i].fullName;
