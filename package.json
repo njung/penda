@@ -8,8 +8,7 @@
     "bower": "./node_modules/.bin/bower install",
     "server": "npm run build && node index",
     "build": "rm -rf public && ./node_modules/.bin/gulp && mkdir -p public/reclinejs && cp -R reclinejs/* public/reclinejs",
-    "cov": "NODE_ENV=test npm run setenv && PORT=7000 ./node_modules/.bin/mocha --require blanket -R json-cov test",
-    "html-cov": "NODE_ENV=test npm run setenv && PORT=7000 ./node_modules/.bin/mocha --require blanket -R html-cov test",
+    "cov": "NODE_ENV=test npm run setenv && PORT=7000 ./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha test",
     "setenv": "./scripts/setenv",
     "watch-build": "watch 'fuser -k 3000/tcp;npm run server' ./src"
   },
@@ -43,6 +42,7 @@
     "hapi-swagger": "^6.2.1",
     "hat": "0.0.3",
     "inert": "^3.2.0",
+    "istanbul": "^0.4.5",
     "j": "0.4.3",
     "joi": "^8.4.2",
     "jsonlint": "^1.6.2",
