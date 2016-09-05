@@ -22,71 +22,8 @@ describe("User", function() {
   this.timeout(300000);
   var allDone = false;
   before(function(done){
-    /* var afterConnect = function() { */
-    /*   async.series([ */
-    /*     function(cb) { */
-    /*       model.remove({}, function(err){ */
-    /*         if (err) return done(err); */
-    /*         cb(null); */
-    /*       }); */
-    /*     }, */
-    /*     function(cb) { */
-    /*       profileModel.remove({}, function(err){ */
-    /*         if (err) return done(err); */
-    /*         cb(null); */
-    /*       }); */
-    /*     }, */
-    /*     function(cb) { */
-    /*       var user = { */
-    /*         username : "auth1@users.com", */
-    /*         password : "pass1", */
-    /*         isActive : true, */
-    /*       } */
-    /*       generateUser(user, function(err){ */
-    /*         if (err) done(err); */
-    /*         cb(); */
-    /*       }); */
-    /*     }, */
-    /*     function(cb) { */
-    /*       var user = { */
-    /*         username : "auth2@users.com", */
-    /*         password : "pass1", */
-    /*         isActive : true, */
-    /*       } */
-    /*       generateUser(user, function(err){ */
-    /*         if (err) done(err); */
-    /*         cb(); */
-    /*       }); */
-    /*     }, */
-    /*     function(cb) { */
-    /*       var user = { */
-    /*         username : "auth3@users.com", */
-    /*         password : "pass1", */
-    /*         isActive : false, */
-    /*       } */
-    /*       generateUser(user, function(err){ */
-    /*         if (err) done(err); */
-    /*         cb(); */
-    /*       }); */
-    /*     }, */
-    /*     function(cb) { */
-    /*       var user = { */
-    /*         username : "auth4@users.com", */
-    /*         password : "pass1", */
-    /*         isActive : true, */
-    /*       } */
-    /*       generateUser(user, function(err){ */
-    /*         if (err) done(err); */
-    /*         cb(); */
-    /*       }); */
-    /*     } */
-    /*   ], function(err) { */
-    /*     done(); */
-    /*   }) */
-    /* } */
     mongoose.connection.on("connected", function() {
       if (allDone) return;
-      /* afterConnect(); */
         done();
     });
     if (!mongoose.connection.readyState) {
