@@ -48,7 +48,7 @@ var UploadCtrl = function ($stateParams, $scope, $state, $window, $rootScope, Au
 
   self.AuthService.checkToken({redirect:true})
 
-  self.uploadStatus = "ready";
+  self.uploadStatus = 'ready';
   self.$scope.data = {
     releaseFreq : 'year',
     year : (new Date()).getFullYear(),
@@ -107,21 +107,21 @@ UploadCtrl.prototype.upload = function(files, invalid) {
       alert('Please specify the release frequency values');
     }
     self.$rootScope.preventNavigation = true;
-    self.uploadStatus = "uploading";
+    self.uploadStatus = 'uploading';
     // Assign uploader ID
     self.$scope.data.uploaderId = self.$rootScope.currentUserProfileId;
     self.DatasetService.upload(file, self.$scope.data)
       .then(function(data, status){
         self.$rootScope.preventNavigation = false;
-        self.uploadStatus = "uploaded";
-        alert("Berhasil diunggah.");
+        self.uploadStatus = 'uploaded';
+        alert('Berhasil diunggah.');
         self.$scope.data = {};
         /* self.$state.go('dataset', {mode:'list'}); */
         self.$rootScope.goTo('dataset', 'list');
       }, function(err){
         self.$rootScope.preventNavigation = false;
-        self.uploadStatus = "failed";
-        // TODO check for error
+        self.uploadStatus = 'failed';
+        self.ToastrService.parse(err);
       }, function(evt){
         self.uploadPercentage = parseInt(100 * evt.loaded / evt.total);
       })
@@ -131,6 +131,5 @@ UploadCtrl.prototype.upload = function(files, invalid) {
 UploadCtrl.inject = [ '$stateParams', '$scope', '$state', '$window', '$rootScope', 'AuthService', 'localStorageService', 'toastr' , '$location', 'ToastrService', '$modal', '$http', 'host' , 'DatasetService', 'Upload', 'CategoryService'];
 
 angular.module('upload',[])
-.controller('UploadCtrl', UploadCtrl)
-;
+.controller('UploadCtrl', UploadCtrl);
 
