@@ -1,5 +1,5 @@
 {
   "options" : {
-    "mongodbUrl" : "mongodb://localhost/penda"
+    "mongodbUrl" : "mongodb://localhost/test"
   }
 }

@@ -39,8 +39,8 @@ describe("User", function() {
     this.timeout(50000);
     it("should logged in and get jwt from /api/users/login", function(done) {
       var user = {
-        username : "auth1@users.com",
-        password : "pass1"
+        username : "admin",
+        password : "admin"
       }
       server.inject({
         method: "POST",
@@ -49,6 +49,7 @@ describe("User", function() {
       }, function(response) {
         profileModel.findOne({email:user.email}, function(err, profile){
           if (err) return done(err);
+          console.log(err);
           response.result.must.be.an.object();
           response.result.success.must.equal(true);
           response.headers.token.must.be.exist();
