@@ -49,7 +49,6 @@ describe("User", function() {
       }, function(response) {
         profileModel.findOne({email:user.email}, function(err, profile){
           if (err) return done(err);
-          console.log(err);
           response.result.must.be.an.object();
           response.result.success.must.equal(true);
           response.headers.token.must.be.exist();
@@ -98,7 +97,6 @@ describe("User", function() {
         url: path,
         method: "GET",
       }, function(response) {
-        console.log(response.result);
         response.result.must.be.an.object();
         response.result.error.must.exist();
         response.result.message.must.exist();

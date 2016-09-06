@@ -57,7 +57,13 @@ Categories.prototype.registerEndPoints = function() {
     method: 'GET',
     path: '/api/categories',
     config : {
-      auth : false
+      auth : false,
+      validate : {
+        query : {
+          page : Joi.number().optional(),
+          limit : Joi.number().optional(),
+        }
+      }
     },
     handler: function(request, reply) {
       self.list(request, reply);
@@ -79,7 +85,12 @@ Categories.prototype.registerEndPoints = function() {
     method: 'GET',
     path: '/api/category/{id}',
     config : {
-      auth : false
+      auth : false,
+      validate : {
+        params : {
+          id : Joi.string().required(),
+        }
+      }
     },
     handler: function(request, reply) {
       self.read(request, reply);
@@ -158,7 +169,7 @@ Categories.prototype.create = function(request, reply) {
   })
 }
 
-Categories.prototype.get = function(request, reply) {
+Categories.prototype.read = function(request, reply) {
   var self = this;
   var bogus = self.checkBogus(request.params.id);
   if (bogus.isBogus) {
@@ -170,7 +181,7 @@ Categories.prototype.get = function(request, reply) {
     if (err) {
       return reply(err).statusCode = 400;
     }
-    if (!result) return reply(boom.notFound());
+    // Do not check for existency since it has been validated by bogus
     reply(result).type('application/json');
   });
 }
@@ -200,7 +211,7 @@ Categories.prototype.update = function(request, reply) {
     if (err) {
       return reply(err).statusCode = 400;
     }
-    if (!result) return reply(boom.notFound());
+    // Do not check for existency since it has been validated by bogus
     categoryModel()
       .findOne({_id:request.params.id})
       .exec(function(err, result) {

@@ -256,7 +256,7 @@ describe("Profiles", function() {
         response.result.limit.must.equal(10);
         response.result.data.must.be.an.array();
         (response.result.data.length).must.least(1);
-        response.result.data.must.have.length(3);
+        response.result.data.must.have.length(4);
         response.result.data[0].must.exist();
         async.each(response.result.data, function(item, cb){
           item._id.must.not.be.null();
@@ -278,7 +278,7 @@ describe("Profiles", function() {
         response.result.limit.must.equal(10);
         response.result.data.must.be.an.array();
         (response.result.data.length).must.least(1);
-        response.result.data.must.have.length(3);
+        response.result.data.must.have.length(4);
         response.result.data[0].must.exist();
         async.each(response.result.data, function(item, cb){
           item._id.must.not.be.null();
@@ -322,7 +322,7 @@ describe("Profiles", function() {
         response.result.page.must.equal(1);
         response.result.data.must.be.an.array();
         (response.result.data.length).must.least(1);
-        response.result.data.must.have.length(1);
+        response.result.data.must.have.length(2);
         response.result.data[0].must.exist();
         async.each(response.result.data, function(item, cb){
           item._id.must.not.be.null();

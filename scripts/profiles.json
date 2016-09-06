@@ -1,1 +1,2 @@
 { "_id" : { "$oid" : "55a0d7064473d4cc336ac636" }, "__v" : 0, "activationCode" : "893edd86-ae09-4da5-bd5d-17c1a7c92435", "username" : "admin", "fullName" : "Administrator", "role" : "admin", "userId" : "55a0d7024473d4cc336ac635" }
+{ "_id" : { "$oid" : "55a0d7064473d4cc336ac637" }, "__v" : 0, "activationCode" : "893edd86-ae09-4da5-bd5d-17c1a7c92435", "username" : "user", "fullName" : "User", "role" : "user", "userId" : "55a0d7024473d4cc336ac636" }

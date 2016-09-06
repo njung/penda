@@ -464,7 +464,6 @@ Profiles.prototype.register = function(request, reply) {
     return reply(err).statusCode = 400;
   }
   if (request.auth && request.auth.credentials) {
-    console.log("registering new user by admin");
     profileModel()
       .findOne({userId: request.auth.credentials.userId})
       .exec(function(err, result) {
@@ -493,7 +492,6 @@ Profiles.prototype.register = function(request, reply) {
       }
     })
   } else {
-    console.log("registering new user by anonym");
     request.payload.role = "user";
     request.payload.country = "";
     User.class.create(request, function(err, result) {
@@ -622,12 +620,6 @@ Profiles.prototype.update = function(request, reply) {
       // TODO : 
       // role user : same id, 
       // role admin, same id, different id
-      console.log(result.role);
-      console.log(request.payload.role);
-      /* if ((result.role != "admin" && request.payload.role) */
-      /*   || (request.params.id == result._id && request.payload.role!="admin") */
-        /* || (request.params.id != result._id && result.role=="user") */
-        /* ){ */
       if (request.auth.credentials.role==="user" 
         && (
             (result.role != "admin" && request.payload.role)
@@ -843,7 +835,6 @@ Profiles.prototype.delete = function(request, reply) {
       return realDelete(request, reply);
     }
     // Prevent self delete
-    console.log(result);
     if (result.userId.toString() === request.auth.credentials.userId.toString()) {
       return reply({
         error: "Not Found", 

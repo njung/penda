@@ -177,13 +177,11 @@ User.prototype.login = function(request, reply) {
         statusCode: 401
       }).code(401);
     }
-    console.log(user);
     profileModel
       .findOne({userId : user._id.toString()})
       .lean()
       .exec(function(err, profile){
       if (err) return reply(err);
-      console.log(profile);
       // Sign jwt token
       var tokenObj = {
         username : user.username,
@@ -301,7 +299,6 @@ User.prototype.deactivate = function(id, cb) {
 // This function is used in testing purpose only, to generate a ready-to-log-in user.
 var generateUser = function(user, cb) {
   console.log('Generating sample user ...');
-  console.log(user);
   var newUser = model();
   newUser.username = user.username;
   if (user.isActive == false) {
@@ -319,7 +316,6 @@ var generateUser = function(user, cb) {
       activationCode : uuid.v4(),
     }, function(err, profile) {
       console.log(err);
-      console.log(profile);
       if (err) return cb(err);
       cb(null, profile);
     });
