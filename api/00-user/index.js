@@ -177,11 +177,15 @@ User.prototype.login = function(request, reply) {
         statusCode: 401
       }).code(401);
     }
+    console.log(user);
+    var id = user._id.toString();
+    console.log(id);
     profileModel
-      .findOne({userId : user._id.toString()})
+      .findOne({userId : id})
       .lean()
       .exec(function(err, profile){
       if (err) return reply(err);
+      console.log(profile);
       // Sign jwt token
       var tokenObj = {
         username : user.username,

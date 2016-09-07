@@ -482,6 +482,9 @@ Dataset.prototype.update = function() {
   if (self.$scope.data.category.length < 1) {
     return alert('Silakan pilih minimal satu kategori terlebih dahulu.');
   }
+  if (self.$scope.data.createdAt) {
+    delete(self.$scope.data.createdAt);
+  }
   self.DatasetService.update(self.$scope.data)
   .then(function(result) {
     self.list(); 

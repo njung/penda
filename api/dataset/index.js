@@ -16,6 +16,7 @@ var StreamArray = require("stream-json/utils/StreamArray");
 var mongoose = require('mongoose');
 var tablespoon = require('tablespoon').sqlite();
 var boom = require('boom');
+var Joi = require('joi');
 var mongooseHistory = require('mongoose-history');
 var profileModel = require(__dirname + '/../../api/profiles/index').model();
 
@@ -84,13 +85,25 @@ Dataset.prototype.registerEndPoints = function() {
       allow : "multipart/form-data",
       parse : true,
     },
+    validate : {
+      payload : {
+        title : Joi.string().required(),
+        source : Joi.string().required(),
+        content : Joi.required(),
+        releaseFreq : Joi.string().optional(), 
+        year : Joi.number().optional(),
+        contact : Joi.string().optional(),
+        level : Joi.string().optional(),
+        scope : Joi.string().optional(),
+        'category[0]' : Joi.string().optional(),
+        dateStart : Joi.date().optional(),
+        dateEnd : Joi.date().optional(),
+        uploaderId : Joi.string().optional(), 
+      }
+    },
     tags : ['api'],
     description : 'Dataset Upload (restricted)',
     notes : 'Upload dataset with its metadata',
-  }
-  // TODO Hawk is terible at handling long request. Switch to jwt.
-  if (config.authStrategy === 'hawk') {
-    uploadConfig.auth = false;
   }
   self.server.route({
     method: "POST",
@@ -130,6 +143,31 @@ Dataset.prototype.registerEndPoints = function() {
       self.update(request, reply);
     },
 		config : {
+			validate : {
+				payload : {
+					__v : Joi.number().optional(),
+					_id : Joi.string().optional(),
+					category : Joi.array().optional(),
+					dateEnd : Joi.date().optional(),
+					dateStart : Joi.date().optional(),
+					filename : Joi.string().optional(),
+					contact : Joi.string().optional(),
+					level : Joi.string().optional(),
+					releaseFreq : Joi.string().optional(),
+					schema : Joi.any().optional(),
+					scope : Joi.string().optional(),
+					source : Joi.string().optional(),
+					status : Joi.string().optional(),
+					tableSchema : Joi.any().optional(),
+					title : Joi.string().optional(),
+					totalColumns : Joi.number().optional(),
+					totalRows : Joi.number().optional(),
+					uploader : Joi.string().optional(),
+					uploaderFullName : Joi.string().optional(),
+					uploaderId : Joi.string().optional(),
+					year : Joi.number().optional(),
+				}
+			}
     }
   });
   
@@ -162,13 +200,20 @@ Dataset.prototype.update = function(request, reply) {
 
     delete(request.payload._id);
     delete(request.payload.__v);
+		delete(request.payload.createdAt);
+		console.log(request.payload);
     datasetModel().findOneAndUpdate({filename : filename}, request.payload, function(err) {
       if (err) {
         console.log(err);
         return reply(boom.wrap(err));
       }
-      console.log(result);
-      reply();
+  		datasetModel().findOne({filename : filename}).lean().exec(function(err, changed) {
+        if (err) {
+          console.log(err);
+          return reply(boom.wrap(err));
+        }
+      	reply(changed);
+			})
     })
   })
 }
@@ -192,13 +237,11 @@ Dataset.prototype.delete = function(request, reply) {
     result.status = 'deleted';
     delete(result._id);
     delete(result.__v);
-    console.log(result);
     datasetModel().findOneAndUpdate({filename : filename}, result, function(err) {
       if (err) {
         console.log(err);
         return reply(boom.wrap(err));
       }
-      console.log(result);
       reply();
     })
   })
@@ -246,7 +289,6 @@ Dataset.prototype.list = function(request, reply) {
     delete(opt['$' + operator]);
   }
   // TODO Handle wide search
-	console.log(opt);
   datasetModel()
   .count(opt)
   .exec(function(err, result) {
@@ -300,7 +342,6 @@ Dataset.prototype.get = function(request, reply) {
           tablespoon.query(sql, function(result) {
             var sql = new Buffer(request.query.sql, 'base64');
             sql = sql.toString();
-            console.log(sql);
             tablespoon.query(sql, function(rows) {
               if (request.query.type && request.query.type === 'csv') {
                 return reply(babyparse.unparse(rows.rows));
@@ -339,8 +380,6 @@ Dataset.prototype.upload = function(request, reply) {
   request.payload.content.pipe(fws);
    
   fws.on("finish", function(){
-    console.log('Payload : ');
-    console.log(request.payload);
     var data = {
       status : 'pending',
       filename : filename,
@@ -388,13 +427,8 @@ Dataset.prototype.upload = function(request, reply) {
           console.log(err);
           return reply(boom.wrap(err));
         }
-        console.log('converting...');
         var cmd = '~/bin/node ' + __dirname + '/converter.js ' + path;
-        console.log(cmd);
         var convert = exec(cmd, function(err, stdout, stderr) {
-          console.log('save2db...');
-          console.log(err);
-          console.log(stderr);
           result.status = 'done';
           result.filename = filename;
           if (err) {
@@ -405,16 +439,14 @@ Dataset.prototype.upload = function(request, reply) {
             result.error = util.format(stderr);
           } else {
             var output = JSON.parse(util.format(stdout.toString()));
-            console.log(output);
             result.totalRows = output.totalRows; 
             result.totalColumns = output.totalColumns; 
             result.tableSchema = output.schema; 
           }
           result.save();
-          console.log('DONE');
         })
         // Do not wait 
-        return reply();
+        return reply(result);
       }) 
     })
   });

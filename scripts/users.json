@@ -1,2 +1,2 @@
-{ "_id" : { "$oid" : "55a0d7024473d4cc336ac635" }, "__v" : 0, "isActive" : true, "password" : "21232f297a57a5a743894a0e4a801fc3", "username" : "admin" }
-{ "_id" : { "$oid" : "55a0d7024473d4cc336ac636" }, "__v" : 0, "isActive" : true, "password" : "21232f297a57a5a743894a0e4a801fc3", "username" : "user" }
+{ "_id" : { "$oid" : "55a0d7024473d4cc336ac634" }, "__v" : 0, "isActive" : true, "password" : "21232f297a57a5a743894a0e4a801fc3", "username" : "admin" }
+{ "_id" : { "$oid" : "55a0d7024473d4cc336ac635" }, "__v" : 0, "isActive" : true, "password" : "21232f297a57a5a743894a0e4a801fc3", "username" : "user" }
