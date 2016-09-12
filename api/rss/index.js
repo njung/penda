@@ -51,10 +51,8 @@ RSS.prototype.registerEndPoints = function() {
     handler: function(request, reply) {
       var now = moment();
       if (self.cache && self.cache.data && now.diff(self.cache.timestamp) < 3600000) {
-        console.log('use cache version');
         return reply(self.cache.data); 
       }
-      console.log('use fetch version');
       rssParser.parseURL(request.query.url, function(err, parsed) {
 				if (err) {
 					console.log(err);

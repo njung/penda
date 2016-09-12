@@ -7,6 +7,8 @@
   <link rel="stylesheet" href="app.css?ver=_VERSION_" />
   <link rel="stylesheet" href="fontawesome/font-awesome.min.css" />
   <link rel="shortcut icon" href="favicon.ico?v=4" />
+
+  <!-- The recline dependencies begins here -->
   <link rel="stylesheet" href="./reclinejs/css/leaflet.css">
   <!--[if lte IE 8]>
   <link rel="stylesheet" href="./reclinejs/vendor/leaflet/0.7.3/leaflet.ie.css" />
@@ -59,20 +61,13 @@
   <script language="javascript" type="text/javascript" src="./reclinejs/vendor/json/json2.js"></script>
   <![endif]-->
 
-  <!--
-    ## Just use the all in one library version rather than individual files
-
-  <script type="text/javascript" src="../dist/recline.js"></script>
-
-  -->
-
   <!-- model and backends -->
   <script type="text/javascript" src="./reclinejs/js/ecma-fixes.js"></script>
   <script type="text/javascript" src="./reclinejs/js/model.js"></script>
   <script type="text/javascript" src="./reclinejs/js/backend.memory.js"></script>
   <script type="text/javascript" src="./reclinejs/js/backend.dataproxy.js"></script>
-  <script type="text/javascript" src="http://okfnlabs.org/recline.backend.gdocs/backend.gdocs.js"></script>
-  <script type="text/javascript" src="http://okfnlabs.org/csv.js/csv.js"></script>
+  <script type="text/javascript" src="./reclinejs/js/backend.gdocs.js"></script>
+  <script type="text/javascript" src="./reclinejs/js/csv.js"></script>
 
   <!-- views -->
   <script type="text/javascript" src="./reclinejs/js/view.grid.js"></script>

@@ -63,7 +63,7 @@ var Start = function ($stateParams, $scope, $state, $window, $rootScope, AuthSer
       useGrouping : true, 
       separator : ',', 
       decimal : '.', 
-      suffix : ' record' 
+      suffix : ' baris' 
     };
     var recordCounterUp = new CountUp("recordCounterUp", 0, result.data.row, 0, 10, recordOptions);
     recordCounterUp.start();
