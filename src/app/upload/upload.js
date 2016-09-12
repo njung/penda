@@ -53,6 +53,7 @@ var UploadCtrl = function ($stateParams, $scope, $state, $window, $rootScope, Au
     releaseFreq : 'year',
     year : (new Date()).getFullYear(),
     month : '0',
+    level : 'Medium',
   };
   self.$rootScope.preventNavigation = false;
 
