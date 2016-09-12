@@ -62,7 +62,7 @@ connection.connect(function(err) {
         if (row.group_name === 'Sys Admin') {
           profile.role = 'admin';
           // Set all admin's password to 'admin'
-          user.password = '21232f297a57a5a743894a0e4a801fc3';
+          /* user.password = '21232f297a57a5a743894a0e4a801fc3'; */
         } else {
           profile.role = 'user';
         }

@@ -126,6 +126,7 @@ describe("Profiles", function() {
         method: "POST",
         payload : user,
       }, function(response) {
+        console.log(response.result);
         response.result.must.be.an.object();
         response.result._id.must.exist();
         response.result.email.must.exist();
