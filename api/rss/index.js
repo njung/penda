@@ -1,5 +1,6 @@
 var boom = require('boom');
 var rssParser = require('rss-parser');
+var moment = require('moment');
 var Joi = require('joi');
 
 var RSS = function(server, options, next) {
@@ -10,6 +11,7 @@ var RSS = function(server, options, next) {
 
 RSS.prototype.registerEndPoints = function() {
   var self = this;
+  self.cache = {};
   self.server.route({
     method: 'GET',
     path: '/api/rss',
@@ -17,7 +19,7 @@ RSS.prototype.registerEndPoints = function() {
       auth : false,
       tags : ['api'],
       description : 'RSS (public)',
-      notes : 'This is a RSS helper to fetch RSS data and returns the converted-XML object. You need to describe the RSS url in the url query.',
+      notes : 'This is a RSS helper to fetch RSS data and returns the converted-XML object. You need to describe the RSS url in the url query. This RSS result cached on one hour.',
       plugins : {
         'hapi-swagger' : {
           responses : {
@@ -47,11 +49,19 @@ RSS.prototype.registerEndPoints = function() {
       }
     },
     handler: function(request, reply) {
+      var now = moment();
+      if (self.cache && self.cache.data && now.diff(self.cache.timestamp) < 3600000) {
+        console.log('use cache version');
+        return reply(self.cache.data); 
+      }
+      console.log('use fetch version');
       rssParser.parseURL(request.query.url, function(err, parsed) {
 				if (err) {
 					console.log(err);
 					return reply(err);
 				}
+        self.cache.timestamp = moment();
+        self.cache.data = parsed.feed.entries;
 				reply(parsed.feed.entries);
       })
     }
