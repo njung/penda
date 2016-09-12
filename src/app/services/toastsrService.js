@@ -9,6 +9,16 @@ var Toastr = function($http, AuthService, host, localStorageService, toastr, $st
   var self = this;
 }
 
+Toastr.prototype.changePasswordSuccess = function() {
+  var self = this;
+  self.toastr.success('Kata sandi berhasil diganti.');
+}
+
+Toastr.prototype.changePasswordFailed = function() {
+  var self = this;
+  self.toastr.error('Kata sandi lama yang Anda masukkan tidak benar.');
+}
+
 Toastr.prototype.accountActivated = function() {
   var self = this;
   self.toastr.success('Akun Anda telah aktif.\nSilakan login.');

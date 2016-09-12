@@ -39,7 +39,7 @@ User.prototype.showUser = function(data) {
   }
   self.$rootScope.currentItem = data;
   self.$rootScope.userModal = self.$modal.open({
-    templateUrl : 'userModal.html',
+    templateUrl : 'user/userModal.html',
     size: 'md',
     controller : 'UserCtrl as user'
   })
@@ -54,7 +54,7 @@ User.prototype.addUser = function() {
   var self = this;
   self.$rootScope.currentItem = {};
   self.$rootScope.userModal = self.$modal.open({
-    templateUrl : 'userModal.html',
+    templateUrl : 'user/userModal.html',
     size: 'md',
     controller : 'UserCtrl as user'
   })
@@ -110,6 +110,30 @@ User.prototype.create = function(data) {
   self.UserService.create(data)
   .then(function(result) {
     self.$rootScope.userModal.dismiss();
+  })
+  .catch(function(result) {
+    self.ToastrService.parse(result);
+  })
+}
+
+User.prototype.changePassword = function(data) {
+  var self = this;
+  if (!data.currentPassword || !data.password || !data.repeatPassword) {
+    return alert('Mohon lengkapi form isian.');
+  }
+  var obj = {
+    currentPassword : data.currentPassword,
+    password : data.password,
+  }
+  self.UserService.changePassword(obj)
+  .then(function(result) {
+    if (result.data && result.data.success) {
+      self.ToastrService.changePasswordSuccess();
+      self.$rootScope.changePasswordModal.dismiss();
+    } else {
+      self.$scope.currentItem = {}; 
+      self.ToastrService.changePasswordFailed();
+    }
   })
   .catch(function(result) {
     self.ToastrService.parse(result);

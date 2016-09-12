@@ -8,12 +8,13 @@ var MenuService = function($rootScope, $state) {
   };
 }
 
-var MenuController = function($rootScope, MenuService, $scope, AuthService, $state) {
+var MenuController = function($rootScope, MenuService, $scope, AuthService, $state, $modal) {
   this.MenuService = MenuService;
   this.$rootScope = $rootScope;
   this.$scope = $scope;
   this.AuthService = AuthService;
   this.$state = $state;
+  this.$modal = $modal;
   var self = this;
 }
 
@@ -25,8 +26,21 @@ MenuController.prototype.logout = function(selected) {
   }, 500);
 }
 
+MenuController.prototype.changePassword = function(data) {
+  var self = this;
+  if (self.$rootScope.syncUser) {
+    return;
+  }
+  self.$rootScope.currentItem = data;
+  self.$rootScope.changePasswordModal = self.$modal.open({
+    templateUrl : 'user/changePassword.html',
+    size: 'md',
+    controller : 'UserCtrl as user'
+  })
+}
+
 MenuService.inject = ['$rootScope'];
-MenuController.inject = ['$rootScope', 'MenuService', '$scope', 'AuthService'];
+MenuController.inject = ['$rootScope', 'MenuService', '$scope', 'AuthService', '$modal'];
 
 angular.module('menu', [])
 .service('MenuService', MenuService)

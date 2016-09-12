@@ -1,9 +1,10 @@
 'use strict';
-var UserService = function($http, AuthService, host, localStorageService) {
+var UserService = function($http, AuthService, host, localStorageService, $rootScope) {
   this.$http = $http;
   this.host = host;
   this.AuthService = AuthService;
   this.localStorageService = localStorageService;
+  this.$rootScope = $rootScope;
   var self = this;
 }
 
@@ -78,6 +79,19 @@ UserService.prototype.create = function(data) {
     method: 'POST',
     url : self.host + path,
     data : data
+  });
+}
+
+UserService.prototype.changePassword = function(data) {
+  var self = this;
+  var path = '/api/user/' + self.$rootScope.currentUserProfileId + '/set-password';
+  return self.$http({
+    headers : {
+      Authorization : self.localStorageService.get('token'),
+    },
+    method : 'POST',
+    url : self.host + path,
+    data : data,
   });
 }
 
@@ -160,7 +174,7 @@ UserService.prototype.setHashtag = function(hashtagString) {
   });
 }
 
-UserService.inject = ['$http', 'AuthService', 'host', 'localStorageService']
+UserService.inject = ['$http', 'AuthService', 'host', 'localStorageService', '$rootScope']
 
 angular.module('userService', [])
 .service('UserService', UserService)
