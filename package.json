@@ -58,6 +58,7 @@
     "must": "0.13.1",
     "mustache": "2.2.1",
     "mysql": "github:felixge/node-mysql",
+    "nodemailer": "^2.6.0",
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "https://github.com/herpiko/passport-local-mongoose.git#simple-salt",
     "reclinejs": "0.7.0",
