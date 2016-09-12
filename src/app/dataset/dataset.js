@@ -343,13 +343,13 @@ Dataset.prototype.getQuery = function() {
           self.$scope.$apply();
         } else if (self.$scope.viewMode === 'graph') {
 					// Collect selected field
-					var series = [];
+					self.$scope.series = [];
 					for (var i in self.$scope.currentItem.schema) {
 						if (self.$scope.currentItem.schema[i].picked) {
-							series.push(self.$scope.currentItem.schema[i].key);
+							self.$scope.series.push(self.$scope.currentItem.schema[i].key);
 						}
 					}
-					if (series.length < 1 || !self.$scope.graphGroupBy) {
+					if (self.$scope.series.length < 1 || !self.$scope.graphGroupBy) {
           	self.$scope.spinner.datasetQuery = false;
 						return;
 					}
@@ -360,7 +360,7 @@ Dataset.prototype.getQuery = function() {
             state: {
               graphType: "lines-and-points",
               group: self.$scope.graphGroupBy,
-              series: series
+              series: self.$scope.series
             }
 					}
 					console.log(opt);

@@ -40,6 +40,7 @@
     "bower_components/ng-file-upload/ng-file-upload-all.js",
     "bower_components/angular-leaflet-directive/dist/angular-leaflet-directive.js",
     "bower_components/xml2json/xml2json.js",
+    "bower_components/underscore/underscore.js",
     "src/libs/angular-dropdowns.js",
     "libs/*.js"
   ],

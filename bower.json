@@ -51,7 +51,7 @@
     "slick-carousel": "~1.5.6",
     "tinymce-dist": "~4.2.2",
     "titip": "*",
-    "underscore": "~1.8.3"
+    "underscore": "^1.8.3"
   },
   "resolutions": {
     "slick-carousel": "~1.4.1",

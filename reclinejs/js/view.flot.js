@@ -123,7 +123,8 @@ my.Flot = Backbone.View.extend({
           y = item.datapoint[0].toFixed(2);
         }
 
-        var content = _.template('<%= group %> = <%= x %>, <%= series %> = <%= y %>', {
+        var template = _.template('<%= group %> = <%= x %>, <%= series %> = <%= y %>');
+        var content = content({
           group: this.state.attributes.group,
           x: this._xaxisLabel(x),
           series: item.series.label,
@@ -142,7 +143,6 @@ my.Flot = Backbone.View.extend({
           xLocation = item.pageX + 10;
           yLocation = item.pageY - 20;
         }
-
         $('<div id="recline-flot-tooltip">' + content + '</div>').css({
             top: yLocation,
             left: xLocation
