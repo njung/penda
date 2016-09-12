@@ -256,6 +256,7 @@ label {
 }
 
 .footer {
+  border-top:5px solid #B3A33D;
   padding-top: 15px;;
   padding-bottom: 15px;
 }
