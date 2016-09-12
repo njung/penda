@@ -24,7 +24,12 @@ for (i = 0; i < process.argv.length; i ++) {
 
 var config = require(__dirname + '/config.json');
 config.mode = process.env.NODE_ENV || 'dev';
-config.syncUser = config.syncUser || false;
+config.syncUser = true;
+try {
+  fs.accessSync(__dirname + '/../../api/ppid-sync', fs.F_OK);
+} catch(e) {
+  config.syncUser = false;
+}
 
 console.log('Running in ' + config.mode + ' mode...');
 var mainJsonPath = '/config/' + config.mode + '/main.json';

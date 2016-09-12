@@ -1,9 +1,0 @@
-{
-  "name": "ppid",
-  "version": "0.0.1",
-  "description": "External plugin to sync with acehprov's ppid",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  }
-}
