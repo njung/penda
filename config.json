@@ -3,13 +3,6 @@
   "datasetsPath": "/tmp/data",
   "authStrategy": "jwt",
   "secretKey" : "secretString",
-  "syncUser" : true,
-  "ppidDb" : {
-    "host" : "localhost",
-    "database" : "ppid",
-    "user" : "root",
-    "password" : "root"
-  },
   "rss" : {
     "url" : "https://news.ycombinator.com/rss",
     "title" : "Y Combinator"

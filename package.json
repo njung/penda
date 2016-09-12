@@ -11,7 +11,7 @@
     "setenv": "./scripts/setenv",
     "watch-build": "watch 'fuser -k 3000/tcp;npm run server' ./src"
   },
-  "author": "Herpiko Dwi Aguno <herpiko@gmail.com> (http://pdft.net)",
+  "author": "Herpiko Dwi Aguno <herpiko@gmail.com>",
   "license": "Proprietary",
   "dependencies": {
     "angular-fcsa-number": "https://github.com/herpiko/angular-fcsa-number/tarball/master",
@@ -44,6 +44,7 @@
     "istanbul": "^0.4.5",
     "j": "0.4.3",
     "joi": "^8.4.2",
+    "joi-assert": "0.0.3",
     "js-base64": "^2.1.9",
     "jsonlint": "^1.6.2",
     "jsonwebtoken": "^7.1.6",
@@ -78,16 +79,5 @@
     "watch": "0.17.1",
     "xlsx": "^0.8.0"
   },
-  "devDependencies": {},
-  "config": {
-    "blanket": {
-      "pattern": [
-        "api"
-      ],
-      "data-cover-never": [
-        "node_modules",
-        "test"
-      ]
-    }
-  }
+  "devDependencies": {}
 }

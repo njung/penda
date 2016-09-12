@@ -17,6 +17,7 @@ var mongoose = require('mongoose');
 var tablespoon = require('tablespoon').sqlite();
 var boom = require('boom');
 var Joi = require('joi');
+var JoiAssert = require('joi-assert');
 var mongooseHistory = require('mongoose-history');
 var profileModel = require(__dirname + '/../../api/profiles/index').model();
 
@@ -26,6 +27,21 @@ var Dataset = function(server, options, next) {
   this.registerEndPoints();
   this.cached = [];
 }
+
+var DatasetSchema = {
+  title : Joi.string().required(),
+  source : Joi.string().required(),
+  releaseFreq : Joi.string().optional(), 
+  year : Joi.number().optional(),
+  contact : Joi.string().optional(),
+  level : Joi.string().optional(),
+  scope : Joi.string().optional(),
+  category : Joi.array().items(Joi.string()),
+  dateStart : Joi.date().optional(),
+  dateEnd : Joi.date().optional(),
+  uploaderId : Joi.string().optional(), 
+}
+
 
 var schema = {
   status : String,
@@ -87,18 +103,8 @@ Dataset.prototype.registerEndPoints = function() {
     },
     validate : {
       payload : {
-        title : Joi.string().required(),
-        source : Joi.string().required(),
-        content : Joi.required(),
-        releaseFreq : Joi.string().optional(), 
-        year : Joi.number().optional(),
-        contact : Joi.string().optional(),
-        level : Joi.string().optional(),
-        scope : Joi.string().optional(),
-        'category[0]' : Joi.string().optional(),
-        dateStart : Joi.date().optional(),
-        dateEnd : Joi.date().optional(),
-        uploaderId : Joi.string().optional(), 
+        data : Joi.required(),
+        file : Joi.required(),
       }
     },
     tags : ['api'],
@@ -147,7 +153,7 @@ Dataset.prototype.registerEndPoints = function() {
 				payload : {
 					__v : Joi.number().optional(),
 					_id : Joi.string().optional(),
-					category : Joi.array().optional(),
+          category : Joi.array().items(Joi.string()),
 					dateEnd : Joi.date().optional(),
 					dateStart : Joi.date().optional(),
 					filename : Joi.string().optional(),
@@ -197,7 +203,6 @@ Dataset.prototype.update = function(request, reply) {
     if (!(request.auth.credentials.role == 'admin' || request.auth.credentials.userId == result.uploaderId)) {
       return reply(boom.unauthorized()); 
     }
-
     delete(request.payload._id);
     delete(request.payload.__v);
 		delete(request.payload.createdAt);
@@ -373,44 +378,45 @@ Dataset.prototype.upload = function(request, reply) {
   var id = md5((new Date()).valueOf());
   var filename = 'dataset_' + id;
   var prefix = config.datasetsPath + '/';
-  var extension = request.payload.content.hapi.filename.split('.');
+  var extension = request.payload.file.hapi.filename.split('.');
   extension = extension[extension.length-1];
   var path = prefix + filename + '.' + extension;
   var fws = fs.createWriteStream(path);
-  request.payload.content.pipe(fws);
-   
+  request.payload.file.pipe(fws);
+
+  // Test the payload data against joi schema
+  var payload = JSON.parse(request.payload.data);
+  try {
+    Joi.assert(payload, DatasetSchema);
+  } catch(err) {
+    return reply(err.message).statusCode = 400
+  }
+  console.log(payload);
   fws.on("finish", function(){
     var data = {
       status : 'pending',
       filename : filename,
-      title : request.payload.title,
-      description : request.payload.description,
-      keywords : request.payload.keywords,
-      source : request.payload.source,
-      contact : request.payload.contact,
-      releaseFreq : request.payload.releaseFreq,
-      level : request.payload.level,
-      scope : request.payload.scope,
-      reference : request.payload.reference,
+      title : payload.title,
+      description : payload.description,
+      keywords : payload.keywords,
+      source : payload.source,
+      contact : payload.contact,
+      releaseFreq : payload.releaseFreq,
+      level : payload.level,
+      scope : payload.scope,
+      reference : payload.reference,
       createdAt : new Date(),
-			uploaderId : request.payload.uploaderId,
-			uploader : request.payload.uploader,
-      dateStart : request.payload.dateStart,
-      dateEnd : request.payload.dateEnd,
-      category : [],
-    }
-    // Parse category
-    var keys = Object.keys(request.payload);
-    for (var i in keys) {
-      if (keys[i].indexOf('category') > -1) {
-        data.category.push(request.payload[keys[i]]);
-      }
+			uploaderId : payload.uploaderId,
+			uploader : payload.uploader,
+      dateStart : payload.dateStart,
+      dateEnd : payload.dateEnd,
+      category : payload.category,
     }
     if (data.releaseFreq === 'year') {
-      data.year = request.payload.year;
+      data.year = payload.year;
     }
     if (data.releaseFreq === 'month') {
-      data.month = request.payload.month;
+      data.month = payload.month;
     }
     profileModel
     .findOne({userId : request.auth.credentials.userId})

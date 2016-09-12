@@ -7,7 +7,15 @@ var Grid = require("gridfs-stream");
 var parse = require("mongoose-parse");
 var moment = require('moment');
 var config = require(__dirname + '/../../config.json');
+var fs = require('fs');
 Grid.mongo = mongoose.mongo;
+
+var syncUser = true;
+try {
+  fs.accessSync(__dirname + '/../../api/ppid-sync', fs.F_OK);
+} catch(e) {
+  syncUser = false;
+}
 
 var User = require("../00-user");
 var Email = require("../email");
@@ -591,7 +599,7 @@ Profiles.prototype.confirm = function(request, reply) {
 
 Profiles.prototype.update = function(request, reply) {
   var self = this;
-  if (config.syncUser) {
+  if (syncUser) {
     return reply(boom.methodNotAllowed());
   }
   var bogus = self.checkBogus(request.params.id);
@@ -677,7 +685,7 @@ Profiles.prototype.update = function(request, reply) {
 
 Profiles.prototype.setPassword = function(request, reply) {
   var self = this;
-  if (config.syncUser) {
+  if (syncUser) {
     return reply(boom.methodNotAllowed());
   }
   var bogus = self.checkBogus(request.params.id);
@@ -808,7 +816,7 @@ Profiles.prototype.get = function(request, reply) {
 
 Profiles.prototype.delete = function(request, reply) {
   var self = this;
-  if (config.syncUser) {
+  if (syncUser) {
     return reply(boom.methodNotAllowed());
   }
   var bogus = self.checkBogus(request.params.id);

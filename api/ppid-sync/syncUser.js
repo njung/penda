@@ -1,6 +1,6 @@
-var config     = require(__dirname + '/../../config.json');
+var config     = require(__dirname + '/config.json');
 var mysql      = require('mysql');
-var connection = mysql.createConnection(config.ppidDb);
+var connection = mysql.createConnection(config);
 var md5        = require('md5');
 var async      = require('async');
 var mongoose   = require('mongoose');
@@ -10,11 +10,6 @@ var profileSchema = require(__dirname + '/../profiles/index').schema;
 var mongo = mongoose.createConnection(dbConfig.options.mongodbUrl);
 var UserModel = mongo.model('users', userSchema);
 var ProfileModel = mongo.model('profiles', profileSchema);
-
-if (!config.syncUser || !config.ppidDb) {
-  var err = new Error('The syncUser configuration does not set up properly. Please fix your config.json.');
-  process.exit();
-}
 
 var dropTables = function(cb) {
   UserModel.remove({}, function(err){

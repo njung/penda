@@ -80,9 +80,11 @@ describe('Dataset', function() {
   describe('Upload', function() {
     it("should be able to upload dataset (CSV)", function(done) {
       var formData = {
-        title : 'CSV',
-        source : 'somewhere',
-        content : fs.createReadStream(__dirname + "/../../../test/samples/sample-1.csv"),
+        data : JSON.stringify({
+          title : 'CSV',
+          source : 'somewhere',
+        }),
+        file : fs.createReadStream(__dirname + "/../../../test/samples/sample-1.csv"),
       }
       req.post({
         headers : { Authorization : token },
@@ -111,10 +113,12 @@ describe('Dataset', function() {
     });
     it("should be able to upload dataset (XLSX)", function(done) {
       var formData = {
-        title : 'Title',
-        source : 'somewhere',
-        'category[0]' : 'NewCategory',
-        content : fs.createReadStream(__dirname + "/../../../test/samples/sample-5.xlsx"),
+        data : JSON.stringify({
+          title : 'Title',
+          source : 'somewhere',
+          category : ['NewCategory']
+        }),
+        file : fs.createReadStream(__dirname + "/../../../test/samples/sample-5.xlsx"),
       }
       req.post({
         headers : { Authorization : token },
@@ -140,10 +144,28 @@ describe('Dataset', function() {
         }, 3000)
       })
     });
-    it("should not be able to upload dataset because of missing field (content)", function(done) {
+    it("should not be able to upload dataset because of missing field (field)", function(done) {
       var formData = {
-        title : 'Title',
-        source : 'somewhere',
+        data : JSON.stringify({
+          title : 'Title',
+          source : 'somewhere',
+        })
+      }
+      req.post({
+        headers : { Authorization : token },
+        url:'http://localhost:7000/api/upload',
+        formData : formData 
+      }, function optionalCallback(err, httpResponse, body) {
+        if (err) {
+          return done(err);
+        }
+        httpResponse.statusCode.must.equal(400);
+        done();
+      })
+    });
+    it("should not be able to upload dataset because of missing field (data)", function(done) {
+      var formData = {
+        file : fs.createReadStream(__dirname + "/../../../test/samples/sample-5.xlsx"),
       }
       req.post({
         headers : { Authorization : token },
@@ -159,8 +181,10 @@ describe('Dataset', function() {
     });
     it("should not be able to upload dataset because of missing field (source)", function(done) {
       var formData = {
-        title : 'Title',
-        content : fs.createReadStream(__dirname + "/../../../test/samples/sample-5.xlsx"),
+        data : JSON.stringify({
+          title : 'Title',
+        }),
+        file : fs.createReadStream(__dirname + "/../../../test/samples/sample-5.xlsx"),
       }
       req.post({
         headers : { Authorization : token },
@@ -176,8 +200,10 @@ describe('Dataset', function() {
     });
     it("should not be able to upload dataset because of missing field (title)", function(done) {
       var formData = {
-        source : 'somewhere',
-        content : fs.createReadStream(__dirname + "/../../../test/samples/sample-5.xlsx"),
+        data : JSON.stringify({
+          source : 'somewhere',
+        }),
+        file : fs.createReadStream(__dirname + "/../../../test/samples/sample-5.xlsx"),
       }
       req.post({
         headers : { Authorization : token },
@@ -193,9 +219,11 @@ describe('Dataset', function() {
     });
     it("should be able to upload dataset (XLS) but unable to process because of unsupported file format", function(done) {
       var formData = {
-        title : 'Title',
-        source : 'somewhere',
-        content : fs.createReadStream(__dirname + "/../../../test/samples/sample-4.xls"),
+        data : JSON.stringify({
+          title : 'Title',
+          source : 'somewhere',
+        }),
+        file : fs.createReadStream(__dirname + "/../../../test/samples/sample-4.xls"),
       }
       req.post({
         headers : { Authorization : token },
@@ -224,9 +252,11 @@ describe('Dataset', function() {
     });
     it("should be able to upload dataset (XLSX) but unable to process because of inconsisten table length", function(done) {
       var formData = {
-        title : 'Title',
-        source : 'somewhere',
-        content : fs.createReadStream(__dirname + "/../../../test/samples/sample-2.xlsx"),
+        data : JSON.stringify({
+          title : 'Title',
+          source : 'somewhere',
+        }),
+        file : fs.createReadStream(__dirname + "/../../../test/samples/sample-2.xlsx"),
       }
       req.post({
         headers : { Authorization : token },
@@ -256,9 +286,11 @@ describe('Dataset', function() {
     });
     it("should be able to upload dataset with non-admin privilege ", function(done) {
       var formData = {
-        title : 'Title',
-        source : 'somewhere',
-        content : fs.createReadStream(__dirname + "/../../../test/samples/sample-1.csv"),
+        data : JSON.stringify({
+          title : 'Title',
+          source : 'somewhere',
+        }),
+        file : fs.createReadStream(__dirname + "/../../../test/samples/sample-1.csv"),
       }
       req.post({
         headers : { Authorization : token2 },
@@ -274,9 +306,11 @@ describe('Dataset', function() {
     });
     it("should not be able to upload dataset with invalid credential", function(done) {
       var formData = {
-        title : 'Title',
-        source : 'somewhere',
-        content : fs.createReadStream(__dirname + "/../../../test/samples/sample-1.csv"),
+        data : JSON.stringify({
+          title : 'Title',
+          source : 'somewhere',
+        }),
+        file : fs.createReadStream(__dirname + "/../../../test/samples/sample-1.csv"),
       }
       req.post({
         headers : { Authorization : token + 'x' },

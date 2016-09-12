@@ -9,15 +9,20 @@ var DatasetService = function($http, AuthService, host, $rootScope, Upload, loca
   var self = this;
 }
 
-DatasetService.prototype.upload = function(data, obj) {
+DatasetService.prototype.upload = function(file, obj) {
   var self = this;
-  var payload = {}
-  var keys = Object.keys(obj);
-  for (var i in keys) {
-    payload[keys[i]] = obj[keys[i]];
+  /* var payload = {} */
+  /* console.log('----------------------'); */
+  /* console.log(obj); */
+  /* var keys = Object.keys(obj); */
+  /* for (var i in keys) { */
+  /*   payload[keys[i]] = obj[keys[i]]; */
+  /* } */
+  /* console.log(payload); */
+  var payload = {
+    data : JSON.stringify(angular.copy(obj)),
   }
-  console.log(payload);
-  payload.content = data; 
+  payload.file = file; 
   var path = self.host + '/api/upload';
   var headers;
   headers = {
