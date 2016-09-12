@@ -40,7 +40,8 @@
       <div ng-show="list.data && list.data.length > 0">
         <h4 class="aceh-color-green-fg">Dataset Terbaru</h4>
         <div class="dataset-item" ng-repeat="dataset in list.data" ng-click="start.showDataset(dataset.filename);">
-          <div class="dataset-icon-container"></div>
+          <div class="dataset-icon-container file-icon file-icon-lg">
+          </div>
           <div class="dataset-info">
             <h4 class="dataset-title">{{dataset.title}}</h4>
             {{dataset.createdAt | amDateFormat:'DD-MM-YYYY HH:mm:ss'}} &nbsp;

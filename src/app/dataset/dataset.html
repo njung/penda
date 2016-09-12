@@ -79,11 +79,12 @@
           </div>
           <div ng-show="list.data && list.data.length > 0">
             <div class="dataset-item" ng-repeat="data in list.data" ng-click="dataset.showDataset(data.filename);">
-              <div class="dataset-icon-container"></div>
+              <div class="dataset-icon-container file-icon file-icon-lg">
+              </div>
               <div class="dataset-info">
                 <h4 class="dataset-title">{{data.title}}</h4>
                 {{data.createdAt | amDateFormat:'DD-MM-YYYY HH:mm:ss'}} &nbsp;
-                <span class="alert-info">{{data.totalRows}} baris</span>
+                <span class="alert-info">&nbsp;{{data.totalRows}} baris&nbsp;</span>
                 <span class="alert-info" ng-repeat="cat in data.category">&nbsp;{{cat}}&nbsp;</span>
                 <p class="dataset-desc">{{data.desc}} </p>
               </div>
