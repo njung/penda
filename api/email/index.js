@@ -9,7 +9,7 @@ var clientHost = JSON.parse(require('fs').readFileSync(__dirname + '/../../confi
 var appName = require(__dirname + '/../../config.json').appName;
 
 var credential = {
-  'key': 'key-8e9fdb5ab02c9f7ada8e460ea502a131',
+  'key': '',
   'domain' : 'domain',
   'address' : 'no-reply@domain',
 
