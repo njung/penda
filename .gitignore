@@ -4,3 +4,4 @@ node_modules
 public
 coverage
 api/hapi-mongoose-db-connector.settings.json
+config/prod
