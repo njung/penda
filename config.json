@@ -1,5 +1,6 @@
 {
-  "appName" : "OpenData",
+  "appName" : "Penda",
+  "showVersion" : true,
   "datasetsPath": "/tmp/data",
   "authStrategy": "jwt",
   "secretKey" : "secretString",

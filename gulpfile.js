@@ -51,7 +51,7 @@ replacements.push(['_RSS_URL_', config.rss.url]);
 replacements.push(['_RSS_TITLE_', config.rss.title]);
 console.log(replacements);
 for (var i in replacements) {
-  if (replacements[i][0] == '_APP_NAME_') {
+  if (replacements[i][0] == '_APP_NAME_' && config.showVersion) {
     replacements[i][1] += ' - ' + pkgDetail.version;
   }
 }
