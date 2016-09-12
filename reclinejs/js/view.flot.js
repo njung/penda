@@ -124,7 +124,7 @@ my.Flot = Backbone.View.extend({
         }
 
         var template = _.template('<%= group %> = <%= x %>, <%= series %> = <%= y %>');
-        var content = content({
+        var content = template({
           group: this.state.attributes.group,
           x: this._xaxisLabel(x),
           series: item.series.label,
