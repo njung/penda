@@ -1,4 +1,25 @@
 			<nav class="aceh-color-green-bg navbar navbar-default navbar-fixed-top" role="navigation" style="z-index:9999 !important" ng-controller="MenuCtrl as m">
+        <div class="pull-left" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-left" ng-show="currentUser">
+            <li>
+							<a class="dropdown-toggle pointer" id="mainDropmenu" data-toggle="dropdown"><span class="fa fa-bars"></span></a>
+              <ul class="dropmenu dropdown-menu" aria-labelledby="mainDropmenu">
+                <li ng-class="{'navbar-nav-li-active':state.current.name=='upload'}">
+                  <a href="_HOST_/#/upload/new"><span class="fa fa-upload"></span>&nbsp;Unggah</a>
+                </li>
+                <li ng-class="{'navbar-nav-li-active':state.current.name=='dataset'}">
+                  <a href="_HOST_/#/dataset/list"><span class="fa fa-area-chart"></span>&nbsp;Dataset</a>
+                </li>
+                <li ng-class="{'navbar-nav-li-active':state.current.name=='category'}" ng-show="currentUserRole=='admin'">
+                  <a href="_HOST_/#/category/list"><span class="fa fa-filter"></span>&nbsp;Kategori</a>
+                </li>
+                <li ng-class="{'navbar-nav-li-active':state.current.name=='user'}" ng-show="currentUserRole=='admin'">
+                  <a href="_HOST_/#/user/list"><span class="fa fa-users"></span>&nbsp;Pengguna / Instansi</a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
         <div class="navbar-header" style="margin-left:40px;color:white;margin-top:5px;font-size:20px">
                 <a href="/" style="color:white !important;text-decoration:none !important;">_APP_NAME_</a>
         </div>
@@ -15,21 +36,9 @@
             </li>
           </ul>
           <ul class="nav navbar-nav navbar-right auth-corner-menu" ng-show="currentUser">
-            <li ng-class="{'navbar-nav-li-active':state.current.name=='upload'}">
-              <a href="_HOST_/#/upload/new">Unggah</a>
-            </li>
-            <li ng-class="{'navbar-nav-li-active':state.current.name=='dataset'}">
-              <a href="_HOST_/#/dataset/list">Dataset</a>
-            </li>
-            <li ng-class="{'navbar-nav-li-active':state.current.name=='category'}" ng-show="currentUserRole=='admin'">
-              <a href="_HOST_/#/category/list">Kategori</a>
-            </li>
-            <li ng-class="{'navbar-nav-li-active':state.current.name=='user'}" ng-show="currentUserRole=='admin'">
-              <a href="_HOST_/#/user/list">Pengguna / Instansi</a>
-            </li>
             <li>
 							<a class="dropdown-toggle pointer" id="userDropmenu" data-toggle="dropdown"><span class="fa fa-user"></span>&nbsp;{{currentUser}}</a>
-	            <ul class="dropdown-menu" aria-labelledby="userDropmenu">
+	            <ul class="dropmenu dropdown-menu" aria-labelledby="userDropmenu">
                	<li><a href="" ng-click="m.changePassword();">Ganti kata sandi</a></li>
                	<li role="separator" class="divider"></li>
                 <li>
