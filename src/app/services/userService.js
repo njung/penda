@@ -52,12 +52,13 @@ UserService.prototype.count = function() {
 }
 
 UserService.prototype.update = function(user) {
-  var data = {
-    birthDate : user.fullName,
-    city : user.city,
-    birthDate : user.birthDate,
-  }
   var self = this;
+  var data = {
+    fullName : user.fullName,
+  }
+  if (user.password && user.password.length > 0) {
+    data.password = user.password;
+  }
   var path = '/api/user/' + user._id;
   return self.$http({
     headers : {

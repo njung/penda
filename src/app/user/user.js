@@ -116,6 +116,18 @@ User.prototype.create = function(data) {
   })
 }
 
+User.prototype.update = function(data) {
+  var self = this;
+  var data = angular.copy(data);
+  self.UserService.update(data)
+  .then(function(result) {
+    self.$rootScope.userModal.dismiss();
+  })
+  .catch(function(result) {
+    self.ToastrService.parse(result);
+  })
+}
+
 User.prototype.changePassword = function(data) {
   var self = this;
   if (!data.currentPassword || !data.password || !data.repeatPassword) {

@@ -50,6 +50,7 @@ var registerSchema = {
 
 var updateSchema = {
   fullName : Joi.string().optional(),
+  password : Joi.string().optional(),
   email : Joi.forbidden(),
   username : Joi.forbidden(),
 }
@@ -600,6 +601,9 @@ Profiles.prototype.confirm = function(request, reply) {
 Profiles.prototype.update = function(request, reply) {
   var self = this;
   if (syncUser) {
+    return reply(boom.methodNotAllowed());
+  }
+  if (request.auth.credentials.role!=='admin') {
     return reply(boom.methodNotAllowed());
   }
   var bogus = self.checkBogus(request.params.id);
@@ -1159,7 +1163,15 @@ var realUpdate = function(request, reply) {
         role : result.role,
         userId: result.userId
       }
-      reply(profile);
+      if (!request.payload.password) {
+        return reply(profile);
+      }
+      User.class.setPasswordRecovery(result.userId, request.payload.password, function(err, user) {
+        if (err) {
+          return reply(err).statusCode = 400;
+        }
+        reply(profile);
+      })
     });
   });
 }
