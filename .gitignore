@@ -3,3 +3,4 @@ npm_debug.log
 node_modules
 public
 coverage
+api/hapi-mongoose-db-connector.settings.json
