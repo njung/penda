@@ -26,7 +26,7 @@ var config = require(__dirname + '/config.json');
 config.mode = process.env.NODE_ENV || 'dev';
 config.syncUser = true;
 try {
-  fs.accessSync(__dirname + '/../../api/ppid-sync', fs.F_OK);
+  fs.accessSync(__dirname + '/../../api/penda-ppid-sync', fs.F_OK);
 } catch(e) {
   config.syncUser = false;
 }

@@ -12,7 +12,7 @@ Grid.mongo = mongoose.mongo;
 
 var syncUser = true;
 try {
-  fs.accessSync(__dirname + '/../../api/ppid-sync', fs.F_OK);
+  fs.accessSync(__dirname + '/../../api/penda-ppid-sync', fs.F_OK);
 } catch(e) {
   syncUser = false;
 }
