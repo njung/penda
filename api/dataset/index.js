@@ -20,6 +20,7 @@ var Joi = require('joi');
 var JoiAssert = require('joi-assert');
 var mongooseHistory = require('mongoose-history');
 var profileModel = require(__dirname + '/../../api/profiles/index').model();
+var nodeBinaryPath = process.env.NODE_BIN;
 
 var Dataset = function(server, options, next) {
   this.server = server;
@@ -433,7 +434,8 @@ Dataset.prototype.upload = function(request, reply) {
           console.log(err);
           return reply(boom.wrap(err));
         }
-        var cmd = '~/bin/node ' + __dirname + '/converter.js ' + path;
+        var cmd = nodeBinaryPath + ' ' + __dirname + '/converter.js ' + path;
+        console.log(cmd);
         var convert = exec(cmd, function(err, stdout, stderr) {
           result.status = 'done';
           result.filename = filename;

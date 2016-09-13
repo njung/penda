@@ -49,7 +49,6 @@ replacements.push(['_APP_NAME_', config.appName]);
 replacements.push(['_SYNC_USER_', config.syncUser]);
 replacements.push(['_RSS_URL_', config.rss.url]);
 replacements.push(['_RSS_TITLE_', config.rss.title]);
-console.log(replacements);
 for (var i in replacements) {
   if (replacements[i][0] == '_APP_NAME_' && config.showVersion) {
     replacements[i][1] += ' - ' + pkgDetail.version;
@@ -57,7 +56,7 @@ for (var i in replacements) {
 }
 
 
-console.log('Settings: ', replacements);
+console.log('Current config : ', replacements);
 gulp.task('clean', function() {
   return gulp.src(['www/*'], {read:false}).pipe(clean());
 });

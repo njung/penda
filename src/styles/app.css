@@ -899,3 +899,9 @@ a,a:hover,a:active {
 .dropmenu .dropdown-menu > li > a {
   margin-left:10px !important;
 }
+.navbar-nav-li-active > a {
+  color:white !important;
+}
+.navbar-nav-li-active > a:hover {
+  color: #48704D !important;
+}
