@@ -7,4 +7,3 @@
 {"_id":{"$oid":"579f6d20dcea72c1808b06f1"},"name":"Ekonomi","__v":0}
 {"_id":{"$oid":"579f6d23dcea72c1808b06f2"},"name":"Industri","__v":0}
 {"_id":{"$oid":"579f6d28dcea72c1808b06f3"},"name":"Pariwisata","__v":0}
-{"_id":{"$oid":"579f6d35dcea72c1808b06f4"},"name":"Birokrasi","__v":0,"lastModifiedBy":"55a0d7024473d4cc336ac635","updatedAt":{"$date":"2016-08-01T15:39:42.372Z"}}

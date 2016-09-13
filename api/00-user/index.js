@@ -134,28 +134,6 @@ User.prototype.model = function() {
   return model();
 }
 
-/**
-  * @api {post} /api/users/login Login to get JWT
-  * @apiName loginUser
-  * @apiGroups Users
-  *
-  * @apiParam {String} username Username of the existing user
-  * @apiParam {String} password Password of the existing user
-  *
-  * @apiSuccess {Object} result Result object
-  * @apiSuccess {Number} result.success Boolean state, should true
-  *
-  * @apiError unauthorized {Object} result Result object
-  * @apiError unauthorized {Object} result.statusCode 401
-  * @apiError unauthorized {Object} result.error Error code
-  * @apiError unauthorized {Object} result.message Description about the error
-  *
-  * If login attemp is succeeded, the server return a token in header.
-  * This token contains an id and a key which separated by a space character.
-  * 
-  *
-**/
-
 User.prototype.login = function(request, reply) {
   var self = this;
   model().authenticate()(
@@ -203,29 +181,8 @@ User.prototype.login = function(request, reply) {
   });
 }
 
-/**
-  * @api {post} /api/users/logout Logout from system
-  * @apiName logoutUser
-  * @apiGroups Users
-  *
-  * @apiSuccess {Object} result Result object
-  * @apiSuccess {Number} result.success Boolean state, should true
-  * 
-  * @apiError unauthorized {Object} result Result object
-  * @apiError unauthorized {Object} result.statusCode 401
-  * @apiError unauthorized {Object} result.error Error code
-  * @apiError unauthorized {Object} result.message Description about the error
-  *
-  *
-**/
-
 User.prototype.logout = function(request, reply) {
   var realLogout = function() {
-    // leave all socket room;
-    var io = request.server.plugins['hapi-io'].io;
-    io.on('connection', function(socket) {
-      socket.leave(request.auth.credentials.userId);
-    });
     reply();
   }
 
@@ -233,9 +190,6 @@ User.prototype.logout = function(request, reply) {
 }
 
 User.prototype.create = function(request, cb) {
-  if (_.isEmpty(request.payload)) {
-    return reply({success:false}).code(400);
-  }
   var self = this;
   var newUser = model();
   newUser.username = request.payload.username;
@@ -290,12 +244,6 @@ User.prototype.remove = function(id, cb) {
 
 User.prototype.activate = function(id, cb) {
   model().findOneAndUpdate({_id:id}, {isActive: true}, function(err, result) {
-    cb(err, result); 
-  });
-}
-
-User.prototype.deactivate = function(id, cb) {
-  model().findOneAndUpdate({_id:id}, {isActive: false}, function(err, result) {
     cb(err, result); 
   });
 }

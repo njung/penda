@@ -15,7 +15,7 @@ var uuid = require("uuid");
 var crypto = require("crypto");
 require("must");
 
-var token;
+var token, token2;
 var activatedUserId;
 var deactivatedUserId;
 var avatar, avatarHash;
@@ -126,7 +126,6 @@ describe("Profiles", function() {
         method: "POST",
         payload : user,
       }, function(response) {
-        console.log(response.result);
         response.result.must.be.an.object();
         response.result._id.must.exist();
         response.result.email.must.exist();
@@ -396,9 +395,22 @@ describe("Profiles", function() {
     });
   });
   // TODO : Skipped if syncUser is active.
-  describe.skip("User update", function() {
+  describe("User update", function() {
+    /* before(function(done) { */
+    /*   server.inject({ */
+    /*     method: "POST", */
+    /*     url: "/api/users/login", */
+    /*     payload : { */
+    /*       username : "admin", */
+    /*       password : "admin" */
+    /*     }, */
+    /*   }, function(response) { */
+    /*     token2 = response.headers.token; */
+    /*     done(); */
+    /*   }) */
+    /* }) */
     this.timeout(500000);
-    it.skip("should update profile of an user by query /api/user/{id}", function(done) {
+    it("should update profile of an user by query /api/user/{id}", function(done) {
       var path = "/api/user/" + activatedUserId;
       server.inject({
         headers : { Authorization : token },
@@ -426,7 +438,7 @@ describe("Profiles", function() {
         url: path,
         method: "POST",
         payload : {
-          currentPassword : "pass1",
+          currentPassword : "admin",
           password : "changed"
         }
       }, function(response) {
@@ -475,12 +487,13 @@ describe("Profiles", function() {
       });
     });
     it("should able to update profile of other user by query /api/user/{id}", function(done) {
-      var path = "/api/users";
+      var path = "/api/user-register";
       var user = {
+        fullName : "Other",
+        username : "otheruser",
         email : "otheruser@users.com",
         password : "otherpass",
-        fullName : "Other",
-        role : "analyst"
+        repeatPassword : "otherpass",
       }
       server.inject({
         headers : { Authorization : token },
@@ -489,10 +502,10 @@ describe("Profiles", function() {
         payload : user,
       }, function(response) { 
         response.result.must.be.an.object();
+        response.result.role.must.exist();
         response.result._id.must.exist();
         response.result.email.must.exist();
         response.result.fullName.must.exist();
-        response.result.role.must.exist();
         response.result.email.must.equal(user.email);
         var id = response.result._id;
         var path = "/api/user/" + id;
@@ -606,9 +619,8 @@ describe("Profiles", function() {
         response.result.must.be.an.object();
         response.result.error.must.exist();
         response.result.message.must.exist();
-        response.result.error.must.equal("Unauthorized");
-        response.result.message.must.equal("Failed to update user");
-        response.result.statusCode.must.equal(401);
+        response.result.error.must.equal("Bad Request");
+        response.result.statusCode.must.equal(400);
         done();
       });
     });
@@ -630,9 +642,8 @@ describe("Profiles", function() {
             response.result.must.be.an.object();
             response.result.error.must.exist();
             response.result.message.must.exist();
-            response.result.error.must.equal("Unauthorized");
-            response.result.message.must.equal("Failed to update user");
-            response.result.statusCode.must.equal(401);
+            response.result.error.must.equal("Bad Request");
+            response.result.statusCode.must.equal(400);
             // Set it back as admin so it can be reused again.
             Profile.findOne({_id:activatedUserId}, function(err, user){
               if (err) done(err);
@@ -646,15 +657,16 @@ describe("Profiles", function() {
       })
     });
   });
-  describe.skip("User delete", function() {
+  describe("User delete", function() {
     this.timeout(50000);
     it("should delete an item by query /api/user/{id}", function(done) {
-      var path = "/api/users";
+      var path = "/api/user-register";
       var user = {
-        username : "user104@users.com",
+        username : "user104",
+        email : "user104@users.com",
         password : "pass104",
+        repeatPassword : "pass104",
         fullName : "User Number One Hundred and Four",
-        role : "analyst"
       }
       server.inject({
         headers : { Authorization : token },
@@ -662,6 +674,7 @@ describe("Profiles", function() {
         method: "POST",
         payload : user,
       }, function(response) { 
+        console.log(response.result);
         response.result.must.be.an.object();
         response.result._id.must.exist();
         response.result.email.must.exist();
@@ -705,169 +718,6 @@ describe("Profiles", function() {
         response.result.error.must.equal("Not Found");
         response.result.message.must.exist();
         response.result.statusCode.must.equal(404);
-        done();
-      });
-    });
-  });
-  describe.skip("Avatars", function() {
-    before(function(done){
-      var path = "/api/user-register";
-      var fakeEmail = faker.internet.email();
-      var password = faker.internet.password();
-      var user = {
-        email :  fakeEmail,
-        username :  fakeEmail,
-        password : password,
-        repeatPassword : password,
-        fullName : faker.name.findName(),
-      }
-      server.inject({
-        headers : { Authorization : token },
-        url: path,
-        method: "POST",
-        payload : user,
-      }, function(response) {
-        response.result.must.be.an.object();
-        activatedUserId = response.result._id;
-        done();
-      });
-    });
-    it("should get an empty avatar ", function(done) {
-      var path = "/api/user/" + activatedUserId + "/avatar";
-      server.inject({
-        headers : { Authorization : token },
-        url: path,
-        method: "GET",
-      }, function(response) {
-        response.statusCode.must.equal(404);
-        done();
-      });
-    });
-
-    it("should be able to upload avatar ", function(done) {
-      var path = "/api/user/" + activatedUserId + "/avatar";
-      var form = new FormData();
-      form.append("avatar", fs.createReadStream(__dirname + "/assets/avatar.jpg"));
-      streamToPromise(form).then(function(payload) {
-        server.inject({
-          url: path,
-          method: "POST",
-          payload: payload,
-          headers : { Authorization : token },
-        }, function(response) {
-          response.result.must.be.an.object();
-          response.statusCode.must.equal(200);
-          response.result.id.must.be.a.string();
-          response.result.success.must.equal(true);
-          var path = "/api/user/" + activatedUserId + "/avatar";
-          server.inject({
-            headers : { Authorization : token },
-            url: path,
-            method: "GET",
-          }, function(response) {
-            response.statusCode.must.equal(200);
-            done();
-          });
-        });
-      });
-    });
-
-    it("should get an empty avatar from an invalid id", function(done) {
-      var invalidPath = "/api/user/000000000000000000000001/avatar";
-      server.inject({
-        headers : { Authorization : token },
-        url: invalidPath,
-        method: "GET",
-      }, function(response) {
-        response.statusCode.must.equal(404);
-        done();
-      });
-    });
-
-    it("should get an empty avatar from a non-object id", function(done) {
-      var invalidPath = "/api/user/ok/avatar";
-      server.inject({
-        headers : { Authorization : token },
-        url: invalidPath,
-        method: "GET",
-      }, function(response) {
-        response.statusCode.must.equal(404);
-        done();
-      });
-    });
-
-    it("should not be able to upload avatar with invalid id", function(done) {
-      var invalidPath = "/api/user/000000000000000000000001/avatar";
-      var form = new FormData();
-      form.append("avatar", fs.createReadStream(__dirname + "/assets/avatar.jpg"));
-      streamToPromise(form).then(function(payload) {
-        server.inject({
-          url: invalidPath,
-          headers : { Authorization : token },
-          method: "POST",
-          payload: payload,
-        }, function(response) {
-          response.result.must.be.an.object();
-          response.statusCode.must.equal(404);
-          response.result.message.must.equal("User profile was not found");
-          done();
-        });
-      });
-    });
-
-    it("should not be able to upload avatar with a non-object id", function(done) {
-      var invalidPath = "/api/user/ok/avatar";
-      var form = new FormData();
-      form.append("avatar", fs.createReadStream(__dirname + "/assets/avatar.jpg"));
-      streamToPromise(form).then(function(payload) {
-        server.inject({
-          url: invalidPath,
-          headers : { Authorization : token },
-          method: "POST",
-          payload: payload,
-        }, function(response) {
-          response.result.must.be.an.object();
-          response.statusCode.must.equal(404);
-          response.result.message.must.equal("User profile was not found");
-          done();
-        });
-      });
-    });
-
-    it("should be able to remove an avatar ", function(done) {
-      var path = "/api/user/" + activatedUserId + "/avatar";
-      server.inject({
-        headers : { Authorization : token },
-        url: path,
-        method: "DELETE",
-      }, function(response) {
-        response.statusCode.must.equal(200);
-        done();
-      });
-    });
-
-    it("should not be able to remove an avatar with invalid id", function(done) {
-      var invalidPath = "/api/user/000000000000000000000001/avatar";
-      server.inject({
-        headers : { Authorization : token },
-        url: invalidPath,
-        method: "DELETE",
-      }, function(response) {
-        response.statusCode.must.equal(404);
-        response.result.message.must.equal("User profile was not found");
-        done();
-      });
-    });
-
-    it("should not be able to remove an empty avatar with non-object id", function(done) {
-      var invalidPath = "/api/user/ok/avatar";
-      server.inject({
-        headers : { Authorization : token },
-        url: invalidPath,
-        method: "DELETE",
-      }, function(response) {
-        response.statusCode.must.equal(404);
-        response.result.message.must.equal("User profile was not found");
         done();
       });
     });

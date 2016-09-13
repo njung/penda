@@ -7,7 +7,7 @@
     "bower": "./node_modules/.bin/bower install",
     "server": "npm run build && NODE_BIN=`which node` node index",
     "build": "rm -rf public && ./node_modules/.bin/gulp && mkdir -p public/reclinejs && cp -R reclinejs/* public/reclinejs",
-    "test": "fuser -k 7000/tcp;  mkdir -p /tmp/data  && NODE_ENV=test npm run setenv && PORT=7000 ./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha test",
+    "test": "fuser -k 7000/tcp;  mkdir -p /tmp/data  && NODE_ENV=test npm run setenv && PORT=7000 NODE_BIN=`which node` ./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha test",
     "setenv": "./scripts/setenv",
     "watch-build": "watch 'fuser -k 3000/tcp;npm run server' ./src"
   },

@@ -18,7 +18,6 @@ try {
 }
 
 var User = require("../00-user");
-var Email = require("../email");
 
 var profileSchema = {
   fullName : String,
@@ -193,41 +192,6 @@ Profiles.prototype.registerEndPoints = function() {
       self.delete(request, reply);
     }
   });
-
-  // Avatar
-  self.server.route({
-    method: "POST",
-    path: "/api/user/{id}/avatar",
-    config : {
-      payload: {
-        maxBytes: 1048576 * 10, // 10MB
-        output: "stream",
-        parse: true
-      }
-    },
-    handler: function(request, reply) {
-      self.uploadAvatar(request, reply);
-    }
-  });
-  self.server.route({
-    method: "GET",
-    path: "/api/user/{id}/avatar",
-    config : {
-      auth: false,
-    },
-    handler: function(request, reply) {
-      self.getAvatar(request, reply);
-    }
-  });
-  self.server.route({
-    method: "DELETE",
-    path: "/api/user/{id}/avatar",
-    config : {
-    },
-    handler: function(request, reply) {
-      self.removeAvatar(request, reply);
-    }
-  });
   
   // Password recovery
   self.server.route({
@@ -271,26 +235,6 @@ Profiles.prototype.registerEndPoints = function() {
     }
   });
 }
-
-/**
-  * @api {get} /api/users List users
-  * @apiName listUsers
-  * @apiGroups Users
-  *
-  * @apiParam {Number} [limit] Number of the result per page
-  * @apiParam {Number} [page] Starting page to query
-  *
-  * @apiSuccess {Object} result Result object
-  * @apiSuccess {Number} result.total Total number of result
-  * @apiSuccess {Number} result.page Current page
-  * @apiSuccess {Object[]} result.data result.data List of users
-  *
-  * @apiError unauthorized {Object} result Result object
-  * @apiError unauthorized {Object} result.statusCode 401
-  * @apiError unauthorized {Object} result.error Error code
-  * @apiError unauthorized {Object} result.message Description about the error
-  *
-**/
 
 Profiles.prototype.list = function(request, reply) {
   var self = this;
@@ -385,7 +329,6 @@ Profiles.prototype.setPasswordRecovery = function(request, reply) {
   
 }
 
-
 Profiles.prototype.passwordRecovery = function(request, reply) {
   var self = this;
   passwordRecoveryModel()
@@ -418,50 +361,15 @@ Profiles.prototype.passwordRecovery = function(request, reply) {
                 reply({
                   success: true, 
                 });
-                Email.class.sendPasswordRecovery(request.payload.email, recoveryCode);
               })
           });
       } else {
         reply({
           success: true, 
         });
-        Email.class.sendPasswordRecovery(request.payload.email, result.recoveryCode);
       } 
     });
 }
-/**
-  * @api {post} /api/users Register new user
-  * @apiName registerUser
-  * @apiGroups Users
-  *
-  * @apiParam {String} email Email of the new user, used as username for login
-  * @apiParam {String} fullname Full name of the new user
-  * @apiParam {String} role Rule of the new user, enums : admin, analyst, manager
-  * @apiParam {String} [team] Team that assigned to the user
-  *
-  * All of the above params is required, except team.
-  *
-  * @apiSuccess {Object} result Result object
-  * @apiSuccess {String} result.id Id of the new user
-  * @apiSuccess {String} result.email Email of the new user;
-  *
-  * @apiError badRequest {Object} result Result object
-  * @apiError badRequest {Object} result.statusCode 400
-  * @apiError badRequest {Object} result.error Error code
-  * @apiError badRequest {Object} result.message Description about the error
-  * @apiError badRequest {String[]} result.validation.keys Arrays of the keys of the source which caused the error
-  *
-  * @apiError unauthorized {Object} result Result object
-  * @apiError unauthorized {Object} result.statusCode 401
-  * @apiError unauthorized {Object} result.error Error code
-  * @apiError unauthorized {Object} result.message Description about the error
-  *
-  * @apiError notFound {Object} result Result object
-  * @apiError notFound {Object} result.statusCode 404
-  * @apiError notFound {Object} result.error Error code
-  * @apiError notFound {Object} result.message Description about the error
-  *
-**/
 
 Profiles.prototype.register = function(request, reply) {
   var self = this;
@@ -517,27 +425,6 @@ Profiles.prototype.register = function(request, reply) {
   }
 }
 
-/**
-  * @api {get} /api/users/confirm/{code} Confirm invitation
-  * @apiName confirmUser
-  * @apiGroups Users
-  *
-  * @apiParam {String} code Confirmation code that has been send by email to newly created user's email.
-  *
-  * @apiSuccess {Object} result Result object
-  * @apiSuccess {Boolean} result.success Boolean state
-  *
-  * @apiError unauthorized {Object} result Result object
-  * @apiError unauthorized {Object} result.statusCode 401
-  * @apiError unauthorized {Object} result.error Error code
-  * @apiError unauthorized {Object} result.message Description about the error
-  *
-  * @apiError notFound {Object} result Result object
-  * @apiError notFound {Object} result.statusCode 404
-  * @apiError notFound {Object} result.error Error code
-  * @apiError notFound {Object} result.message Description about the error
-**/
-
 Profiles.prototype.confirm = function(request, reply) {
   var self = this;
   var io = request.server.plugins['hapi-io'].io;
@@ -557,46 +444,11 @@ Profiles.prototype.confirm = function(request, reply) {
       if (err) {
         return reply(err).statusCode = 400;
       }
-      // Get email
-      Email.class.sendNewUserGreeting(email);
       reply({success: true})
     });
   })
 
 }
-
-/**
-  * @api {post} /api/user/{id} Update existing user
-  * @apiName updateUser
-  * @apiGroups Users
-  *
-  * @apiParam {String} [fullname] Full name of the existing user
-  * @apiparam {string} [role] role of the new user, enums : admin, analyst, manager
-  * @apiParam {String} [team] Team that assigned to the user
-  *
-  * Not all of the above params is required
-  * But the request should have at least one field to update
-  *
-  * @apiSuccess {Object} result Result object
-  * @apiSuccess {String} result.success Boolean state
-  *
-  * @apiError badRequest {Object} result Result object
-  * @apiError badRequest {Object} result.statusCode 400
-  * @apiError badRequest {Object} result.error Error code
-  * @apiError badRequest {Object} result.message Description about the error
-  * @apiError badRequest {String[]} result.validation.keys Arrays of the keys of the source which caused the error
-  *
-  * @apiError unauthorized {Object} result Result object
-  * @apiError unauthorized {Object} result.statusCode 401
-  * @apiError unauthorized {Object} result.error Error code
-  * @apiError unauthorized {Object} result.message Description about the error
-  *
-  * @apiError notFound {Object} result Result object
-  * @apiError notFound {Object} result.statusCode 404
-  * @apiError notFound {Object} result.error Error code
-  * @apiError notFound {Object} result.message Description about the error
-
-**/
 
 Profiles.prototype.update = function(request, reply) {
   var self = this;
@@ -658,35 +510,6 @@ Profiles.prototype.update = function(request, reply) {
   });
 }
 
-/**
-  * @api {post} /api/user/{id}/set-password Set new password of existing user
-  * @apiName setPasswordUser
-  * @apiGroups Users
-  *
-  * @apiParam {String} currentPassword Current password
-  * @apiParam {String} password New password
-  *
-  * @apiSuccess {Object} result Result object
-  * @apiSuccess {String} result.success Boolean state
-  *
-  * @apiError badRequest {Object} result Result object
-  * @apiError badRequest {Object} result.statusCode 400
-  * @apiError badRequest {Object} result.error Error code
-  * @apiError badRequest {Object} result.message Description about the error
-  * @apiError badRequest {String[]} result.validation.keys Arrays of the keys of the source which caused the error
-  *
-  * @apiError unauthorized {Object} result Result object
-  * @apiError unauthorized {Object} result.statusCode 401
-  * @apiError unauthorized {Object} result.error Error code
-  * @apiError unauthorized {Object} result.message Description about the error
-  *
-  * @apiError notFound {Object} result Result object
-  * @apiError notFound {Object} result.statusCode 404
-  * @apiError notFound {Object} result.error Error code
-  * @apiError notFound {Object} result.message Description about the error
-
-**/
-
 Profiles.prototype.setPassword = function(request, reply) {
   var self = this;
   if (syncUser) {
@@ -745,32 +568,6 @@ Profiles.prototype.setPassword = function(request, reply) {
   });
 }
 
-/**
-  * @api {get} /api/user/{id} Get an user
-  * @apiName getUser
-  * @apiGroups Users
-  *
-  * @apiParam {String} id Id of an existing user
-  *
-  * @apiSuccess {Object} result Result object
-  * @apiSuccess {String} result.id Id of the user
-  * @apiSuccess {String} result.email Email of the user
-  * @apiSuccess {String} result.fullName Full name of the user
-  *
-  * @apiError unauthorized {Object} result Result object
-  * @apiError unauthorized {Object} result.statusCode 401
-  * @apiError unauthorized {Object} result.error Error code
-  * @apiError unauthorized {Object} result.message Description about the error
-  *
-  * @apiError notFound {Object} result Result object
-  * @apiError notFound {Object} result.statusCode 404
-  * @apiError notFound {Object} result.error Error code
-  * @apiError notFound {Object} result.message Description about the error
-  *
-
-**/
-
-
 Profiles.prototype.get = function(request, reply) {
   var self = this;
   var bogus = self.checkBogus(request.params.id);
@@ -790,33 +587,9 @@ Profiles.prototype.get = function(request, reply) {
         message: "User profile was not found"
       }).code(400);
     }
-    /* var redisClient = request.server.plugins['hapi-redis'].client; */
-    /* redisClient.set(request.auth.credentials.profileId, request.headers["socketid"]); */
     reply(result).type("application/json");
   });
 }
-
-/**
-  * @api {delete} /api/user/{id} Delete existing user
-  * @apiName deleteUser
-  * @apiGroups Users
-  *
-  * @apiParam {String} [id] Id of an existing user
-  *
-  * @apiSuccess {Object} result Result object
-  * @apiSuccess {String} result.success Boolean state
-  *
-  * @apiError unauthorized {Object} result Result object
-  * @apiError unauthorized {Object} result.statusCode 401
-  * @apiError unauthorized {Object} result.error Error code
-  * @apiError unauthorized {Object} result.message Description about the error
-  *
-  * @apiError notFound {Object} result Result object
-  * @apiError notFound {Object} result.statusCode 404
-  * @apiError notFound {Object} result.error Error code
-  * @apiError notFound {Object} result.message Description about the error
-
-**/
 
 Profiles.prototype.delete = function(request, reply) {
   var self = this;
@@ -861,219 +634,6 @@ Profiles.prototype.delete = function(request, reply) {
       realDelete(request, reply);
     })
   })
-}
-
-/**
- * @api {post} /api/user/{id}/avatar Uploads a new avatar image
- * @apiName uploadAvatar
- * @apiGroup Users
- *
- * @apiSuccess {Object} result Result
- * @apiSuccess {Boolean} result.success True 
- *
- * @apiError unauthorized {Object} result Result object
- * @apiError unauthorized {Object} result.statusCode 401
- * @apiError unauthorized {Object} result.error Error code
- * @apiError unauthorized {Object} result.message Description about the error
- *
- * @apiError notFound {Object} result Result object
- * @apiError notFound {Object} result.statusCode 404
- * @apiError notFound {Object} result.error Error code
- * @apiError notFound {Object} result.message Description about the error
- * @apiError notFound {Object} result.validation Validation object describing the error 
- * @apiError notFound {String} result.validation.source Source of the error 
- *
- */
-
-Profiles.prototype.uploadAvatar = function(request, reply) {
-  var self = this;
-  var id = request.params.id;  
-  var bogus = self.checkBogus(id);
-  if (bogus.isBogus) {
-    return reply(bogus.reply).statusCode = 404;
-  }
-  profileModel()
-    .findOne({_id:id})
-    .lean().exec(function(err, result) {
-    if (err) {
-      console.log(err);
-      return reply(err);
-    }
-    if (result == null) {
-      return reply({
-        statusCode: 404,
-        error: "Not Found", 
-        message: "User profile was not found", 
-        validation: {
-          source: "DB",
-          keys: [ "id" ]
-        }
-      }).statusCode = 404;
-    }
-    var gfs = Grid(mongoose.connection.db);
-    var image = request.payload.avatar;
-    var avatarId = mongoose.Types.ObjectId();
-    var writeStream = gfs.createWriteStream({
-      _id: avatarId, 
-      filename: image.filename,
-      root: "profiles",
-      metadata: {
-        profile: mongoose.Types.ObjectId(id) 
-      }
-    });
-    writeStream.on("finish", function() {
-      profileModel().findOneAndUpdate(
-        { _id: id}, 
-        { 
-          avatar: avatarId
-        },
-        function(err) {
-          if (err) return reply(err).statusCode = 500;
-          reply({ 
-            id: avatarId + "",
-            success: true
-          }).type("application/json");
-
-        });
-    });
-    image.pipe(writeStream);
-  });
-}
-
-/**
- * @api {get} /api/user/{id}/avatar Gets a new avatar image
- * @apiName getAvatar
- * @apiGroup Users
- *
- * @apiSuccess {Buffer} result The image
- *
- * @apiError unauthorized {Object} result Result object
- * @apiError unauthorized {Object} result.statusCode 401
- * @apiError unauthorized {Object} result.error Error code
- * @apiError unauthorized {Object} result.message Description about the error
- *
- * @apiError notFound {Object} result Result object
- * @apiError notFound {Object} result.statusCode 404
- * @apiError notFound {Object} result.error Error code
- * @apiError notFound {Object} result.message Description about the error
- * @apiError notFound {Object} result.validation Validation object describing the error 
- * @apiError notFound {String} result.validation.source Source of the error 
- */
-Profiles.prototype.getAvatar = function(request, reply) {
-  var self = this;
-  var id = request.params.id;
-  var bogus = self.checkBogus(id);
-  if (bogus.isBogus) {
-    return reply(bogus.reply).statusCode = 404;
-  }
-  profileModel()
-    .findOne({_id:id})
-    .lean()
-    .exec(function(err, result) {
-    if (err) return reply(err).statusCode = 500;
-    if (result == null || !result.avatar) {
-      return reply({}).statusCode = 404;
-    }
-    var gfs = Grid(mongoose.connection.db);
-    gfs.exist({
-      _id: result.avatar,
-      root: "profiles"
-    }, function(err, found) {
-      if (err) return reply(err).statusCode = 500;
-      if (found == false) {
-        // not found
-        return reply({
-          statusCode: 404,
-          error: "Not Found", 
-          message: "User profile was not found", 
-          validation: {
-            source: "DB",
-            keys: [ "id" ]
-          }
-        }).statusCode = 404;
-      }
-      var rs = gfs.createReadStream({
-        _id: result.avatar, 
-        root: "profiles",
-      });
-      reply(rs);
-    });
-
-  });
-}
-
-/**
- * @api {delete} /api/user/{id}/avatar Removes an avatar image
- * @apiName removeAvatar
- * @apiGroup Users
- *
- * @apiSuccess {Object} result Result
- * @apiSuccess {Boolean} result.success True 
- *
- * @apiError unauthorized {Object} result Result object
- * @apiError unauthorized {Object} result.statusCode 401
- * @apiError unauthorized {Object} result.error Error code
- * @apiError unauthorized {Object} result.message Description about the error
- *
- * @apiError notFound {Object} result Result object
- * @apiError notFound {Object} result.statusCode 404
- * @apiError notFound {Object} result.error Error code
- * @apiError notFound {Object} result.message Description about the error
- * @apiError notFound {Object} result.validation Validation object describing the error 
- * @apiError notFound {String} result.validation.source Source of the error 
- */
-
-Profiles.prototype.removeAvatar = function(request, reply) {
-  var self = this;
-  var id = request.params.id;
-  var bogus = self.checkBogus(id);
-  if (bogus.isBogus) {
-    return reply(bogus.reply).statusCode = 404;
-  }
-
-  profileModel()
-    .findOne({_id:id})
-    .exec(function(err, dataResult) {
-    if (err) return reply(err);
-    if (dataResult == null) {
-      // the record does not exist, spew 404 immediately
-      return reply({
-        statusCode: 404,
-        error: "Not Found", 
-        message: "User profile was not found", 
-        validation: {
-          source: "DB",
-          keys: [ "id" ]
-        }
-      }).statusCode = 404;
-    }
-    var imageId = dataResult.avatar;
-    var gfs = Grid(mongoose.connection.db);
-    gfs.exist({
-      _id: imageId, 
-      root: "profiles",
-    }, function(err, result) {
-      if (err) return reply(err).statusCode = 500;
-      if (result == false) {
-        // not found
-        return reply({}).statusCode = 404;
-      }
-
-      // First, remove from gridfs
-      var rs = gfs.remove({
-        _id: imageId, 
-        root: "profiles",
-      }, function(err) {
-        if (err) return reply(err).statusCode = 500;
-        avatar = null;
-        
-        dataResult.save(function(err, result) {
-          if (err) return reply(err).statusCode = 500;
-          reply({success: true});
-        });
-      });
-    });
-  });
 }
 
 
