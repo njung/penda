@@ -75,29 +75,6 @@ var profileModel = function() {
   return m;
 }
 
-var passwordRecoveryModel = function() {
-  var registered = false;
-  var m;
-  try {
-    m = mongoose.model("PasswordRecovery");
-    registered = true;
-  } catch(e) {
-  }
-
-  if (registered) return m;
-  var schema = {
-    recoveryCode : String,
-    profileId : String,
-    userId : String,
-    email : String,
-    isActive : Boolean
-  }
-
-  var s = new mongoose.Schema(schema);
-  m = mongoose.model("PasswordRecovery", s);
-  return m;
-}
-
 var Profiles = function(server, options, next) {
   this.server = server;
   this.options = options || {};
@@ -192,48 +169,6 @@ Profiles.prototype.registerEndPoints = function() {
       self.delete(request, reply);
     }
   });
-  
-  // Password recovery
-  self.server.route({
-    method: "POST",
-    path: "/api/users/password-recovery",
-    config : {
-      auth: false,
-    },
-    handler: function(request, reply) {
-      self.passwordRecovery(request, reply);
-    }
-  });
-  self.server.route({
-    method: "GET",
-    path: "/api/users/check-recovery-code/{code}",
-    config : {
-      auth: false,
-    },
-    handler: function(request, reply) {
-      self.checkRecoveryCode(request, reply);
-    }
-  });
-  self.server.route({
-    method: "GET",
-    path: "/api/users/count",
-    config : {
-      auth: false,
-    },
-    handler: function(request, reply) {
-      self.count(request, reply);
-    }
-  });
-  self.server.route({
-    method: "POST",
-    path: "/api/users/set-password-recovery/{code}",
-    config : {
-      auth: false,
-    },
-    handler: function(request, reply) {
-      self.setPasswordRecovery(request, reply);
-    }
-  });
 }
 
 Profiles.prototype.list = function(request, reply) {
@@ -247,9 +182,6 @@ Profiles.prototype.list = function(request, reply) {
 
   var q = {}
   var count;
-  
-  if (request.query.role) q.role = request.query.role;
-  if (request.query.country) q.country = request.query.country;
   
   // count all record
   profileModel()
@@ -280,97 +212,6 @@ Profiles.prototype.list = function(request, reply) {
   });
 }
 
-Profiles.prototype.count = function(request, reply) {
-  var self = this;
-  var increaser = 400;
-  // count all record
-  profileModel()
-    .count()
-    .exec(function(err, result){
-    if (err) {
-      return reply(err).statusCode = 400;
-    }
-      reply(result + increaser).type("application/json");
-    });
-}
-
-Profiles.prototype.checkRecoveryCode = function(request, reply) {
-  var self = this;
-  passwordRecoveryModel()
-    .findOne({recoveryCode:request.params.code, isActive:true})
-    .exec(function(err, result){
-    if (err) return reply(parse(err));
-    if (result) {
-      reply({success:true});
-    } else {
-      reply({success:false}).code(404);
-    }
-  });
-}
-
-Profiles.prototype.setPasswordRecovery = function(request, reply) {
-  var self = this;
-  passwordRecoveryModel()
-    .findOne({recoveryCode:request.params.code, isActive:true})
-    .exec(function(err, result){
-    if (err) return reply(parse(err));
-    if (result) {
-      User.class.setPasswordRecovery(result.userId, request.payload.password, function(err, user) {
-        if (err) return reply(parse(err));
-        result.isActive = false;
-        result.save(function(err, result){
-          reply({success:true});
-        })
-      });
-    } else {
-      reply({success:false});
-    }
-  });
-  
-}
-
-Profiles.prototype.passwordRecovery = function(request, reply) {
-  var self = this;
-  passwordRecoveryModel()
-    .findOne({email: request.payload.email, isActive : true})
-    .exec(function(err, result) {
-      if (err) return reply(parse(err));
-      if (!result) {
-        profileModel()
-          .findOne({email: request.payload.email})
-          .lean()
-          .exec(function(err, result){
-            if (err) return reply(parse(err));
-            if (!result) {
-              return reply({
-                error: "Not Found", 
-                statusCode: 404, 
-                message: "Invalid email address"
-              }).code(404);
-            }
-            var recoveryCode = uuid.v4();
-            passwordRecoveryModel()
-              .create({
-                email : request.payload.email,
-                profileId : result._id,
-                userId : result.userId,
-                recoveryCode : recoveryCode,
-                isActive : true
-              }, function(err, result) {
-                if (err) return reply(parse(err));
-                reply({
-                  success: true, 
-                });
-              })
-          });
-      } else {
-        reply({
-          success: true, 
-        });
-      } 
-    });
-}
-
 Profiles.prototype.register = function(request, reply) {
   var self = this;
   // Force to have 'user' role
@@ -380,54 +221,37 @@ Profiles.prototype.register = function(request, reply) {
     var err = new Error('Repeat password not matched');
     return reply(err).statusCode = 400;
   }
-  if (request.auth && request.auth.credentials) {
-    profileModel()
-      .findOne({userId: request.auth.credentials.userId})
-      .exec(function(err, result) {
-      if (err) {
-        return reply(err).statusCode = 400;
-      }
-      if (result.role == "admin") {
-        request.isActive = true;
-        User.class.create(request, function(err, result) {
-          if (err) {
-            return reply(err).statusCode = 400;
-          } else {
-            request.payload.userId = result.id;
-            self.realRegister(request, function(err, profile) {
-              if (err) return reply(err).statusCode = 500;
-              reply(profile);
-            });
-          }
-        })
-      } else {
-        return reply({
-          error: "Unauthorized",
-          message: "Failed to register new user",
-          statusCode: 401
-        }).code(401);
-      }
-    })
-  } else {
-    request.payload.role = "user";
-    request.payload.country = "";
-    User.class.create(request, function(err, result) {
-      if (err) {
-        return reply(err).statusCode = 400;
-      } else {
-        request.payload.userId = result.id;
-        self.realRegister(request, function(err, profile) {
-          if (err) return reply(err).statusCode = 500;
-          reply(profile);
-        });
-      }
-    })
-  }
+  profileModel()
+    .findOne({userId: request.auth.credentials.userId})
+    .exec(function(err, result) {
+    if (err) {
+      return reply(err).statusCode = 400;
+    }
+    if (result.role == "admin") {
+      request.isActive = true;
+      User.class.create(request, function(err, result) {
+        if (err) {
+          return reply(err).statusCode = 400;
+        } else {
+          request.payload.userId = result.id;
+          self.realRegister(request, function(err, profile) {
+            if (err) return reply(err).statusCode = 500;
+            reply(profile);
+          });
+        }
+      })
+    } else {
+      return reply({
+        error: "Unauthorized",
+        message: "Failed to register new user",
+        statusCode: 401
+      }).code(401);
+    }
+  })
 }
 
 Profiles.prototype.confirm = function(request, reply) {
   var self = this;
-  var io = request.server.plugins['hapi-io'].io;
   profileModel().findOne({activationCode : request.params.code}, function(err, result) {
     if (err) {
       return reply(err).statusCode = 400;
@@ -734,30 +558,6 @@ var realUpdate = function(request, reply) {
       })
     });
   });
-}
-
-Profiles.prototype.getUserMap = function(users, cb) {
-  var self = this;
-  profileModel()
-  .find({_id:{$in : users}})
-  .lean()
-  .exec(function(err, users){
-    var userMap = {};
-    for (var i in users) {
-      userMap[users[i]._id] = users[i].fullName;
-    }
-    cb(userMap);
-  })
-}
-
-Profiles.prototype.getUserId = function(profileId, cb) {
-  var self = this;
-  profileModel()
-  .findOne({_id : profileId})
-  .exec(function(err, result){
-    if (err) return cb(err);
-    cb(null, result.userId);
-  })
 }
 
 var realDelete = function(request, reply) {

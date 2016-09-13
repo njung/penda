@@ -55,7 +55,6 @@ RSS.prototype.registerEndPoints = function() {
       }
       rssParser.parseURL(request.query.url, function(err, parsed) {
 				if (err) {
-					console.log(err);
 					return reply(err);
 				}
         self.cache.timestamp = moment();

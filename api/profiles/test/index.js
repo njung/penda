@@ -1,18 +1,13 @@
 var mongoose = require("mongoose");
 var server = require(__dirname + "/../../../index");
 var model = require(__dirname + "/../index").model();
-var passportLocalMongoose = require("passport-local-mongoose");
 var fs = require("fs");
 var hat = require("hat");
-var _ = require("lodash");
 var User = require("../../00-user").model();
 var Profile = require("../../profiles").model();
 var async = require("async");
-var FormData = require("form-data");
-var streamToPromise = require("stream-to-promise");
 var faker = require("faker");
 var uuid = require("uuid");
-var crypto = require("crypto");
 require("must");
 
 var token, token2;
@@ -175,6 +170,29 @@ describe("Profiles", function() {
           url: path,
           method: "POST",
           payload : {},
+        }, function(response) {
+          response.result.must.be.an.object();
+          response.result.error.must.equal("Bad Request");
+          response.result.message.must.exist();
+          response.result.validation.must.exist();
+          response.result.statusCode.must.equal(400);
+          done();
+        });
+    });
+    it("should fail to create new user with unmatched password - repeat password, /api/users", function(done) {
+      var user = {
+        username : "user2@users.com",
+        email : "user2@users.com",
+        password : "pass2",
+        repeatPassword : "pass3",
+        fullName : "User Number Two",
+      }
+      var path = "/api/users";
+        server.inject({
+          headers : { Authorization : token },
+          url: path,
+          method: "POST",
+          payload : user,
         }, function(response) {
           response.result.must.be.an.object();
           response.result.error.must.equal("Bad Request");
@@ -396,19 +414,6 @@ describe("Profiles", function() {
   });
   // TODO : Skipped if syncUser is active.
   describe("User update", function() {
-    /* before(function(done) { */
-    /*   server.inject({ */
-    /*     method: "POST", */
-    /*     url: "/api/users/login", */
-    /*     payload : { */
-    /*       username : "admin", */
-    /*       password : "admin" */
-    /*     }, */
-    /*   }, function(response) { */
-    /*     token2 = response.headers.token; */
-    /*     done(); */
-    /*   }) */
-    /* }) */
     this.timeout(500000);
     it("should update profile of an user by query /api/user/{id}", function(done) {
       var path = "/api/user/" + activatedUserId;
@@ -431,6 +436,29 @@ describe("Profiles", function() {
         done();
       });
     });
+    it("should update the password of an user by query /api/user/{id}", function(done) {
+      var path = "/api/user/" + activatedUserId;
+      server.inject({
+        headers : { Authorization : token },
+        url: path,
+        method: "POST",
+        payload : {
+          password : "ok",
+        }
+      }, function(response) {
+        server.inject({
+          method: "POST",
+          url: "/api/users/login",
+          payload : {
+            username : "user1x@users.com",
+            password : "ok"
+          },
+        }, function(response) {
+          response.headers.token.must.exist();
+          done();
+        });
+      });
+    });
     it("should update password /api/user/{id}", function(done) {
       var path = "/api/user/" + activatedUserId + "/set-password";
       server.inject({
@@ -438,7 +466,7 @@ describe("Profiles", function() {
         url: path,
         method: "POST",
         payload : {
-          currentPassword : "admin",
+          currentPassword : "ok",
           password : "changed"
         }
       }, function(response) {

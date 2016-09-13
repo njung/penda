@@ -1,16 +1,7 @@
 var server = require(__dirname + '/../../../index');
 var mongoose = require('mongoose');
-var server = require(__dirname + '/../../../index');
-var model = require(__dirname + '/../index').model();
-var passportLocalMongoose = require('passport-local-mongoose');
 var fs = require('fs');
-var _ = require('lodash');
-var uuid = require('uuid');
-var moment = require('moment');
-var async = require('async');
-var generateUser = require(__dirname + '/../../../api/00-user/index').generateUser;
 var profileModel = require(__dirname + '/../../../api/profiles/index').model();
-var should = require('should');
 require('must');
 
 var port = '3000';
