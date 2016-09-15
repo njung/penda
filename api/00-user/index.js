@@ -100,7 +100,7 @@ User.prototype.registerEndPoints = function() {
               }),
             },
             '400' : {
-              description : 'Bad request',
+              description : 'Bad Request',
             },
             '500': {
               description : 'Internal server error',

@@ -42,6 +42,8 @@
     "bower_components/xml2json/xml2json.js",
     "bower_components/underscore/underscore.js",
     "src/libs/angular-dropdowns.js",
+    "node_modules/chart.js/dist/Chart.bundle.js",
+    "node_modules/angular-chart.js/dist/angular-chart.js",
     "libs/*.js"
   ],
   "styles": [

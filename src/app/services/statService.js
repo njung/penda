@@ -21,6 +21,18 @@ StatService.prototype.sum = function() {
   });
 }
 
+StatService.prototype.complete = function() {
+  var self = this;
+  var path = '/api/stat/complete';
+  return self.$http({
+    headers : {
+      Authorization : self.localStorageService.get('token'),
+    },
+    method: 'GET',
+    url : self.host + path,
+  });
+}
+
 StatService.inject = ['$http', 'AuthService', 'host', 'Upload', 'localStorageService']
 
 angular.module('statService', [])

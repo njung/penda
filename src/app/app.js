@@ -14,6 +14,7 @@ angular.module('App', [
   'user',
   'category',
   'dataset',
+  'stat',
   'upload',
   'logout',
   'notfound',
@@ -28,6 +29,7 @@ angular.module('App', [
   'datasetService',
   'statService',
 
+  'chart.js',
   'LocalStorageModule',
   'toastr',
   'ngFileUpload',
@@ -118,6 +120,14 @@ angular.module('App', [
       cache: false,
       templateProvider: function($templateCache) {
         return $templateCache.get('dataset/dataset.html');
+      }
+    }
+  )
+  .state('stat', {
+      url: '/stat',
+      cache: false,
+      templateProvider: function($templateCache) {
+        return $templateCache.get('stat/stat.html');
       }
     }
   )

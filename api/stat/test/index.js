@@ -71,7 +71,23 @@ describe('RSS', function() {
         url: path,
         method: 'GET',
       }, function(response) {
-        console.log(response.result);
+        response.result.row.must.exist();
+        response.result.dataset.must.exist();
+        response.result.category.must.exist();
+        done();
+      });
+    });
+    it('should be able to get complete stat', function(done) {
+      var path = '/api/stat/complete';
+      server.inject({
+        headers : { Authorization : token },
+        url: path,
+        method: 'GET',
+      }, function(response) {
+        response.result.byCategory.must.exist();
+        response.result.byUploader.must.exist();
+        response.result.byCategory.length.should.greaterThan(0);
+        response.result.byUploader.length.should.greaterThan(0);
         done();
       });
     });

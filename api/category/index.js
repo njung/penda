@@ -63,6 +63,26 @@ Categories.prototype.registerEndPoints = function() {
           page : Joi.number().optional(),
           limit : Joi.number().optional(),
         }
+      },
+      tags : ['api'],
+      description : 'Categories (public)',
+      notes : 'List the categories.',
+      plugins : {
+        'hapi-swagger' : {
+          '200' : {
+            description : 'OK',
+            schema : {},
+          },
+          '400' : {
+            description : 'Bad Request',
+          },
+          '401' : {
+            description : 'Unauthorized',
+          },
+          '500': {
+            description : 'Internal server error',
+          },
+        }
       }
     },
     handler: function(request, reply) {
@@ -78,6 +98,26 @@ Categories.prototype.registerEndPoints = function() {
     config : {
       validate : {
         payload: Joi.object(createSchema)
+      },
+      tags : ['api'],
+      description : 'Create a category',
+      notes : 'Create a category, the only required value is the category name.',
+      plugins : {
+        'hapi-swagger' : {
+          '200' : {
+            description : 'OK',
+            schema : {},
+          },
+          '400' : {
+            description : 'Bad Request',
+          },
+          '401' : {
+            description : 'Unauthorized',
+          },
+          '500': {
+            description : 'Internal server error',
+          },
+        }
       }
     }
   });
@@ -89,6 +129,22 @@ Categories.prototype.registerEndPoints = function() {
       validate : {
         params : {
           id : Joi.string().required(),
+        }
+      },
+      tags : ['api'],
+      description : 'Get a category (public)',
+      plugins : {
+        'hapi-swagger' : {
+          '200' : {
+            description : 'OK',
+            schema : {},
+          },
+          '400' : {
+            description : 'Bad Request',
+          },
+          '500': {
+            description : 'Internal server error',
+          },
         }
       }
     },
@@ -102,6 +158,25 @@ Categories.prototype.registerEndPoints = function() {
     config : {
       validate : {
         payload: Joi.object(updateSchema)
+      },
+      tags : ['api'],
+      description : 'Update an existing category',
+      plugins : {
+        'hapi-swagger' : {
+          '200' : {
+            description : 'OK',
+            schema : {},
+          },
+          '400' : {
+            description : 'Bad Request',
+          },
+          '401' : {
+            description : 'Unauthorized',
+          },
+          '500': {
+            description : 'Internal server error',
+          },
+        }
       }
     },
     handler: function(request, reply) {
@@ -111,6 +186,27 @@ Categories.prototype.registerEndPoints = function() {
   self.server.route({
     method: 'DELETE',
     path: '/api/category/{id}',
+    config : {
+      tags : ['api'],
+      description : 'Delete a category',
+      plugins : {
+        'hapi-swagger' : {
+          '200' : {
+            description : 'OK',
+            schema : {},
+          },
+          '400' : {
+            description : 'Bad Request',
+          },
+          '401' : {
+            description : 'Unauthorized',
+          },
+          '500': {
+            description : 'Internal server error',
+          },
+        }
+      }
+    },
     handler: function(request, reply) {
       self.delete(request, reply);
     }
