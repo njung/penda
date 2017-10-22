@@ -6,6 +6,5 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Mohammad Anwari <mdamt@mdamt.net> (http://aksi.mdamt.net/)",
   "license": "MIT"
 }

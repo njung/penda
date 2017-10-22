@@ -223,6 +223,7 @@ Dataset.prototype.get = function(filename) {
   self.DatasetService.get(filename)
   .then(function(result) {
     self.$scope.currentItem = result.data;
+    self.$scope.numberFieldAvailable = false;
     self.$scope.datasetQuery.total = result.data.totalRows;
     // Collect field
     self.$scope.fields = [{
@@ -239,10 +240,14 @@ Dataset.prototype.get = function(filename) {
             key : keys[i],
             value : result.data.tableSchema[keys[i]]
           })
+          if (result.data.tableSchema[keys[i]] === 'number') {
+            self.$scope.currentItem.numberFieldAvailable = true;
+          }
         }
       }
     }
     self.$scope.spinner.dataset = false;
+    self.$scope.$apply();
     self.getQuery();
   })
   .catch(function(result) {
@@ -342,28 +347,30 @@ Dataset.prototype.getQuery = function() {
           self.$scope.spinner.datasetQuery = false;
           self.$scope.$apply();
         } else if (self.$scope.viewMode === 'graph') {
-					// Collect selected field
-					self.$scope.series = [];
-					for (var i in self.$scope.currentItem.schema) {
-						if (self.$scope.currentItem.schema[i].picked) {
-							self.$scope.series.push(self.$scope.currentItem.schema[i].key);
-						}
-					}
-					if (self.$scope.series.length < 1 || !self.$scope.graphGroupBy) {
-          	self.$scope.spinner.datasetQuery = false;
-						return;
-					}
+          // Collect selected field
+          self.$scope.series = [];
+          for (var i in self.$scope.currentItem.schema) {
+            if (self.$scope.currentItem.schema[i].picked) {
+              self.$scope.series.push(self.$scope.currentItem.schema[i].key);
+              if (self.$scope.currentItem.schema[i].value === 'number') {
+                self.$scope.currentItem.numberFieldAvailable = true;
+              }
+            }
+          }
+          if (self.$scope.series.length < 1 || !self.$scope.graphGroupBy) {
+            self.$scope.spinner.datasetQuery = false;
+            return;
+	  }
           var $el = $('#view-graph');
-    			$el.text('');
-					var opt = {
+          $el.text('');
+          var opt = {
             model: dataset,
             state: {
               graphType: "lines-and-points",
               group: self.$scope.graphGroupBy,
               series: self.$scope.series
             }
-					}
-					console.log(opt);
+          }
           var graph = new recline.View.Graph(opt);
           $el.append(graph.el);
           graph.render();
@@ -374,15 +381,14 @@ Dataset.prototype.getQuery = function() {
           self.$scope.spinner.datasetQuery = false;
           // Map field ( long, lang ) should be available on the schema.
           var longExists, latExists;
-
-					for (var i in self.$scope.currentItem.schema) {
-						if (self.$scope.currentItem.schema[i].key === 'long') {
+          for (var i in self.$scope.currentItem.schema) {
+            if (self.$scope.currentItem.schema[i].key === 'long') {
               longExists = true;
-						}
-						if (self.$scope.currentItem.schema[i].key === 'lat') {
+            }
+            if (self.$scope.currentItem.schema[i].key === 'lat') {
               latExists = true;
-						}
-					}
+            }
+          }
           if (longExists && latExists) {
             self.$scope.mapAvailable = true;
             // Collect markers
