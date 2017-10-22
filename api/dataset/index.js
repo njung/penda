@@ -127,8 +127,8 @@ Dataset.prototype.registerEndPoints = function() {
     handler: function(request, reply) {
       self.list(request, reply);
     },
-		config : {
-			auth : false,
+    config : {
+      auth : false,
     }
   });
   
@@ -138,8 +138,8 @@ Dataset.prototype.registerEndPoints = function() {
     handler: function(request, reply) {
       self.get(request, reply);
     },
-		config : {
-			auth : false,
+    config : {
+      auth : false,
     }
   });
   
@@ -149,32 +149,32 @@ Dataset.prototype.registerEndPoints = function() {
     handler: function(request, reply) {
       self.update(request, reply);
     },
-		config : {
-			validate : {
-				payload : {
-					__v : Joi.number().optional(),
-					_id : Joi.string().optional(),
+    config : {
+      validate : {
+        payload : {
+          __v : Joi.number().optional(),
+          _id : Joi.string().optional(),
           category : Joi.array().items(Joi.string()),
-					dateEnd : Joi.date().optional(),
-					dateStart : Joi.date().optional(),
-					filename : Joi.string().optional(),
-					contact : Joi.string().optional(),
-					level : Joi.string().optional(),
-					releaseFreq : Joi.string().optional(),
-					schema : Joi.any().optional(),
-					scope : Joi.string().optional(),
-					source : Joi.string().optional(),
-					status : Joi.string().optional(),
-					tableSchema : Joi.any().optional(),
-					title : Joi.string().optional(),
-					totalColumns : Joi.number().optional(),
-					totalRows : Joi.number().optional(),
-					uploader : Joi.string().optional(),
-					uploaderFullName : Joi.string().optional(),
-					uploaderId : Joi.string().optional(),
-					year : Joi.number().optional(),
-				}
-			}
+          dateEnd : Joi.date().optional(),
+          dateStart : Joi.date().optional(),
+          filename : Joi.string().optional(),
+          contact : Joi.string().optional(),
+          level : Joi.string().optional(),
+          releaseFreq : Joi.string().optional(),
+          schema : Joi.any().optional(),
+          scope : Joi.string().optional(),
+          source : Joi.string().optional(),
+          status : Joi.string().optional(),
+          tableSchema : Joi.any().optional(),
+          title : Joi.string().optional(),
+          totalColumns : Joi.number().optional(),
+          totalRows : Joi.number().optional(),
+          uploader : Joi.string().optional(),
+          uploaderFullName : Joi.string().optional(),
+          uploaderId : Joi.string().optional(),
+          year : Joi.number().optional(),
+        }
+      }
     }
   });
   
@@ -184,8 +184,6 @@ Dataset.prototype.registerEndPoints = function() {
     handler: function(request, reply) {
       self.delete(request, reply);
     },
-		config : {
-    }
   });
 }
 
