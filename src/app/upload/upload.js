@@ -103,6 +103,8 @@ UploadCtrl.prototype.upload = function(files, invalid) {
       console.log(end);
       self.$scope.data.dateStart = (new Date(start)).toISOString();
       self.$scope.data.dateEnd = (new Date(end)).toISOString();
+    } else {
+      delete(self.$scope.data.month);
     }
     if (!self.$scope.data.dateStart || !self.$scope.data.dateEnd) {
       alert('Please specify the release frequency values');
