@@ -10,12 +10,8 @@ var config = require(__dirname + '/../../config.json');
 var fs = require('fs');
 Grid.mongo = mongoose.mongo;
 
-var syncUser = true;
-try {
-  fs.accessSync(__dirname + '/../../api/penda-ppid-sync', fs.F_OK);
-} catch(e) {
-  syncUser = false;
-}
+// A user sync plugin could be added to /api. This is a flag to prevent user data modification if such plugin is being used.
+var syncUser = false; 
 
 var User = require("../00-user");
 
