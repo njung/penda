@@ -334,15 +334,18 @@
           <div ng-show="viewMode=='table'" id="view-table" class="recline-read-only animated fadeIn" style="margin-bottom: 30px; height: 500px;border:1px solid lightgrey">&nbsp;</div>
           <div ng-show="viewMode=='graph'" class=" animated fadeIn">
             <div class="row">
-              <div class="col-md-8" id="view-graph" style="background:white;min-height:500px;padding-top:15px;">
+              <div ng-show="currentItem.numberFieldAvailable" class="col-md-8" id="view-graph" style="background:white;min-height:500px;padding-top:15px;">
                 <p class="alert alert-info">Pilih pengelompokan dan kolom data pada isian di samping.</p>              
               </div>              
-              <div class="col-md-4">
-								<h4>Dikelompokkan berdasarkan : </h4>
-								<select ng-model="graphGroupBy" ng-change="dataset.loadGraph();">
-									<option ng-repeat="col in currentItem.schema track by $index">{{col.key}}</option>
-								</select>
-								<h4>Pilih kolom : </h4>
+              <div ng-show="!currentItem.numberFieldAvailable" class="col-md-8" id="view-graph" style="background:white;min-height:500px;padding-top:15px;">
+                <p class="alert alert-info">Tidak ada data berbasis angka yang dapat mendukung bentuk grafik ini.</p>              
+              </div>              
+              <div ng-show="currentItem.numberFieldAvailable" class="col-md-4">
+                <h4>Dikelompokkan berdasarkan : </h4>
+                <select ng-model="graphGroupBy" ng-change="dataset.loadGraph();">
+                  <option ng-repeat="col in currentItem.schema track by $index">{{col.key}}</option>
+                </select>
+                <h4>Pilih kolom : </h4>
                 <ul style="list-style-type: none;padding-left:0px;">
                   <li ng-repeat="col in currentItem.schema track by $index" ng-show="col.value=='number'">
                     <input type="checkbox" ng-model="col.picked" ng-click="dataset.loadGraph();"> {{col.key}}
