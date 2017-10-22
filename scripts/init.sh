@@ -1,5 +1,5 @@
 HOST=${HOST:-localhost}
-PORT=${HOST:-27017}
+PORT=${PORT:-27017}
 DB=${DB:-penda}
 set +e
 echo "Setting up initial data with $DB on $HOST"
